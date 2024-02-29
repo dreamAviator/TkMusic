@@ -857,6 +857,14 @@ def delFrompllst():#delete from playlist
 def delFrompllstKey(event):
     delFrompllst()
 
+def deleteAllSongs():
+    global playlist
+    global pPlaylist
+    playlist = []
+    pPlaylist = []
+    togglePlay()
+    updatePlaylist(0,0)
+
 def savePlaylist():
     global playlist
     global pPlaylist
@@ -1833,6 +1841,27 @@ root.geometry(rootWidthStr + 'x360+100+100')
 root.resizable(False,False)
 #root.iconbitmap(logo)#noch kein logo
 root.bind('<Escape>',hideInBackground)
+    #menus
+menubar = tk.Menu(root)
+root.config(menu = menubar)
+        #file_menu
+file_menu = tk.Menu(menubar,tearoff = False)
+file_menu.add_command(label = 'Open',command = addToPlaylist)
+sub_menu = tk.Menu(file_menu,tearoff = False)
+sub_menu.add_command(label = 'Recent file 1')
+file_menu.add_cascade(label = "Recent files",menu = sub_menu)
+file_menu.add_command(label = 'Save as...',command = savePlaylist)
+file_menu.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu.add_separator()
+file_menu.add_command(label='Exit',command=exitProgram)
+menubar.add_cascade(label="File",menu=file_menu,underline=0)
+        #view_menu
+view_menu = tk.Menu(menubar,tearoff = False)
+view_menu.add_command(label = 'Show the value of the volume slider',command = lambda: (settings("volumeSliderText")))
+view_menu.add_command(label = 'Two windows',command = lambda: (settings("twoWindows")))
+view_menu.add_command(label = 'Mini mode',command = lambda: (settings("miniMode")))
+menubar.add_cascade(label = "View",menu = view_menu,underline = 0)
+        #help_menu
 
 #playlist window
 global plW #playlistWindow
