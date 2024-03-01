@@ -1842,26 +1842,30 @@ root.resizable(False,False)
 #root.iconbitmap(logo)#noch kein logo
 root.bind('<Escape>',hideInBackground)
     #menus
-menubar = tk.Menu(root)
-root.config(menu = menubar)
+menubar1 = tk.Menu(root)
+root.config(menu = menubar1)
         #file_menu
-file_menu = tk.Menu(menubar,tearoff = False)
-file_menu.add_command(label = 'Open',command = addToPlaylist)
-sub_menu = tk.Menu(file_menu,tearoff = False)
-sub_menu.add_command(label = 'Recent file 1')
-file_menu.add_cascade(label = "Recent files",menu = sub_menu)
-file_menu.add_command(label = 'Save as...',command = savePlaylist)
-file_menu.add_command(label = 'Delete all',command = deleteAllSongs)
-file_menu.add_separator()
-file_menu.add_command(label='Exit',command=exitProgram)
-menubar.add_cascade(label="File",menu=file_menu,underline=0)
+file_menu1 = tk.Menu(menubar1,tearoff = False)
+file_menu1.add_command(label = 'Open',command = addToPlaylist)
+sub_menu1 = tk.Menu(file_menu1,tearoff = False)
+sub_menu1.add_command(label = 'Recent file 1')
+file_menu1.add_cascade(label = "Recent files",menu = sub_menu1)
+file_menu1.add_command(label = 'Save as...',command = savePlaylist)
+file_menu1.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu1.add_separator()
+file_menu1.add_command(label='Exit',command=exitProgram)
+menubar1.add_cascade(label="File",menu=file_menu1,underline=0)
         #view_menu
-view_menu = tk.Menu(menubar,tearoff = False)
-view_menu.add_command(label = 'Show the value of the volume slider',command = lambda: (settings("volumeSliderText")))
-view_menu.add_command(label = 'Two windows',command = lambda: (settings("twoWindows")))
-view_menu.add_command(label = 'Mini mode',command = lambda: (settings("miniMode")))
-menubar.add_cascade(label = "View",menu = view_menu,underline = 0)
+view_menu1 = tk.Menu(menubar1,tearoff = False)
+view_menu1.add_command(label = 'Show the value of the volume slider',command = lambda: (settings("volumeSliderText")))
+view_menu1.add_command(label = 'Two windows',command = lambda: (settings("twoWindows")))
+view_menu1.add_command(label = 'Mini mode',command = lambda: (settings("miniMode")))
+menubar1.add_cascade(label = "View",menu = view_menu1,underline = 0)
         #help_menu
+#keyboard shortcuts
+#license
+#changelog
+#halt alle sachen die im help menu standardmäßig sind und/oder die im info window sind
 
 #playlist window
 global plW #playlistWindow
@@ -1872,6 +1876,32 @@ plW = tk.Toplevel()
 plW.title("Playlist")
 plW.geometry(playlistWidthStr + 'x360+600+100')
 plW.resizable(False,False)
+    #menus
+menubar2 = tk.Menu(plW)
+plW.config(menu = menubar2)
+        #file_menu
+file_menu2 = tk.Menu(menubar2,tearoff = False)
+file_menu2.add_command(label = 'Add',command = addToPlaylist)
+sub_menu2 = tk.Menu(file_menu2,tearoff = False)
+sub_menu2.add_command(label = 'Recent song 1')
+file_menu2.add_cascade(label = "Recent songs",menu = sub_menu2)
+sub_menu3 = tk.Menu(file_menu2,tearoff = False)
+sub_menu3.add_command(label = 'Recent playlist 1')
+file_menu2.add_cascade(label = "Recent playlists",menu = sub_menu3)
+file_menu2.add_command(label = 'Save as...',command = savePlaylist)
+file_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu2.add_separator()
+file_menu2.add_command(label='Exit',command=exitProgram)
+menubar2.add_cascade(label="File",menu=file_menu2,underline=0)
+        #edit_menu
+edit_menu2 = tk.Menu(menubar2,tearoff = False)#das erste edit menu, aber ist in menubar 2, der übersicht halber ist das nummer 2
+edit_menu2.add_command(label = 'Move one or more elements to the top',command = topInPlaylist)
+edit_menu2.add_command(label = 'Move one or more elements to the bottom',command = bottomInPlaylist)
+edit_menu2.add_command(label = 'Move one or more elements one place up',command = upInPlaylist)
+edit_menu2.add_command(label = 'Move one or more elements one place down',command = downInPlaylist)
+edit_menu2.add_command(label = 'Delete one or more elements from the playlist',command = delFrompllst)
+edit_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
+menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
 
 #variables
 sliderVar = tk.IntVar()
