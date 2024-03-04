@@ -1676,8 +1676,11 @@ def buildVolumeSliderText(ToF):
     if ToF == True:
         volumeInfo = ttk.Label(toolbarFrame,text = volumeText)
         volumeInfo.pack(side = tk.TOP)
-        volumeInfoExtra = ttk.Label(toolbarFrameExtra,text = volumeText)
-        volumeInfoExtra.pack(side = tk.TOP)
+        try:
+            volumeInfoExtra = ttk.Label(toolbarFrameExtra,text = volumeText)
+            volumeInfoExtra.pack(side = tk.TOP)
+        except:
+            pass
     volumeSlider = ttk.Scale(toolbarFrame,variable = volume,from_ = 0,to = 100,orient = 'vertical')
     volumeSlider.bind("<Motion>",changeVolume)
     volumeSlider.bind("<ButtonRelease-1>",volumePressedFalse)
@@ -1691,6 +1694,11 @@ def buildVolumeSliderText(ToF):
         volumeSliderExtra.pack(side = tk.BOTTOM,fill = tk.Y,expand = True,pady = 10)
     except:
         pass
+
+def buildMiniMode(event):
+	global numberforminimode
+	print(numberforminimode)
+	numberforminimode = numberforminimode + 1
 
 def messageLogClicked(event):
     global tree1
@@ -1771,6 +1779,14 @@ def notebookTabChange(event):
     global logs
     global selectedLog
     selectedLog = str(logs.index("current"))
+
+def settingsFmenu(setting):
+	if setting == "volumeSliderText":
+		volumeSliderText = volumeSliderTextOnOff.get()
+		if volumeSliderText == False:
+			volumeSliderTextOnOff.set("True")
+		else:
+			volumeSliderTextOnOff.set("")
 
 def settings(setting):
     global loopPlaylist
@@ -1853,13 +1869,15 @@ file_menu1.add_cascade(label = "Recent files",menu = sub_menu1)
 file_menu1.add_command(label = 'Save as...',command = savePlaylist)
 file_menu1.add_command(label = 'Delete all',command = deleteAllSongs)
 file_menu1.add_separator()
+file_menu1.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
+file_menu1.add_separator()
 file_menu1.add_command(label='Exit',command=exitProgram)
 menubar1.add_cascade(label="File",menu=file_menu1,underline=0)
         #view_menu
 view_menu1 = tk.Menu(menubar1,tearoff = False)
-view_menu1.add_command(label = 'Show the value of the volume slider',command = lambda: (settings("volumeSliderText")))
-view_menu1.add_command(label = 'Two windows',command = lambda: (settings("twoWindows")))
-view_menu1.add_command(label = 'Mini mode',command = lambda: (settings("miniMode")))
+view_menu1.add_command(label = 'Show the value of the volume slider',command = lambda: (settingsFmenu("volumeSliderText")))
+view_menu1.add_command(label = 'Two windows',command = lambda: (settingsFmenu("twoWindows")))
+view_menu1.add_command(label = 'Mini mode',command = lambda: (settingsFmenu("miniMode")))
 menubar1.add_cascade(label = "View",menu = view_menu1,underline = 0)
         #help_menu
 #keyboard shortcuts
@@ -1890,6 +1908,8 @@ sub_menu3.add_command(label = 'Recent playlist 1')
 file_menu2.add_cascade(label = "Recent playlists",menu = sub_menu3)
 file_menu2.add_command(label = 'Save as...',command = savePlaylist)
 file_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu2.add_separator()
+file_menu2.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
 file_menu2.add_separator()
 file_menu2.add_command(label='Exit',command=exitProgram)
 menubar2.add_cascade(label="File",menu=file_menu2,underline=0)
@@ -1950,6 +1970,7 @@ sliderPressed = False
 volumePressed = False
 exiting = False
 ThreadStopped = False
+numberforminimode = 1
 
 #images
 #print(os.path.join(dirname,'vlc\libvlc.dll'))
@@ -2178,10 +2199,10 @@ plW.bind("<Right>",bottomInPlaylistKey)
     #volume
 root.bind_all("<plus>",changeVolumeUpKey)
 root.bind_all("<minus>",changeVolumeDownKey)
-	#skip/rewind
+    #skip/rewind
 root.bind("<Right>",fastForwardKey)
 root.bind("<Left>",rewindSongKey)
-	#step skip/rewind
+    #step skip/rewind
 root.bind("<Shift-Right>",stepFastForwardKey)
 root.bind("<Shift-Left>",stepRewindSongKey)
     #open settings
@@ -2190,7 +2211,7 @@ root.bind("<Shift-Left>",stepRewindSongKey)
     #open info page/window
 #root.bind_all('s',windowExtra("settings"))
 #root.bind_all('S',windowExtra("settings"))
-
+root.bind_all("<Unmap>",buildMiniMode)
 root.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
