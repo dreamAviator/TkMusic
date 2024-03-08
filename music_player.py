@@ -857,6 +857,14 @@ def delFrompllst():#delete from playlist
 def delFrompllstKey(event):
     delFrompllst()
 
+def deleteAllSongs():
+    global playlist
+    global pPlaylist
+    playlist = []
+    pPlaylist = []
+    togglePlay()
+    updatePlaylist(0,0)
+
 def savePlaylist():
     global playlist
     global pPlaylist
@@ -1668,8 +1676,11 @@ def buildVolumeSliderText(ToF):
     if ToF == True:
         volumeInfo = ttk.Label(toolbarFrame,text = volumeText)
         volumeInfo.pack(side = tk.TOP)
-        volumeInfoExtra = ttk.Label(toolbarFrameExtra,text = volumeText)
-        volumeInfoExtra.pack(side = tk.TOP)
+        try:
+            volumeInfoExtra = ttk.Label(toolbarFrameExtra,text = volumeText)
+            volumeInfoExtra.pack(side = tk.TOP)
+        except:
+            pass
     volumeSlider = ttk.Scale(toolbarFrame,variable = volume,from_ = 0,to = 100,orient = 'vertical')
     volumeSlider.bind("<Motion>",changeVolume)
     volumeSlider.bind("<ButtonRelease-1>",volumePressedFalse)
@@ -1683,6 +1694,25 @@ def buildVolumeSliderText(ToF):
         volumeSliderExtra.pack(side = tk.BOTTOM,fill = tk.Y,expand = True,pady = 10)
     except:
         pass
+
+def buildMiniMode_root(event):
+	global numberforminimode_root
+	print(numberforminimode_root)
+	numberforminimode_root = numberforminimode_root + 1
+	if numberforminimode_root == 21:
+		numberforminimode_root = 1
+		buildMiniMode()
+
+def buildMiniMode_plW(event):
+	global numberforminimode_plW
+	print(numberforminimode_plW)
+	numberforminimode_plW = numberforminimode_plW + 1
+	if numberforminimode_plW == 26:
+		numberforminimode_plW = 1
+		buildMiniMode()
+
+def buildMiniMode():
+	print("i have no idea how tbh")
 
 def messageLogClicked(event):
     global tree1
@@ -1764,6 +1794,14 @@ def notebookTabChange(event):
     global selectedLog
     selectedLog = str(logs.index("current"))
 
+def settingsFmenu(setting):
+	if setting == "volumeSliderText":
+		volumeSliderText = volumeSliderTextOnOff.get()
+		if volumeSliderText == False:
+			volumeSliderTextOnOff.set("True")
+		else:
+			volumeSliderTextOnOff.set("")
+
 def settings(setting):
     global loopPlaylist
     global loopMove
@@ -1833,6 +1871,33 @@ root.geometry(rootWidthStr + 'x360+100+100')
 root.resizable(False,False)
 #root.iconbitmap(logo)#noch kein logo
 root.bind('<Escape>',hideInBackground)
+    #menus
+menubar1 = tk.Menu(root)
+root.config(menu = menubar1)
+        #file_menu
+file_menu1 = tk.Menu(menubar1,tearoff = False)
+file_menu1.add_command(label = 'Open',command = addToPlaylist)
+sub_menu1 = tk.Menu(file_menu1,tearoff = False)
+sub_menu1.add_command(label = 'Recent file 1')
+file_menu1.add_cascade(label = "Recent files",menu = sub_menu1)
+file_menu1.add_command(label = 'Save as...',command = savePlaylist)
+file_menu1.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu1.add_separator()
+file_menu1.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
+file_menu1.add_separator()
+file_menu1.add_command(label='Exit',command=exitProgram)
+menubar1.add_cascade(label="File",menu=file_menu1,underline=0)
+        #view_menu
+view_menu1 = tk.Menu(menubar1,tearoff = False)
+view_menu1.add_command(label = 'Show the value of the volume slider',command = lambda: (settingsFmenu("volumeSliderText")))
+view_menu1.add_command(label = 'Two windows',command = lambda: (settingsFmenu("twoWindows")))
+view_menu1.add_command(label = 'Mini mode',command = lambda: (settingsFmenu("miniMode")))
+menubar1.add_cascade(label = "View",menu = view_menu1,underline = 0)
+        #help_menu
+#keyboard shortcuts
+#license
+#changelog
+#halt alle sachen die im help menu standardmäßig sind und/oder die im info window sind
 
 #playlist window
 global plW #playlistWindow
@@ -1843,6 +1908,34 @@ plW = tk.Toplevel()
 plW.title("Playlist")
 plW.geometry(playlistWidthStr + 'x360+600+100')
 plW.resizable(False,False)
+    #menus
+menubar2 = tk.Menu(plW)
+plW.config(menu = menubar2)
+        #file_menu
+file_menu2 = tk.Menu(menubar2,tearoff = False)
+file_menu2.add_command(label = 'Add',command = addToPlaylist)
+sub_menu2 = tk.Menu(file_menu2,tearoff = False)
+sub_menu2.add_command(label = 'Recent song 1')
+file_menu2.add_cascade(label = "Recent songs",menu = sub_menu2)
+sub_menu3 = tk.Menu(file_menu2,tearoff = False)
+sub_menu3.add_command(label = 'Recent playlist 1')
+file_menu2.add_cascade(label = "Recent playlists",menu = sub_menu3)
+file_menu2.add_command(label = 'Save as...',command = savePlaylist)
+file_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu2.add_separator()
+file_menu2.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
+file_menu2.add_separator()
+file_menu2.add_command(label='Exit',command=exitProgram)
+menubar2.add_cascade(label="File",menu=file_menu2,underline=0)
+        #edit_menu
+edit_menu2 = tk.Menu(menubar2,tearoff = False)#das erste edit menu, aber ist in menubar 2, der übersicht halber ist das nummer 2
+edit_menu2.add_command(label = 'Move one or more elements to the top',command = topInPlaylist)
+edit_menu2.add_command(label = 'Move one or more elements to the bottom',command = bottomInPlaylist)
+edit_menu2.add_command(label = 'Move one or more elements one place up',command = upInPlaylist)
+edit_menu2.add_command(label = 'Move one or more elements one place down',command = downInPlaylist)
+edit_menu2.add_command(label = 'Delete one or more elements from the playlist',command = delFrompllst)
+edit_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
+menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
 
 #variables
 sliderVar = tk.IntVar()
@@ -1891,6 +1984,8 @@ sliderPressed = False
 volumePressed = False
 exiting = False
 ThreadStopped = False
+numberforminimode_root = 1
+numberforminimode_plW = 1
 
 #images
 #print(os.path.join(dirname,'vlc\libvlc.dll'))
@@ -2119,10 +2214,10 @@ plW.bind("<Right>",bottomInPlaylistKey)
     #volume
 root.bind_all("<plus>",changeVolumeUpKey)
 root.bind_all("<minus>",changeVolumeDownKey)
-	#skip/rewind
+    #skip/rewind
 root.bind("<Right>",fastForwardKey)
 root.bind("<Left>",rewindSongKey)
-	#step skip/rewind
+    #step skip/rewind
 root.bind("<Shift-Right>",stepFastForwardKey)
 root.bind("<Shift-Left>",stepRewindSongKey)
     #open settings
@@ -2131,7 +2226,8 @@ root.bind("<Shift-Left>",stepRewindSongKey)
     #open info page/window
 #root.bind_all('s',windowExtra("settings"))
 #root.bind_all('S',windowExtra("settings"))
-
+root.bind("<Unmap>",buildMiniMode_root)
+plW.bind("<Unmap>",buildMiniMode_plW)
 root.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
