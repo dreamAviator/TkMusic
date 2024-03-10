@@ -1493,6 +1493,7 @@ def closeExtra():
     root.attributes('-alpha',1)
     root.lift()
     checkLogoInverted()
+    #hier wird einfach nur restore root aufgerufen und oben wird root einmal destroyt (sieht so cursed aus mit diesem t xD)
 
 def closeExtraEvent(event):
     closeExtra()
@@ -1695,10 +1696,46 @@ def buildVolumeSliderText(ToF):
     except:
         pass
 
-def buildMiniMode(event):
-	global numberforminimode
-	print(numberforminimode)
-	numberforminimode = numberforminimode + 1
+def buildMiniMode_root(event):
+	global numberforminimode_root
+	print(numberforminimode_root)
+	numberforminimode_root = numberforminimode_root + 1
+	if numberforminimode_root == 21:
+		numberforminimode_root = 1
+		buildMiniMode()
+
+def buildMiniMode_plW(event):
+	global numberforminimode_plW
+	print(numberforminimode_plW)
+	numberforminimode_plW = numberforminimode_plW + 1
+	if numberforminimode_plW == 26:
+		numberforminimode_plW = 1
+		buildMiniMode()
+
+def buildMiniMode():
+	global root
+	global plW
+	global root_size
+	global plW_size
+	root_size = root.geometry()
+	plW_size = plW.geometry()
+	print("trying")
+	root.destroy()
+	print("done")
+	x_pos = root_size.find('x')
+	firstplus_pos = root_size.find('+')
+	root_size_1 = root_size[:x_pos + 1]
+	root_size_2 = root_size[firstplus_pos:]
+	miniModeSize = root_size_1 + "80" + root_size_2
+	miniModeWindow = tk.Toplevel()
+	miniModeWindow.geometry(miniModeSize)
+	#dann hier einen titel und ein icon einfügen
+
+def restoreRoot():
+	pass
+
+def restorePlW():
+	pass
 
 def messageLogClicked(event):
     global tree1
@@ -1970,7 +2007,8 @@ sliderPressed = False
 volumePressed = False
 exiting = False
 ThreadStopped = False
-numberforminimode = 1
+numberforminimode_root = 1
+numberforminimode_plW = 1
 
 #images
 #print(os.path.join(dirname,'vlc\libvlc.dll'))
@@ -2211,7 +2249,8 @@ root.bind("<Shift-Left>",stepRewindSongKey)
     #open info page/window
 #root.bind_all('s',windowExtra("settings"))
 #root.bind_all('S',windowExtra("settings"))
-root.bind_all("<Unmap>",buildMiniMode)
+root.bind("<Unmap>",buildMiniMode_root)
+plW.bind("<Unmap>",buildMiniMode_plW)
 root.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
