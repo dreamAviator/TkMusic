@@ -145,7 +145,7 @@ def loadSong():
             songNameTextSmol.config(text = songName)
         except:
             pass
-    root.title(songFilename + " | TkMusic")
+    main_window.title(songFilename + " | TkMusic")
     player.play()
     checkLogo()
 
@@ -1119,11 +1119,11 @@ def volumePressedFalse(event):
 
 #for extra window space
 #def makeWindowBigger():
-#    global rootWidth
-#    while rootWidth < 100:
-#        rootWidth = rootWidth + 1
-#        rootWidthStr = str(rootWidth)
-#        root.geometry(rootWidthStr + 'x360+100+100')
+#    global main_windowWidth
+#    while main_windowWidth < 100:
+#        main_windowWidth = main_windowWidth + 1
+#        main_windowWidthStr = str(main_windowWidth)
+#        main_window.geometry(main_windowWidthStr + 'x360+100+100')
 
 #system functions
 def infoWE():
@@ -1342,7 +1342,7 @@ def windowExtra(extraType):
         extraWindow.destroy()
     except:
         pass
-    root.attributes('-alpha',0)
+    main_window.attributes('-alpha',0)
     extraWindow = tk.Toplevel()
     if extraType == "info" or extraType == "attributions" or extraType == "attributionButtons" or extraType == "Changelog" or extraType == "License":
         icon = info_icon
@@ -1350,12 +1350,12 @@ def windowExtra(extraType):
         icon = settings_icon
     elif extraType == "messageLogs":
         icon = message_icon
-    root_size_etc = root.geometry()
+    main_window_size_etc = main_window.geometry()
     if platform.system() == "Windows":
         extraWindow.iconbitmap(icon)
     elif platform.system() == "Linux":
         extraWindow.iconphoto(False,icon)
-    extraWindow.geometry(root_size_etc)
+    extraWindow.geometry(main_window_size_etc)
     extraWindow.bind('<Escape>',closeExtraEvent)
     extraWindow.bind('<space>',togglePlayKey)
     extraWindow.focus()
@@ -1490,10 +1490,10 @@ def windowExtra(extraType):
 def closeExtra():
     global extraWindow
     extraWindow.destroy()
-    root.attributes('-alpha',1)
-    root.lift()
+    main_window.attributes('-alpha',1)
+    main_window.lift()
     checkLogoInverted()
-    #hier wird einfach nur restore root aufgerufen und oben wird root einmal destroyt (sieht so cursed aus mit diesem t xD)
+    #hier wird einfach nur restore main_window aufgerufen und oben wird main_window einmal destroyt (sieht so cursed aus mit diesem t xD)
 
 def closeExtraEvent(event):
     closeExtra()
@@ -1696,12 +1696,12 @@ def buildVolumeSliderText(ToF):
     except:
         pass
 
-def buildMiniMode_root(event):
-	global numberforminimode_root
-	print(numberforminimode_root)
-	numberforminimode_root = numberforminimode_root + 1
-	if numberforminimode_root == 21:
-		numberforminimode_root = 1
+def buildMiniMode_main_window(event):
+	global numberforminimode_main_window
+	print(numberforminimode_main_window)
+	numberforminimode_main_window = numberforminimode_main_window + 1
+	if numberforminimode_main_window == 21:
+		numberforminimode_main_window = 1
 		buildMiniMode()
 
 def buildMiniMode_plW(event):
@@ -1713,25 +1713,67 @@ def buildMiniMode_plW(event):
 		buildMiniMode()
 
 def buildMiniMode():
-	global root
+	global main_window
 	global plW
-	global root_size
+	global main_window_size
 	global plW_size
-	root_size = root.geometry()
+	global exit_button_image
+	global rewind_button_image_smol
+	global forward_button_image_smol
+	global play_image_smol
+	global pause_image_smol
+	global song_cover_image_smol
+	main_window_size = main_window.geometry()
 	plW_size = plW.geometry()
 	print("trying")
-	root.destroy()
+	main_window.destroy()
+	plW.destroy()
 	print("done")
-	x_pos = root_size.find('x')
-	firstplus_pos = root_size.find('+')
-	root_size_1 = root_size[:x_pos + 1]
-	root_size_2 = root_size[firstplus_pos:]
-	miniModeSize = root_size_1 + "80" + root_size_2
+	x_pos = main_window_size.find('x')
+	firstplus_pos = main_window_size.find('+')
+	secondplus_pos = main_window_size.rfind('+')
+	main_window_size_1 = main_window_size[:x_pos + 1]
+	main_window_size_2 = main_window_size[firstplus_pos:secondplus_pos + 1]
+	miniModeSize = main_window_size_1 + "80" + main_window_size_2 + "380"
+	print(miniModeSize)
 	miniModeWindow = tk.Toplevel()
 	miniModeWindow.geometry(miniModeSize)
-	#dann hier einen titel und ein icon einfügen
+	miniModeWindow.title("Song Name | TkMusic")
+	#iconshit 
+	miniModeWindow.protocol("WM_DELETE_WINDOW",exitProgram)
+	#Frames
+	musicControlFrameMini = ttk.Frame(miniModeWindow,height = 50)
+	musicControlFrameMini.pack(side = tk.BOTTOM,fill = tk.X)
+		#musicControlFrame
+	musicControlFrameMiniL = ttk.Frame(musicControlFrameMini,width = 50)
+	musicControlFrameMiniL.pack(side = tk.LEFT)
+	musicControlFrameMiniR = ttk.Frame(musicControlFrameMini,width = 300)
+	musicControlFrameMiniR.pack(side = tk.RIGHT)
+	musicInfoFrameMini2_1 = ttk.Frame(musicControlFrameMini)
+	musicInfoFrameMini2_1.pack(side = tk.TOP,fill = tk.X)
+	musicInfoFrameMini2_2 = ttk.Frame(musicControlFrameMini)
+	musicInfoFrameMini2_2.pack(side = tk.BOTTOM,fill = tk.X)
+	musicInfoFrameMini1 = ttk.Frame(miniModeWindow)
+	musicInfoFrameMini1.pack(side = tk.BOTTOM,fill = tk.X)
+	#not frames xD
+		#musicControlFrameMiniL
+	songCoverLabel = ttk.Label(musicControlFrameMiniL,image = song_cover_image_smol)
+	songCoverLabel.pack()
+		#musicControlFrameMiniR
+	exitButtonMini = ttk.Button(musicControlFrameMiniR,image = exit_button_image,command = exitProgram)
+	exitButtonMini.pack(side = tk.RIGHT)
+	forwardButtonMini = ttk.Button(musicControlFrameMiniR,image = forward_button_image_smol,command = exitProgram)
+	forwardButtonMini.pack(side = tk.RIGHT)
+	togglePlayButtonMini = ttk.Button(musicControlFrameMiniR,image = play_image_smol,command = exitProgram)
+	togglePlayButtonMini.pack(side = tk.RIGHT)
+	rewindButtonMini = ttk.Button(musicControlFrameMiniR,image = rewind_button_image_smol,command = exitProgram)
+	rewindButtonMini.pack(side = tk.RIGHT)
+	
+		#musicInfoFrameMini1
+		#musicInfoFrameMini2_1
+		#musicInfoFrameMini2_2
 
-def restoreRoot():
+def restoremain_window():
 	pass
 
 def restorePlW():
@@ -1883,20 +1925,24 @@ def exitProgram():
 def hideInBackground(event):#auch playlistWindow in hintergrund bringen
     pass
 
-#main window
-global root
-global rootWidth
-rootWidth = 500
-rootWidthStr = str(rootWidth)
+#root_window
 root = tk.Tk()
-root.title("Music Player")
-root.geometry(rootWidthStr + 'x360+100+100')
-root.resizable(False,False)
-#root.iconbitmap(logo)#noch kein logo
-root.bind('<Escape>',hideInBackground)
+root.withdraw()
+
+#main window
+global main_window
+global main_windowWidth
+main_windowWidth = 500
+main_windowWidthStr = str(main_windowWidth)
+main_window = tk.Toplevel()
+main_window.title("Music Player")
+main_window.geometry(main_windowWidthStr + 'x360+100+100')
+main_window.resizable(False,False)
+#main_window.iconbitmap(logo)#noch kein logo
+main_window.bind('<Escape>',hideInBackground)
     #menus
-menubar1 = tk.Menu(root)
-root.config(menu = menubar1)
+menubar1 = tk.Menu(main_window)
+main_window.config(menu = menubar1)
         #file_menu
 file_menu1 = tk.Menu(menubar1,tearoff = False)
 file_menu1.add_command(label = 'Open',command = addToPlaylist)
@@ -2007,7 +2053,7 @@ sliderPressed = False
 volumePressed = False
 exiting = False
 ThreadStopped = False
-numberforminimode_root = 1
+numberforminimode_main_window = 1
 numberforminimode_plW = 1
 
 #images
@@ -2067,16 +2113,16 @@ loading_image_2 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_2_smo
 loading_image_3 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_3_smol.png'))
 
 #frames
-    #root
-toolbarFrame = ttk.Frame(root,width = 50)
+    #main_window
+toolbarFrame = ttk.Frame(main_window,width = 50)
 toolbarFrame.pack(side = tk.LEFT,fill = tk.Y)
-musicControlFrame = ttk.Frame(root,height = 100)
+musicControlFrame = ttk.Frame(main_window,height = 100)
 musicControlFrame.pack(side = tk.BOTTOM,fill = tk.X)
-sliderFrame = ttk.Frame(root)
+sliderFrame = ttk.Frame(main_window)
 sliderFrame.pack(side = tk.BOTTOM,fill = tk.X,padx = 10)
-songInfoFrame = ttk.Frame(root)
+songInfoFrame = ttk.Frame(main_window)
 songInfoFrame.pack(side = tk.BOTTOM,fill = tk.X,padx = 10)
-songCoverFrame = ttk.Frame(root,width = 200,height = 200)
+songCoverFrame = ttk.Frame(main_window,width = 200,height = 200)
 songCoverFrame.pack(anchor = tk.CENTER,pady = 5)
     #playlist window
 btmBtnsFrame = ttk.Frame(plW,height = 50)#bottom buttons
@@ -2086,7 +2132,7 @@ sdBtnsFrame.pack(side = tk.RIGHT,fill = tk.Y)
 playlistFrame = ttk.Frame(plW)
 playlistFrame.pack(side = tk.TOP,expand = True,fill = tk.BOTH)
 
-#root
+#main_window
     #toolbarFrame
 exitButton = tk.Button(toolbarFrame,image = exit_button_image,command = exitProgram,borderwidth = 0)
 exitButton.pack(side = tk.BOTTOM,anchor = tk.S)
@@ -2222,12 +2268,12 @@ scrollbar.pack(side = tk.RIGHT,fill = tk.Y)
 
 #window bindings
     #toggle play
-root.bind_all('<space>',togglePlayKey)
-root.bind_all('<Pause>',togglePlayKey)
+main_window.bind_all('<space>',togglePlayKey)
+main_window.bind_all('<Pause>',togglePlayKey)
     #add to playlist
-root.bind_all('<Control-o>',addToPlaylistKey)
+main_window.bind_all('<Control-o>',addToPlaylistKey)
     #delete from playlist
-#root.bind("<Delete>",delFrompllstKey)#probably nicht
+#main_window.bind("<Delete>",delFrompllstKey)#probably nicht
 plW.bind("<Delete>",delFrompllstKey)
     #move in playlist
 plW.bind("<Up>",upInPlaylistKey)
@@ -2235,28 +2281,28 @@ plW.bind("<Down>",downInPlaylistKey)
 plW.bind("<Left>",topInPlaylistKey)
 plW.bind("<Right>",bottomInPlaylistKey)
     #volume
-root.bind_all("<plus>",changeVolumeUpKey)
-root.bind_all("<minus>",changeVolumeDownKey)
+main_window.bind_all("<plus>",changeVolumeUpKey)
+main_window.bind_all("<minus>",changeVolumeDownKey)
     #skip/rewind
-root.bind("<Right>",fastForwardKey)
-root.bind("<Left>",rewindSongKey)
+main_window.bind("<Right>",fastForwardKey)
+main_window.bind("<Left>",rewindSongKey)
     #step skip/rewind
-root.bind("<Shift-Right>",stepFastForwardKey)
-root.bind("<Shift-Left>",stepRewindSongKey)
+main_window.bind("<Shift-Right>",stepFastForwardKey)
+main_window.bind("<Shift-Left>",stepRewindSongKey)
     #open settings
-#root.bind_all('i',windowExtra("info"))
-#root.bind_all('I',windowExtra("info"))
+#main_window.bind_all('i',windowExtra("info"))
+#main_window.bind_all('I',windowExtra("info"))
     #open info page/window
-#root.bind_all('s',windowExtra("settings"))
-#root.bind_all('S',windowExtra("settings"))
-root.bind("<Unmap>",buildMiniMode_root)
+#main_window.bind_all('s',windowExtra("settings"))
+#main_window.bind_all('S',windowExtra("settings"))
+main_window.bind("<Unmap>",buildMiniMode_main_window)
 plW.bind("<Unmap>",buildMiniMode_plW)
-root.protocol("WM_DELETE_WINDOW", exitProgram)
+main_window.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
 #end
 plW.mainloop()
-root.mainloop()
+main_window.mainloop()
 
 #verschiedene sprachen, du brauchst eine textdatei wo alle dinge drinstehen, und die nennst du dann "language_Deutsch.txt", und die englische wird dann eben "language_United States.txt". das programm guckt dann eben in einem ornder (maybe in einem eigenen maysbe in dem texts ornder) nach allen ("language_...") dateien, und zeigt in eionem dropdown menü alle optionen an, sodass man dann da eine auswählen kann. vlt schaffst du den wechsel sogar ohne das programm neuzustarten
 #vlt eine option zum verändern des styles/themes, der farben/(zumindest) der farbe des ausgewählten elements in der playlist
