@@ -50,6 +50,7 @@ def loadSong():
     global song
     global songCover
     global songCoverSmol
+    global songCoverMini
     global song_cover_image
     global song_cover_image_smol
     global songLength
@@ -61,6 +62,12 @@ def loadSong():
     global songLengthTextSmol
     global songNameTextSmol
     global songArtistTextSmol
+    global miniModeWindow
+    global musicSliderMini
+    global songTitleLabelMini
+    global songArtistLabelMini
+    global songLengthTextMini
+    global songArtImageSmol
     media = instance.media_new(song)
     media.get_mrl()
     player.set_media(media)
@@ -78,10 +85,21 @@ def loadSong():
     print(songArt)
     print(songLS)
     print(songFilename)
-    musicSlider.config(to = songLengthSec)
-    songLengthText.config(text = songLength)
-    songArtistText.config(text = songArtist)
-    songNameText.config(text = songName)
+    try:
+        musicSlider.config(to = songLengthSec)
+        songLengthText.config(text = songLength)
+        songArtistText.config(text = songArtist)
+        songNameText.config(text = songName)
+    except:
+        pass
+    try:
+        musicSliderExtra.config(to = songLengthSec)
+    except:
+        pass
+    try:
+        musicSliderMini.config(to = songLengthSec)
+    except:
+        pass
     #songArt_pillow1 = Image.open(songArt)
     #songArt_pillow2 = ImageTk.PhotoImage(songArt)
     if songArt != "nothing":
@@ -94,18 +112,33 @@ def loadSong():
         jpg_image_resized_smol.save('song_cover_smol.png',format = 'PNG')
         songArtImage = tk.PhotoImage(file = 'song_cover.png')
         songArtImageSmol = tk.PhotoImage(file = 'song_cover_smol.png')
-        songCover.config(image = songArtImage)
-        songCover.image = songArtImage
+        try:
+            songCover.config(image = songArtImage)
+            songCover.image = songArtImage
+        except:
+            pass
         try:
             songCoverSmol.config(image = songArtImageSmol)
             songCoverSmol.image = songArtImageSmol
         except:
             pass
+        try:
+            songCoverMini.config(image = songArtImageSmol)
+            songCoverMini.image = songArtImageSmol
+        except:
+            pass
         jpg_image.close()
     else:
-        songCover.config(image = song_cover_image)
+        try:
+            songCover.config(image = song_cover_image)
+        except:
+            pass
         try:
             songCoverSmol.config(image = song_cover_image_smol)
+        except:
+            pass
+        try:
+            songCoverMini.config(image = song_cover_image_smol)
         except:
             pass
     try:
@@ -113,39 +146,88 @@ def loadSong():
         songNameTextSmol.config(text = songName)
     except:
         pass
+    try:
+        songArtistLabelMini.config(text = songArtist)
+        songTitleLabelMini.config(text = songName)
+    except:
+        pass
     if songArtist == 'unknown':
-        songArtistText.config(text = songFilename)
+        try:
+            songArtistText.config(text = songFilename)
+        except:
+            pass
         try:
             songArtistTextSmol.config(text = songFilename)
         except:
             pass
+        try:
+            songArtistLabelMini.config(text = songFilename)
+        except:
+            pass
         if songName == 'unknown':
-            songNameText.config(text = '')
+            try:
+                songNameText.config(text = '')
+            except:
+                pass
             try:
                 songNameTextSmol.config(text = '')
             except:
                 pass
+            try:
+                songTitleLabelMini.config(text = '')
+            except:
+                pass
         else:
-            songNameText.config(text = songName)
+            
+            try:
+                songNameText.config(text = songName)
+            except:
+                pass
             try:
                 songNameTextSmol.config(text = songName)
             except:
                 pass
+            try:
+                songTitleLabelMini.config(text = songName)
+            except:
+                pass
     elif songName == 'unknown':
-        songNameText.config(text = songFilename)
+        try:
+            songNameText.config(text = songFilename)
+        except:
+            pass
         try:
             songNameTextSmol.config(text = songFilename)
         except:
             pass
+        try:
+            songTitleLabelMini.config(text = songFilename)
+        except:
+            pass
     else:
-        songArtistText.config(text = songArtist)
-        songNameText.config(text = songName)
+        try:
+            songArtistText.config(text = songArtist)
+            songNameText.config(text = songName)
+        except:
+            pass
         try:
             songArtistTextSmol.config(text = songArtist)
             songNameTextSmol.config(text = songName)
         except:
             pass
-    main_window.title(songFilename + " | TkMusic")
+        try:
+            songArtistLabelMini.config(text = songArtist)
+            songTitleLabelMini.config(text = songName)
+        except:
+            pass
+    try:
+        main_window.title(songFilename + " | TkMusic")
+    except:
+        pass
+    try:
+        miniModeWindow.title(songFilename + " | TkMusic")
+    except:
+        pass
     player.play()
     checkLogo()
 
@@ -310,13 +392,21 @@ def songPos():
         doubledot = songTime.rfind(":")
         songTimeFin = songTime[doubledot - 2:dot]
         if sliderPressed == False:
-            songPositionText.config(text = songTimeFin)
+            try:
+                songPositionText.config(text = songTimeFin)
+            except:
+                pass
             try:
                 songPositionTextSmol.config(text = songTimeFin)
             except:
                 pass
+            try:
+                songPositionTextMini.config(text = songTimeFin)
+            except:
+                pass
             sliderVar.set(songMS // 1000)
             sliderVarExtra.set(songMS // 1000)
+            sliderVarMini.set(songMS // 1000)
         if player.get_state() == vlc.State.Ended:
             break
     #time.sleep(0.2)#damit der song wirklich zuende spielt#brauche ich nicht, weil ich player.get_state() benutze
@@ -334,30 +424,59 @@ def togglePlayKey(event):
 
 def checkLogo():
     global togglePlayButtonSmol
+    global togglePlayButtonMini
     if player.get_state() == vlc.State.Playing:
-        togglePlayButton.config(image = play_image)
+        try:
+           togglePlayButton.config(image = play_image)
+        except:
+            pass
         try:
             togglePlayButtonSmol.config(image = play_image_smol)
         except:
             pass
+        try:
+            togglePlayButtonMini.config(image = play_image_smol)
+        except:
+            pass
     else:
-        togglePlayButton.config(image = pause_image)
+        try:
+            togglePlayButton.config(image = pause_image)
+        except:
+            pass
         try:
             togglePlayButtonSmol.config(image = pause_image_smol)
+        except:
+            pass
+        try:
+            togglePlayButtonMini.config(image = pause_image_smol)
         except:
             pass
 
 def checkLogoInverted():#beim fenster neuladen muss das irgendwie andersherum sein
     if player.get_state() == vlc.State.Playing:
-        togglePlayButton.config(image = pause_image)
+        try:
+            togglePlayButton.config(image = pause_image)
+        except:
+            pass
         try:
             togglePlayButtonSmol.config(image = pause_image_smol)
         except:
             pass
+        try:
+            togglePlayButtonMini.config(image = pause_image_smol)
+        except:
+            pass
     else:
-        togglePlayButton.config(image = play_image)
+        try:
+            togglePlayButton.config(image = play_image)
+        except:
+            pass
         try:
             togglePlayButtonSmol.config(image = play_image_smol)
+        except:
+            pass
+        try:
+            togglePlayButtonMini.config(image = play_image_smol)
         except:
             pass
 
@@ -365,6 +484,9 @@ def nextSong(where):
     global playlist
     global pPlaylist
     global song
+    global tree
+    global treeMiniMode
+    global miniModeActive
     try:
         song = playlist[0]
     except:
@@ -375,27 +497,43 @@ def nextSong(where):
         nextSong("nextSong")
     threading()
     if where == "skipF" or where == "skipB" or where == "fst" or where == "lst" or where == "end":
-        items = tree.get_children()
-        for item_id in items:
-            values = tree.item(item_id,"values")
-            tree.item(item_id,tags = ("not_playing"))
-            if values[3] == str(len(pPlaylist) + 1):
-                tree.see(item_id)
-                tree.item(item_id,tags = ("playing"))
-                if where == "skipF" or where == "end":
-                    remainingLength("f")
-                elif where == "skipB":
-                    remainingLength("b")
-                elif where == "fst":
-                    remainingLength("fst")
-                elif where == "lst":
-                    remainingLength("lst")
+        if miniModeActive == False:
+            items = tree.get_children()
+            for item_id in items:
+                values = tree.item(item_id,"values")
+                tree.item(item_id,tags = ("not_playing"))
+                if values[3] == str(len(pPlaylist) + 1):
+                    tree.see(item_id)
+                    tree.item(item_id,tags = ("playing"))
+                    if where == "skipF" or where == "end":
+                        remainingLength("f")
+                    elif where == "skipB":
+                        remainingLength("b")
+                    elif where == "fst":
+                        remainingLength("fst")
+                    elif where == "lst":
+                        remainingLength("lst")
+        elif miniModeActive == True:
+            items = treeMiniMode.get_children()
+            for item_id in items:
+                values = treeMiniMode.item(item_id,"values")
+                treeMiniMode.item(item_id,tags = ("not_playing"))
+                if values[3] == str(len(pPlaylist) + 1):
+                    treeMiniMode.see(item_id)
+                    treeMiniMode.item(item_id,tags = ("playing"))
+                    if where == "skipF" or where == "end":
+                        remainingLength("f")
+                    elif where == "skipB":
+                        remainingLength("b")
+                    elif where == "fst":
+                        remainingLength("fst")
+                    elif where == "lst":
+                        remainingLength("lst")
         plstSelSee(0,0)
         return
     updatePlaylist(0,0)
 
 def fastForward():
-    global tree
     global loopPlaylist
     if playlist == [] and pPlaylist == []:
         return
@@ -518,6 +656,8 @@ def sliderChange(event):
         try:
             if extraWindow.winfo_exists():
                 player.set_time(sliderVarExtra.get() * 1000)
+            elif miniModeWindow.winfo_exists():
+                player.set_time(sliderVarMini.get() * 1000)
             else:
                 player.set_time(sliderVar.get() * 1000)
         except:
@@ -531,12 +671,17 @@ def sliderPressedTrue(event):
 def sliderChangePos(event):
     global sliderPressed
     global songPositionTextSmol
+    global songPositionTextMini
     global extraWindow
+    global miniModeWindow
     if sliderPressed == True:
         try:
             if extraWindow.winfo_exists():
                 sliderPos = sliderVarExtra.get()
                 sliderPos = str(datetime.timedelta(seconds = sliderPos))
+            elif miniModeWindow.winfo_exists():
+                sliderPos = sliderVarMini.get()
+                sliderPos = str(datetime.timedelta(seconds = songPos))
             else:
                 sliderPos = sliderVar.get()
                 sliderPos = str(datetime.timedelta(seconds = sliderPos))
@@ -549,9 +694,16 @@ def sliderChangePos(event):
             sliderPosFin = sliderPos[doubledot - 2:dot]
         else:
             sliderPosFin = sliderPos[doubledot - 2:]
-        songPositionText.config(text = sliderPosFin)
+        try:
+            songPositionText.config(text = sliderPosFin)
+        except:
+            pass
         try:
             songPositionTextSmol.config(text = sliderPosFin)
+        except:
+            pass
+        try:
+            songPositionTextMini.config(text = sliderPosFin)
         except:
             pass
 
@@ -609,25 +761,49 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     global playlistLengthLabel
     global remainingPlaylistLengthLabel
     global plW
-    plW.title("Playlist loading...")
+    global miniModeActive
+    global plWminiMode
+    global treeMiniMode
+    global remainingPlaylistLengthLabelMini
+    if miniModeActive == False:
+        plW.title("Playlist loading...")
+    elif miniModeActive == True:
+        plWminiMode.title("Playlist loading...")
 #    loadingThreading()
     row_number = 1
-    for item in tree.get_children():
-        tree.delete(item)
-    playlistLengthLabel.config(text = "loading...")
-    remainingPlaylistLengthLabel.config(text = "loading...")
-    for pSong in pPlaylist:#played song
-        Title = getSongName(pSong)
-        Artist = getSongArtist(pSong)
-        #length = getSongLength(pSong)
-        tree.insert('',tk.END,values = (Title,Artist,"loading",row_number))
-        row_number = row_number + 1
-    for song in playlist:
-        Title = getSongName(song)
-        Artist = getSongArtist(song)
-        #length = getSongLength(song)
-        tree.insert('',tk.END,values = (Title,Artist,"loading",row_number))
-        row_number = row_number + 1
+    if miniModeActive == False:
+        for item in tree.get_children():
+            tree.delete(item)
+        playlistLengthLabel.config(text = "loading...")
+        remainingPlaylistLengthLabel.config(text = "loading...")
+        for pSong in pPlaylist:#played song
+            Title = getSongName(pSong)
+            Artist = getSongArtist(pSong)
+            #length = getSongLength(pSong)
+            tree.insert('',tk.END,values = (Title,Artist,"loading",row_number))
+            row_number = row_number + 1
+        for song in playlist:
+            Title = getSongName(song)
+            Artist = getSongArtist(song)
+            #length = getSongLength(song)
+            tree.insert('',tk.END,values = (Title,Artist,"loading",row_number))
+            row_number = row_number + 1
+    elif miniModeActive == True:
+        for item in treeMiniMode.get_children():
+            treeMiniMode.delete(item)
+        remainingPlaylistLengthLabelMini.config(text = "loading...")
+        for pSong in pPlaylist:#played song
+            Title = getSongName(pSong)
+            Artist = getSongArtist(pSong)
+            #length = getSongLength(pSong)
+            treeMiniMode.insert('',tk.END,values = (Title,Artist,"loading",row_number))
+            row_number = row_number + 1
+        for song in playlist:
+            Title = getSongName(song)
+            Artist = getSongArtist(song)
+            #length = getSongLength(song)
+            treeMiniMode.insert('',tk.END,values = (Title,Artist,"loading",row_number))
+            row_number = row_number + 1
     plstSelSee(selectCount,seeCount)
 #    loadingWindow.destroy()
     #for item_id in items:
@@ -644,28 +820,53 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
 
 def plstSelSee(selectCount,seeCount):#plstSelSee = plstSelSeeAndSee;0 = none; -1 = last
     global tree
+    global treeMiniMode
     global playlist
     global pPlaylist
-    items = tree.get_children()
-    for item_id in items:
-        tree.item(item_id,tags = ("not_playing"))
-        values = tree.item(item_id,"values")
-        if values[3] == str(len(pPlaylist) + 1):
-            #tree.selection_set(item_id)
-            #tree.see(item_id)
-            tree.item(item_id,tags = ("playing"))
-            playlistSelection = str(len(pPlaylist) + 1) + "/" + str(len(pPlaylist) + len(playlist))
-            plstSelectionLabel.config(text = playlistSelection)
-        if values[3] == str(selectCount):
-            tree.selection_set(item_id)
-        if values[3] == str(seeCount):
-            tree.see(item_id)
-        elif selectCount == -1:
-            if values[3] == str(len(pPlaylist) + len(playlist)):
+    global miniModeActive
+    global playlistSelectionLabelMini
+    if miniModeActive == False:
+        items = tree.get_children()
+        for item_id in items:
+            tree.item(item_id,tags = ("not_playing"))
+            values = tree.item(item_id,"values")
+            if values[3] == str(len(pPlaylist) + 1):
+                #tree.selection_set(item_id)
+                #tree.see(item_id)
+                tree.item(item_id,tags = ("playing"))
+                playlistSelection = str(len(pPlaylist) + 1) + "/" + str(len(pPlaylist) + len(playlist))
+                plstSelectionLabel.config(text = playlistSelection)
+            if values[3] == str(selectCount):
                 tree.selection_set(item_id)
-        elif seeCount == -1:
-            if values[3] == str(len(pPlaylist) + len(playlist)):
+            if values[3] == str(seeCount):
                 tree.see(item_id)
+            elif selectCount == -1:
+                if values[3] == str(len(pPlaylist) + len(playlist)):
+                    tree.selection_set(item_id)
+            elif seeCount == -1:
+                if values[3] == str(len(pPlaylist) + len(playlist)):
+                    tree.see(item_id)
+    elif miniModeActive == True:
+        items = treeMiniMode.get_children()
+        for item_id in items:
+            treeMiniMode.item(item_id,tags = ("not_playing"))
+            values = treeMiniMode.item(item_id,"values")
+            if values[3] == str(len(pPlaylist) + 1):
+                #tree.selection_set(item_id)
+                #tree.see(item_id)
+                treeMiniMode.item(item_id,tags = ("playing"))
+                playlistSelection = str(len(pPlaylist) + 1) + "/" + str(len(pPlaylist) + len(playlist))
+                playlistSelectionLabelMini.config(text = playlistSelection)
+            if values[3] == str(selectCount):
+                treeMiniMode.selection_set(item_id)
+            if values[3] == str(seeCount):
+                treeMiniMode.see(item_id)
+            elif selectCount == -1:
+                if values[3] == str(len(pPlaylist) + len(playlist)):
+                    treeMiniMode.selection_set(item_id)
+            elif seeCount == -1:
+                if values[3] == str(len(pPlaylist) + len(playlist)):
+                    treeMiniMode.see(item_id)
 
 def updatePlaylistThread():
     length_for_playlist_thread = Thread(target = length_for_playlist)
@@ -673,87 +874,162 @@ def updatePlaylistThread():
 
 def length_for_playlist():
     global tree
+    global treeMiniMode
     global loadingWindow
     global playlistLengthLabel
     global remainingPlaylistLengthLabel
+    global remainingPlaylistLengthLabelMini
     global plW
+    global plWminiMode
     global plWtitleNameTrue
     global plWtitleName
-    plW.title("Playlist duration loading...")
+    global miniModeActive
+    if miniModeActive == False:
+        plW.title("Playlist duration loading...")
+    elif miniModeActive == True:
+        plWminiMode.title("Playlist duration loading...")
     notFound = ""
     notFoundList1 = []
     notFoundList2 = []
     try:
-        items = tree.get_children()
-        count = 0
-        playlistLengthSec = 0#insgesamte länge der playlist
-        remainingPlaylistLengthSec = 0
-        for pSong in pPlaylist:
-            #print("pPlaylist")
-            if pSong.endswith('.m3u'):
-                break
-            try:
-                length,songLengthSec = getSongLength(pSong)
-                playlistLengthSec = playlistLengthSec + songLengthSec
-            except:
-                notFoundList1.append[pSong]
-                notFound = notFound + '\n' + pSong
-                #continue
-            item_id = items[count]
-            tree.item(item_id,values = (tree.item(item_id,"values")[0],tree.item(item_id,"values")[1],length,tree.item(item_id,"values")[3]))
-            count = count + 1
-        for song in playlist:
-            #print("playlist")
-            if song.endswith('.m3u'):
-                break
-            try:
-                length,songLengthSec = getSongLength(song)
-                playlistLengthSec = playlistLengthSec + songLengthSec
-                remainingPlaylistLengthSec = remainingPlaylistLengthSec + songLengthSec
-            except:
-                notFoundList2.append(song)
-                notFound = notFound + '\n' + song
-                #continue
-            try:
-                item_id = items[count]#der letzte ist immer zu hoch, keine ahnung warum
-            except:
-                pass
-            tree.item(item_id,values = (tree.item(item_id,"values")[0],tree.item(item_id,"values")[1],length,tree.item(item_id,"values")[3]))
-            count = count + 1
-        playlistLength = str(datetime.timedelta(seconds = playlistLengthSec))
-        remainingPlaylistLength = str(datetime.timedelta(seconds = remainingPlaylistLengthSec))
-        dot = playlistLength.rfind(".")
-        if dot != -1:
-            playlistLength = playlistLength[:dot]
-        playlistLengthLabel.config(text = playlistLength)
-        dot = remainingPlaylistLength.rfind(".")
-        if dot != -1:
-            remainingPlaylistLength = remainingPlaylistLength[:dot]
-        remainingPlaylistLengthLabel.config(text = remainingPlaylistLength)
-        for song in notFoundList2[::-1]:
-            #print(playlist[count])
-            try:
-                playlist.remove(song)
-            except:
-                pass
-        for pSong in notFoundList1[::-1]:
-            #print(pPlaylist[count])
-            try:
-                pPlaylist.remove(pSong)
-            except:
-                pass
-        if notFoundList1 != [] or notFoundList2 != []:
-            message(2,"File(s) not found","These files couldn't be found and were removed from the playlist:\n" + notFound,"ok",0)
-            updatePlaylist(0,0)
+        if miniModeActive == False:
+            items = tree.get_children()
+            count = 0
+            playlistLengthSec = 0#insgesamte länge der playlist
+            remainingPlaylistLengthSec = 0
+            for pSong in pPlaylist:
+                #print("pPlaylist")
+                if pSong.endswith('.m3u'):
+                    break
+                try:
+                    length,songLengthSec = getSongLength(pSong)
+                    playlistLengthSec = playlistLengthSec + songLengthSec
+                except:
+                    notFoundList1.append[pSong]
+                    notFound = notFound + '\n' + pSong
+                    #continue
+                item_id = items[count]
+                tree.item(item_id,values = (tree.item(item_id,"values")[0],tree.item(item_id,"values")[1],length,tree.item(item_id,"values")[3]))
+                count = count + 1
+            for song in playlist:
+                #print("playlist")
+                if song.endswith('.m3u'):
+                    break
+                try:
+                    length,songLengthSec = getSongLength(song)
+                    playlistLengthSec = playlistLengthSec + songLengthSec
+                    remainingPlaylistLengthSec = remainingPlaylistLengthSec + songLengthSec
+                except:
+                    notFoundList2.append(song)
+                    notFound = notFound + '\n' + song
+                    #continue
+                try:
+                    item_id = items[count]#der letzte ist immer zu hoch, keine ahnung warum
+                except:
+                    pass
+                tree.item(item_id,values = (tree.item(item_id,"values")[0],tree.item(item_id,"values")[1],length,tree.item(item_id,"values")[3]))
+                count = count + 1
+            playlistLength = str(datetime.timedelta(seconds = playlistLengthSec))
+            remainingPlaylistLength = str(datetime.timedelta(seconds = remainingPlaylistLengthSec))
+            dot = playlistLength.rfind(".")
+            if dot != -1:
+                playlistLength = playlistLength[:dot]
+            playlistLengthLabel.config(text = playlistLength)
+            dot = remainingPlaylistLength.rfind(".")
+            if dot != -1:
+                remainingPlaylistLength = remainingPlaylistLength[:dot]
+            remainingPlaylistLengthLabel.config(text = remainingPlaylistLength)
+            for song in notFoundList2[::-1]:
+                #print(playlist[count])
+                try:
+                    playlist.remove(song)
+                except:
+                    pass
+            for pSong in notFoundList1[::-1]:
+                #print(pPlaylist[count])
+                try:
+                    pPlaylist.remove(pSong)
+                except:
+                    pass
+            if notFoundList1 != [] or notFoundList2 != []:
+                message(2,"File(s) not found","These files couldn't be found and were removed from the playlist:\n" + notFound,"ok",0)
+                updatePlaylist(0,0)
+        if miniModeActive == True:
+            items = treeMiniMode.get_children()
+            count = 0
+            playlistLengthSec = 0#insgesamte länge der playlist
+            remainingPlaylistLengthSec = 0
+            for pSong in pPlaylist:
+                #print("pPlaylist")
+                if pSong.endswith('.m3u'):
+                    break
+                try:
+                    length,songLengthSec = getSongLength(pSong)
+                    playlistLengthSec = playlistLengthSec + songLengthSec
+                except:
+                    notFoundList1.append[pSong]
+                    notFound = notFound + '\n' + pSong
+                    #continue
+                item_id = items[count]
+                treeMiniMode.item(item_id,values = (treeMiniMode.item(item_id,"values")[0],treeMiniMode.item(item_id,"values")[1],length,treeMiniMode.item(item_id,"values")[3]))
+                count = count + 1
+            for song in playlist:
+                #print("playlist")
+                if song.endswith('.m3u'):
+                    break
+                try:
+                    length,songLengthSec = getSongLength(song)
+                    playlistLengthSec = playlistLengthSec + songLengthSec
+                    remainingPlaylistLengthSec = remainingPlaylistLengthSec + songLengthSec
+                except:
+                    notFoundList2.append(song)
+                    notFound = notFound + '\n' + song
+                    #continue
+                try:
+                    item_id = items[count]#der letzte ist immer zu hoch, keine ahnung warum
+                except:
+                    pass
+                treeMiniMode.item(item_id,values = (treeMiniMode.item(item_id,"values")[0],treeMiniMode.item(item_id,"values")[1],length,treeMiniMode.item(item_id,"values")[3]))
+                count = count + 1
+            playlistLength = str(datetime.timedelta(seconds = playlistLengthSec))
+            remainingPlaylistLength = str(datetime.timedelta(seconds = remainingPlaylistLengthSec))
+            dot = playlistLength.rfind(".")
+            if dot != -1:
+                playlistLength = playlistLength[:dot]
+            dot = remainingPlaylistLength.rfind(".")
+            if dot != -1:
+                remainingPlaylistLength = remainingPlaylistLength[:dot]
+            remainingPlaylistLengthLabelMini.config(text = remainingPlaylistLength)
+            for song in notFoundList2[::-1]:
+                #print(playlist[count])
+                try:
+                    playlist.remove(song)
+                except:
+                    pass
+            for pSong in notFoundList1[::-1]:
+                #print(pPlaylist[count])
+                try:
+                    pPlaylist.remove(pSong)
+                except:
+                    pass
+            if notFoundList1 != [] or notFoundList2 != []:
+                message(2,"File(s) not found","These files couldn't be found and were removed from the playlist:\n" + notFound,"ok",0)
+                updatePlaylist(0,0)
     except Exception as e:
         print(e)
-    
-    if plWtitleNameTrue:
-        plW.title(plWtitleName)
-        return
-    plW.title("Playlist")
+        
+    if miniModeActive == False:
+        if plWtitleNameTrue:
+            plW.title(plWtitleName)
+            return
+        plW.title("Playlist")
+    elif miniModeActive == True:
+        if plWtitleNameTrue:
+            plWminiMode.title(plWtitleName)
+            return
+        plWminiMode.title("Playlist")
 
-def remainingLength(ForB):
+def remainingLength(ForB):#okay hier wird das noch ein problem wenn ich nicht die gesamte länge anzeige
     global remainingPlaylistLengthLabel
     global playlistLengthLabel
     remainingPlaylistLengthOld = remainingPlaylistLengthLabel["text"]
@@ -789,10 +1065,17 @@ def remainingLength(ForB):
     remainingPlaylistLengthLabel.config(text = remainingLength)
 
 def playFromPlaylist():
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive == False:
+        selectedItems = tree.selection()
+    elif miniModeActive == True:
+        selectedItems = tree.selection()
     if len(selectedItems) > 1 or len(selectedItems) == 0:
         return
-    selectedRow = tree.item(selectedItems)
+    if miniModeActive == False:
+        selectedRow = tree.item(selectedItems)
+    elif miniModeActive == True:
+        selectedRow = tree.item(selectedItems)
     values = selectedRow['values']
     count = values[3]
     if count - len(pPlaylist) - 1 == 0:
@@ -815,12 +1098,19 @@ def playFromPlaylistEvent(event):
     playFromPlaylist()
 
 def delFrompllst():#delete from playlist
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive == False:
+        selectedItems = tree.selection()
+    elif miniModeActive == True:
+        selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     counts = []
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive == True:
+            selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         counts.append(count)
@@ -868,6 +1158,7 @@ def deleteAllSongs():
 def savePlaylist():
     global playlist
     global pPlaylist
+    global miniModeActive
     #global progressPercent
     #progress()
     #progressPercent = 100 / (len(playlist) + len(pPlaylist) + 2)
@@ -898,18 +1189,28 @@ def savePlaylist():
         with open(saveThere, "a") as f:
             f.write(element + '\n')
     #    makeProgress()
-    plW.title(playlistName)
+    if miniModeActive == False:
+        plW.title(playlistName)
+    elif miniModeActive == True:
+        plWminiMode.title(playlistName)
     message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)
 
 def upInPlaylist():
     global loopMove
     global playlist
     global pPlaylist
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive == False:
+        selectedItems = tree.selection()
+    elif miniModeActive == True:
+        selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive == True:
+            selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         if count == 1 and loopMove.get() == False:
@@ -952,11 +1253,18 @@ def downInPlaylist():
     global loopMove
     global playlist
     global pPlaylist
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive == False:
+        selectedItems = tree.selection()
+    elif miniModeActive == True:
+        selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive == True:
+            selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         if count == len(pPlaylist) + len(playlist) and loopMove.get() == False:
@@ -996,11 +1304,18 @@ def downInPlaylistKey(event):
 def topInPlaylist():
     global playlist
     global pPlaylist
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive == False:
+        selectedItems = tree.selection()
+    elif miniModeActive == True:
+        selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive == True:
+            selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         if count == 1:
@@ -1025,11 +1340,18 @@ def topInPlaylistKey(event):
 def bottomInPlaylist():
     global playlist
     global pPlaylist
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive == False:
+        selectedItems = tree.selection()
+    elif miniModeActive == True:
+        selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive == True:
+            selectedRow == treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         if count == len(playlist) + len(pPlaylist):
@@ -1276,7 +1598,7 @@ def attributionsWE():
 
 def attributionButtonsWE():
     extraWindow.title("Attributions")
-    buttons = ["https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.videolan.org/","VideoLAN","https://github.com/dreamAviator","Me (dreamAviator) on GitHub"]
+    buttons = ["https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam on Flaticon","https://www.videolan.org/","VideoLAN","https://github.com/dreamAviator","Me (dreamAviator) on GitHub"]
     bCount = len(buttons) // 2#buttons count
     while bCount > 0:
         bText = buttons[-1]
@@ -1330,6 +1652,7 @@ def windowExtra(extraType):
     global volumeInfoExtra
     global volumeSliderExtra
     global musicSliderExtra
+    global songArtImageSmol
     #window
     try:
         song = playlist[0]
@@ -1425,10 +1748,6 @@ def windowExtra(extraType):
         songArtistTextSmol.config(text = songArtist)
         songNameTextSmol.config(text = songName)
         if songArt != "nothing":
-            jpg_image = Image.open(songArt)
-            new_size = (50,50)
-            jpg_image_resized = jpg_image.resize(new_size)
-            jpg_image_resized.save('song_cover_smol.png',format = 'PNG')
             songArtImage = tk.PhotoImage(file = 'song_cover_smol.png')
             songCoverSmol.config(image = songArtImage)
             songCoverSmol.image = songArtImage
@@ -1697,87 +2016,182 @@ def buildVolumeSliderText(ToF):
         pass
 
 def buildMiniMode_main_window(event):
-	global numberforminimode_main_window
-	print(numberforminimode_main_window)
-	numberforminimode_main_window = numberforminimode_main_window + 1
-	if numberforminimode_main_window == 21:
-		numberforminimode_main_window = 1
-		buildMiniMode()
+    global numberforminimode_main_window
+    print(numberforminimode_main_window)
+    numberforminimode_main_window = numberforminimode_main_window + 1
+    if numberforminimode_main_window == 21:
+        numberforminimode_main_window = 1
+        buildMiniMode()
 
 def buildMiniMode_plW(event):
-	global numberforminimode_plW
-	print(numberforminimode_plW)
-	numberforminimode_plW = numberforminimode_plW + 1
-	if numberforminimode_plW == 26:
-		numberforminimode_plW = 1
-		buildMiniMode()
+    global numberforminimode_plW
+    print(numberforminimode_plW)
+    numberforminimode_plW = numberforminimode_plW + 1
+    if numberforminimode_plW == 26:
+        numberforminimode_plW = 1
+        buildMiniMode()
 
 def buildMiniMode():
-	global main_window
-	global plW
-	global main_window_size
-	global plW_size
-	global exit_button_image
-	global rewind_button_image_smol
-	global forward_button_image_smol
-	global play_image_smol
-	global pause_image_smol
-	global song_cover_image_smol
-	main_window_size = main_window.geometry()
-	plW_size = plW.geometry()
-	print("trying")
-	main_window.destroy()
-	plW.destroy()
-	print("done")
-	x_pos = main_window_size.find('x')
-	firstplus_pos = main_window_size.find('+')
-	secondplus_pos = main_window_size.rfind('+')
-	main_window_size_1 = main_window_size[:x_pos + 1]
-	main_window_size_2 = main_window_size[firstplus_pos:secondplus_pos + 1]
-	miniModeSize = main_window_size_1 + "80" + main_window_size_2 + "380"
-	print(miniModeSize)
-	miniModeWindow = tk.Toplevel()
-	miniModeWindow.geometry(miniModeSize)
-	miniModeWindow.title("Song Name | TkMusic")
-	#iconshit 
-	miniModeWindow.protocol("WM_DELETE_WINDOW",exitProgram)
-	#Frames
-	musicControlFrameMini = ttk.Frame(miniModeWindow,height = 50)
-	musicControlFrameMini.pack(side = tk.BOTTOM,fill = tk.X)
-		#musicControlFrame
-	musicControlFrameMiniL = ttk.Frame(musicControlFrameMini,width = 50)
-	musicControlFrameMiniL.pack(side = tk.LEFT)
-	musicControlFrameMiniR = ttk.Frame(musicControlFrameMini,width = 300)
-	musicControlFrameMiniR.pack(side = tk.RIGHT)
-	musicInfoFrameMini2_1 = ttk.Frame(musicControlFrameMini)
-	musicInfoFrameMini2_1.pack(side = tk.TOP,fill = tk.X)
-	musicInfoFrameMini2_2 = ttk.Frame(musicControlFrameMini)
-	musicInfoFrameMini2_2.pack(side = tk.BOTTOM,fill = tk.X)
-	musicInfoFrameMini1 = ttk.Frame(miniModeWindow)
-	musicInfoFrameMini1.pack(side = tk.BOTTOM,fill = tk.X)
-	#not frames xD
-		#musicControlFrameMiniL
-	songCoverLabel = ttk.Label(musicControlFrameMiniL,image = song_cover_image_smol)
-	songCoverLabel.pack()
-		#musicControlFrameMiniR
-	exitButtonMini = ttk.Button(musicControlFrameMiniR,image = exit_button_image,command = exitProgram)
-	exitButtonMini.pack(side = tk.RIGHT)
-	forwardButtonMini = ttk.Button(musicControlFrameMiniR,image = forward_button_image_smol,command = exitProgram)
-	forwardButtonMini.pack(side = tk.RIGHT)
-	togglePlayButtonMini = ttk.Button(musicControlFrameMiniR,image = play_image_smol,command = exitProgram)
-	togglePlayButtonMini.pack(side = tk.RIGHT)
-	rewindButtonMini = ttk.Button(musicControlFrameMiniR,image = rewind_button_image_smol,command = exitProgram)
-	rewindButtonMini.pack(side = tk.RIGHT)
-	
-		#musicInfoFrameMini1
-		#musicInfoFrameMini2_1
-		#musicInfoFrameMini2_2
+    global main_window
+    global plW
+    global main_window_size
+    global plW_size
+    global exit_button_image
+    global rewind_button_image_smol
+    global forward_button_image_smol
+    global play_image_smol
+    global pause_image_smol
+    global song_cover_image_smol
+    global remainingPlaylistLength
+    global songName
+    global songArtist
+    global songLength
+    global songPosition
+    global songLengthSeconds
+    global plstSelection
+    global songCoverMini
+    global songLengthTextMini
+    global songTitleLabelMini
+    global songArtistLabelMini
+    global songPositionTextMini
+    global musicSliderMini
+    global plWminiMode
+    global treeMiniMode
+    global miniModeActive
+    global remainingPlaylistLengthLabelMini
+    global playlistSelectionLabelMini
+    global togglePlayButtonMini
+    global songArtImageSmol
+    miniModeActive = True
+    main_window_size = main_window.geometry()
+    plW_size = plW.geometry()
+    print("trying")
+    main_window.destroy()
+    plW.destroy()
+    print("done")
+    x_pos = main_window_size.find('x')
+    firstplus_pos = main_window_size.find('+')
+    secondplus_pos = main_window_size.rfind('+')
+    main_window_size_1 = main_window_size[:x_pos + 1]
+    main_window_size_2 = main_window_size[firstplus_pos + 1:secondplus_pos]
+    miniModeSize = main_window_size_1 + "80+" + main_window_size_2 + "+380"
+    print(miniModeSize)
+    miniModeWindow = tk.Toplevel()
+    miniModeWindow.geometry(miniModeSize)
+    miniModeWindow.title("Song Name | TkMusic")
+    #iconshit 
+    miniModeWindow.protocol("WM_DELETE_WINDOW",exitProgram)
+    #Frames
+    musicControlFrameMini = ttk.Frame(miniModeWindow,height = 50)
+    musicControlFrameMini.pack(side = tk.BOTTOM,fill = tk.X)
+        #musicControlFrame
+    musicControlFrameMiniL = ttk.Frame(musicControlFrameMini,width = 50)
+    musicControlFrameMiniL.pack(side = tk.LEFT)
+    musicControlFrameMiniR = ttk.Frame(musicControlFrameMini,width = 300)
+    musicControlFrameMiniR.pack(side = tk.RIGHT)
+    musicInfoFrameMini2_1 = ttk.Frame(musicControlFrameMini)
+    musicInfoFrameMini2_1.pack(side = tk.TOP,fill = tk.X)
+    musicInfoFrameMini2_2 = ttk.Frame(musicControlFrameMini)
+    musicInfoFrameMini2_2.pack(side = tk.BOTTOM,fill = tk.X)
+    musicInfoFrameMini1 = ttk.Frame(miniModeWindow)
+    musicInfoFrameMini1.pack(side = tk.BOTTOM,fill = tk.X)
+    #not frames xD
+        #musicControlFrameMiniL
+    songCoverMini = ttk.Label(musicControlFrameMiniL,image = song_cover_image_smol)
+    songCoverMini.pack()
+        #musicControlFrameMiniR
+    exitButtonMini = ttk.Button(musicControlFrameMiniR,image = exit_button_image,command = exitProgram)
+    exitButtonMini.pack(side = tk.RIGHT)
+    forwardButtonMini = ttk.Button(musicControlFrameMiniR,image = forward_button_image_smol,command = fastForward)
+    forwardButtonMini.pack(side = tk.RIGHT)
+    togglePlayButtonMini = ttk.Button(musicControlFrameMiniR,image = play_image_smol,command = togglePlay)
+    togglePlayButtonMini.pack(side = tk.RIGHT)
+    rewindButtonMini = ttk.Button(musicControlFrameMiniR,image = rewind_button_image_smol,command = rewindSong)
+    rewindButtonMini.pack(side = tk.RIGHT)
+    checkLogoInverted()
+        #musicInfoFrameMini1
+    songPositionTextMini = ttk.Label(musicInfoFrameMini1,text = songPosition)
+    songPositionTextMini.pack(side = tk.LEFT)
+    songLengthTextMini = ttk.Label(musicInfoFrameMini1,text = songLength)
+    songLengthTextMini.pack(side = tk.RIGHT)
+    musicSliderMini = ttk.Scale(musicInfoFrameMini1,variable = sliderVarMini,from_ = 0,to = songLengthSeconds,orient = 'horizontal')
+    musicSliderMini.bind("<Motion>",sliderChangePos)
+    musicSliderMini.bind("<ButtonRelease-1>",sliderChange)
+    musicSliderMini.bind("<ButtonPress-1>",sliderPressedTrue)
+    musicSliderMini.pack(side = tk.BOTTOM,fill = tk.X,expand = True)
+        #musicInfoFrameMini2_1
+    songTitleLabelMini = ttk.Label(musicInfoFrameMini2_1,text = songName)
+    songTitleLabelMini.pack(side = tk.LEFT)
+    songArtistLabelMini = ttk.Label(musicInfoFrameMini2_1,text = songArtist)
+    songArtistLabelMini.pack(sid = tk.RIGHT)
+        #musicInfoFrameMini2-2
+    playlistSelectionLabelMini = ttk.Label(musicInfoFrameMini2_2,text = plstSelection)
+    playlistSelectionLabelMini.pack(side = tk.LEFT)
+    remainingPlaylistLengthLabelMini = ttk.Label(musicInfoFrameMini2_2,text = remainingPlaylistLength)
+    remainingPlaylistLengthLabelMini.pack(side = tk.RIGHT)
+    try:
+        songLength,songLengthSec = getSongLength(song)
+        songArtist = getSongArtist(song)
+        songName = getSongName(song)
+        songArt = getSongArt(song)
+        musicSliderExtra.config(to = songLengthSec)
+        songLengthTextSmol.config(text = songLength)
+        songLS = song.rfind("/")#song last slash
+        songFilename = song[songLS + 1:]
+        songArtistTextSmol.config(text = songArtist)
+        songNameTextSmol.config(text = songName)
+        if songArt != "nothing":
+            songArtImage = tk.PhotoImage(file = 'song_cover_smol.png')#warum klappt das hier nicht!?!?!
+            songCoverMini.config(image = songArtImageSmol)
+            songCoverMini.image = songArtImageSmol
+        if songArtist == 'unknown':
+            songArtistLabelMini.config(text = songFilename)
+            if songName == 'unknown':
+                songTitleLabelMini.config(text = '')
+            else:
+                songTitleLabelMini.config(text = songName)
+        elif songName == 'unknown':
+            songNameTitleLabelMini.config(text = songFilename)
+    except:
+        pass
+    plWminiMode = tk.Toplevel()
+    main_window_size_2_int = int(main_window_size_2)
+    main_window_size_2_int = main_window_size_2_int + 500
+    main_window_size_2_str = str(main_window_size_2_int)
+    plWminiMode.geometry(main_window_size_1 + "80+" + main_window_size_2_str + "+380")
+    plWminiMode.title("Playlist")
+    #iconshit
+    plWminiMode.protocol("WM_DELETE_WINDOW",exitProgram)
+    plWminiMode.bind("<Delete>",delFrompllstKey)
+    plWminiMode.bind("<Up>",upInPlaylistKey)
+    plWminiMode.bind("<Down>",downInPlaylistKey)
+    plWminiMode.bind("<Left>",topInPlaylistKey)
+    plWminiMode.bind("<Right>",bottomInPlaylistKey)
+    #playlist
+    columns = ('Title','Artist','length','count')
+    treeMiniMode = ttk.Treeview(plWminiMode,columns = columns,show = 'headings')
+    treeMiniMode.heading('Title',text = 'Title')
+    treeMiniMode.heading('Artist',text = 'Artist')
+    treeMiniMode.heading('length',text = 'Length')
+    treeMiniMode.column('Title',width = 150)
+    treeMiniMode.column('Artist',width = 150)
+    treeMiniMode.column('length',width = 50)
+    treeMiniMode.column('count',width = 0,stretch = False)
+    treeMiniMode.tag_configure("playing", foreground="green")
+    treeMiniMode.tag_configure("not_playing",foreground = "black")
+    treeMiniMode.pack(fill = tk.BOTH)
+    treeMiniMode.bind('<Motion>','break')
+    treeMiniMode.bind('<Double-1>',playFromPlaylistEvent)
+    scrollbarMiniMode = ttk.Scrollbar(plWminiMode,orient = tk.VERTICAL,command = treeMiniMode.yview)
+    treeMiniMode.configure(yscroll = scrollbarMiniMode.set)
+    scrollbarMiniMode.pack(side = tk.RIGHT,fill = tk.Y)
+    updatePlaylist(0,0)
 
 def restoremain_window():
-	pass
+    pass
 
 def restorePlW():
-	pass
+    pass
 
 def messageLogClicked(event):
     global tree1
@@ -1860,12 +2274,12 @@ def notebookTabChange(event):
     selectedLog = str(logs.index("current"))
 
 def settingsFmenu(setting):
-	if setting == "volumeSliderText":
-		volumeSliderText = volumeSliderTextOnOff.get()
-		if volumeSliderText == False:
-			volumeSliderTextOnOff.set("True")
-		else:
-			volumeSliderTextOnOff.set("")
+    if setting == "volumeSliderText":
+        volumeSliderText = volumeSliderTextOnOff.get()
+        if volumeSliderText == False:
+            volumeSliderTextOnOff.set("True")
+        else:
+            volumeSliderTextOnOff.set("")
 
 def settings(setting):
     global loopPlaylist
@@ -2009,6 +2423,7 @@ menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
 #variables
 sliderVar = tk.IntVar()
 sliderVarExtra = tk.IntVar()
+sliderVarMini = tk.IntVar()
 volume = tk.IntVar()
 volumeSliderTextOnOff = tk.BooleanVar()
 loopPlaylist = tk.BooleanVar()
@@ -2053,6 +2468,7 @@ sliderPressed = False
 volumePressed = False
 exiting = False
 ThreadStopped = False
+miniModeActive = False
 numberforminimode_main_window = 1
 numberforminimode_plW = 1
 
@@ -2308,3 +2724,4 @@ main_window.mainloop()
 #vlt eine option zum verändern des styles/themes, der farben/(zumindest) der farbe des ausgewählten elements in der playlist
 #auf meinem linux pc wird nicht der gesamte text von length im playlist fenster angezeigt
 #entweder das extra window (wieder ig) nicht größenverstellbar machen, oder gucken, ob das programm vlt doch größenverstellbar sein kann
+#bei den playlist fenstern ein icon hinzufügen
