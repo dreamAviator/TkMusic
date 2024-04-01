@@ -1,4 +1,5 @@
-    #This program can play music. It does not have a name yet (probably TkMusic)
+    #TkMusic
+    #This program can play music.
     #Copyright (C) 2023  Nathan Baron
 
 #gui
@@ -2074,7 +2075,7 @@ def buildMiniMode():
     secondplus_pos = main_window_size.rfind('+')
     main_window_size_1 = main_window_size[:x_pos + 1]
     main_window_size_2 = main_window_size[firstplus_pos + 1:secondplus_pos]
-    miniModeSize = main_window_size_1 + "80+" + main_window_size_2 + "+380"
+    miniModeSize = main_window_size_1 + "82+" + main_window_size_2 + "+380"
     print(miniModeSize)
     miniModeWindow = tk.Toplevel()
     miniModeWindow.geometry(miniModeSize)
@@ -2158,7 +2159,7 @@ def buildMiniMode():
     main_window_size_2_int = int(main_window_size_2)
     main_window_size_2_int = main_window_size_2_int + 500
     main_window_size_2_str = str(main_window_size_2_int)
-    plWminiMode.geometry(main_window_size_1 + "80+" + main_window_size_2_str + "+380")
+    plWminiMode.geometry(main_window_size_1 + "82+" + main_window_size_2_str + "+380")
     plWminiMode.title("Playlist")
     #iconshit
     plWminiMode.protocol("WM_DELETE_WINDOW",exitProgram)
@@ -2173,13 +2174,13 @@ def buildMiniMode():
     treeMiniMode.heading('Title',text = 'Title')
     treeMiniMode.heading('Artist',text = 'Artist')
     treeMiniMode.heading('length',text = 'Length')
-    treeMiniMode.column('Title',width = 150)
-    treeMiniMode.column('Artist',width = 150)
+    treeMiniMode.column('Title',width = 217)
+    treeMiniMode.column('Artist',width = 217)
     treeMiniMode.column('length',width = 50)
     treeMiniMode.column('count',width = 0,stretch = False)
     treeMiniMode.tag_configure("playing", foreground="green")
     treeMiniMode.tag_configure("not_playing",foreground = "black")
-    treeMiniMode.pack(fill = tk.BOTH)
+    treeMiniMode.pack(side = tk.LEFT,fill = tk.Y)
     treeMiniMode.bind('<Motion>','break')
     treeMiniMode.bind('<Double-1>',playFromPlaylistEvent)
     scrollbarMiniMode = ttk.Scrollbar(plWminiMode,orient = tk.VERTICAL,command = treeMiniMode.yview)
@@ -2469,6 +2470,7 @@ volumePressed = False
 exiting = False
 ThreadStopped = False
 miniModeActive = False
+plWtitleNameTrue = False
 numberforminimode_main_window = 1
 numberforminimode_plW = 1
 
