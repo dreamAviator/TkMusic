@@ -2352,8 +2352,6 @@ main_windowWidthStr = str(main_windowWidth)
 main_window = tk.Toplevel()
 main_window.title("Music Player")
 main_window.geometry(main_windowWidthStr + 'x360+100+100')
-main_window.resizable(False,False)
-#main_window.iconbitmap(logo)#noch kein logo
 main_window.bind('<Escape>',hideInBackground)
     #menus
 menubar1 = tk.Menu(main_window)
@@ -2477,6 +2475,7 @@ numberforminimode_plW = 1
 #images
 #print(os.path.join(dirname,'vlc\libvlc.dll'))
 if platform.system() == "Windows":
+    default_icon = os.path.join(dirname,'icons/default_icon.ico')
     info_icon = os.path.join(dirname,'icons/info.ico')
     settings_icon = os.path.join(dirname,'icons/settings.ico')
     warning_icon = os.path.join(dirname,'icons/warning.ico')
@@ -2486,11 +2485,14 @@ if platform.system() == "Windows":
     #loading_icon_2 = os.path.join(dirname,'icons/loading_2.ico')
     #loading_icon_3 = os.path.join(dirname,'icons/loading_3.ico')
 elif platform.system() == "Linux":
+    default_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon.png'))
     info_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/info_icon.png'))
     settings_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/settings_icon.png'))
     warning_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/warning_icon.png'))
     error_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/error_icon.png'))
     message_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/message_icon.png'))
+app_logo_image = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_smol.png'))
+app_logo_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_vewy_smol.png'))
 exit_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/quit_smol.png'))
 settings_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/settings_smol.png'))
 info_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/info_smol.png'))
@@ -2506,12 +2508,14 @@ pause_image = tk.PhotoImage(file = os.path.join(dirname,'icons/pause_smol.png'))
 pause_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/pause_vewy_smol.png'))
 #song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_black_smol.png'))
 #song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_white_smol.png'))
-song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_smol.png'))
+#song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_smol.png'))
 #song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_grey_smol.png'))
+song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_smol.png'))
 #song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_black_vewy_smol.png'))
 #song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_white_vewy_smol.png'))
-song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_vewy_smol.png'))
+#song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_vewy_smol.png'))
 #song_cover_image_smol = tk.PhotoImage(file = 'os.path.join(dirname,icons/cover_grey_vewy_smol.png'))
+song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_vewy_smol.png'))
 #song_cover_image_temp = tk.PhotoImage(file = os.path.join(dirname, 'temporary_song_cover.png'))
 #song_cover_image_temp_smol = tk.PhotoImage(file = os.path.join(dirname, 'temporary_song_cover_smol.png'))
 delete_from_playlist_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/delete_from_playlist_smol.png'))
@@ -2529,6 +2533,15 @@ left_image = tk.PhotoImage(file = os.path.join(dirname,'icons/left_smol.png'))
 loading_image_1 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_1_smol.png'))
 loading_image_2 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_2_smol.png'))
 loading_image_3 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_3_smol.png'))
+
+#window_icons
+#nachricht löschen (text auf default icon größer machen)
+main_window.resizable(False,False)
+if platform.system() == "Windows":
+    main_window.iconbitmap(default_icon)
+elif platform.system() == "Linux":
+    main_window.iconphoto(False,default_icon)
+#playlist window benötigt noch ein icon
 
 #frames
     #main_window
@@ -2603,7 +2616,7 @@ songNameText.pack(side = tk.RIGHT)
 
     #songCoverFrame
 songCover = ttk.Label(songCoverFrame,image = song_cover_image)
-songCover.pack()
+songCover.pack(ipady = 20)
 
 #playlist window
     #btmBtnsFrame
