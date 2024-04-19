@@ -1597,9 +1597,13 @@ def attributionsWE():
     attributionsText.insert(tk.INSERT,text)
     attributionsText.config(state = 'disabled',font = 'Helvetica 9')
 
-def attributionButtonsWE():
+def attributionButtonsWE():#irgendwie mehrere seiten oder so machen (7 links passen auf eine seite)
     extraWindow.title("Attributions")
-    buttons = ["https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam on Flaticon","https://www.videolan.org/","VideoLAN","https://github.com/dreamAviator","Me (dreamAviator) on GitHub"]
+    pageFrame = ttk.Frame(extraWindow)
+    pageFrame.pack(side = tk.BOTTOM,fill = tk.X)
+    buttonFrame = ttk.Frame(extraWindow)
+    buttonFrame.pack(fill = tk.BOTH)
+    buttons = ["https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam","https://openclipart.org/artist/JoelM","JoelM","https://www.flaticon.com/authors/smashicons","Smashicons on FLaticon","https://www.videolan.org/","VideoLAN","https://github.com/dreamAviator","Me (dreamAviator) on GitHub"]
     bCount = len(buttons) // 2#buttons count
     while bCount > 0:
         bText = buttons[-1]
@@ -1607,7 +1611,7 @@ def attributionButtonsWE():
         url = buttons[-1]#button text
         del buttons[-1]
         bCount = bCount - 1
-        attributionsButton = ttk.Button(extraWindow,text = bText,command = functools.partial(openurl,url))
+        attributionsButton = ttk.Button(buttonFrame,text = bText,command = functools.partial(openurl,url))
         attributionsButton.pack(side = tk.BOTTOM,fill = tk.X)
 
 def changelogWE():
@@ -2476,6 +2480,7 @@ numberforminimode_plW = 1
 #print(os.path.join(dirname,'vlc\libvlc.dll'))
 if platform.system() == "Windows":
     default_icon = os.path.join(dirname,'icons/default_icon.ico')
+    playlist_icon = os.path.join(dirname,'icons/playlist_icon.ico')
     info_icon = os.path.join(dirname,'icons/info.ico')
     settings_icon = os.path.join(dirname,'icons/settings.ico')
     warning_icon = os.path.join(dirname,'icons/warning.ico')
@@ -2486,6 +2491,7 @@ if platform.system() == "Windows":
     #loading_icon_3 = os.path.join(dirname,'icons/loading_3.ico')
 elif platform.system() == "Linux":
     default_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon.png'))
+    playlist_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/playlist_icon.png'))
     info_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/info_icon.png'))
     settings_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/settings_icon.png'))
     warning_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/warning_icon.png'))
@@ -2539,9 +2545,10 @@ loading_image_3 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_3_smo
 main_window.resizable(False,False)
 if platform.system() == "Windows":
     main_window.iconbitmap(default_icon)
+    plW.iconbitmap(playlist_icon)
 elif platform.system() == "Linux":
     main_window.iconphoto(False,default_icon)
-#playlist window benötigt noch ein icon
+    plW.iconphoto(False,playlist_icon)
 
 #frames
     #main_window
