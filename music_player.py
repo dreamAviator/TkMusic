@@ -1310,7 +1310,7 @@ def topInPlaylist():
         selectedItems = tree.selection()
     elif miniModeActive == True:
         selectedItems = treeMiniMode.selection()
-    if len(selectedItems) == 0:
+    if len(selectedItems) == 0 or len(selectedItems) < 1:#nur vorläufig so machen, später einen fix dafür rausbringen, dass man mehrere selecten kann. vielleicht irgendwie mit einem counter track behalten, wie viele items nach unten die anderen items gerutscht sind.
         return
     for item in selectedItems:
         if miniModeActive == False:
@@ -1346,7 +1346,7 @@ def bottomInPlaylist():
         selectedItems = tree.selection()
     elif miniModeActive == True:
         selectedItems = treeMiniMode.selection()
-    if len(selectedItems) == 0:
+    if len(selectedItems) == 0 or len(selectedItems) < 1:#nur vorläufig so machen, später einen fix dafür rausbringen, dass man mehrere selecten kann. vielleicht irgendwie mit einem counter track behalten, wie viele items nach oben die anderen items gerutscht sind.
         return
     for item in selectedItems:
         if miniModeActive == False:
@@ -1688,6 +1688,29 @@ def windowExtra(extraType):
     extraWindow.bind('<space>',togglePlayKey)
     extraWindow.focus()
     extraWindow.protocol("WM_DELETE_WINDOW", closeExtra)
+        #menus
+    menubar3 = tk.Menu(extraWindow)
+    extraWindow.config(menu = menubar3)
+            #file_menu
+    file_menu3 = tk.Menu(menubar3,tearoff = False)
+    file_menu3.add_command(label = 'Open',command = addToPlaylist)
+    sub_menu3 = tk.Menu(file_menu3,tearoff = False)
+    sub_menu3.add_command(label = 'Recent file 1')
+    file_menu3.add_cascade(label = "Recent files",menu = sub_menu3)
+    file_menu3.add_command(label = 'Save as...',command = savePlaylist)
+    file_menu3.add_command(label = 'Delete all',command = deleteAllSongs)
+    file_menu3.add_separator()
+    file_menu3.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
+    file_menu3.add_separator()
+    file_menu3.add_command(label='Exit',command=exitProgram)
+    menubar3.add_cascade(label="File",menu=file_menu3,underline=0)
+            #view_menu
+    view_menu3 = tk.Menu(menubar3,tearoff = False)
+    view_menu3.add_command(label = 'Show the value of the volume slider',command = lambda: (settingsFmenu("volumeSliderText")))
+    view_menu3.add_command(label = 'Two windows',command = lambda: (settingsFmenu("twoWindows")))
+    view_menu3.add_command(label = 'Mini mode',command = lambda: (settingsFmenu("miniMode")))
+    menubar3.add_cascade(label = "View",menu = view_menu3,underline = 0)
+            #help_menu
     #frames
     toolbarFrameExtra = ttk.Frame(extraWindow,width = 50)
     toolbarFrameExtra.pack(side = tk.LEFT,fill = tk.Y)
