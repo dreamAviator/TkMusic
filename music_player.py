@@ -2407,6 +2407,11 @@ menubar1.add_cascade(label = "View",menu = view_menu1,underline = 0)
 #license
 #changelog
 #halt alle sachen die im help menu standardmäßig sind und/oder die im info window sind
+help_menu1 = tk.Menu(menubar1,tearoff = False)
+help_menu1.add_command(label = 'About TkMusic',command = lambda:(windowExtra("info")))
+help_menu1.add_command(label = 'Changelog',command = lambda:(windowExtra("Changelog")))
+help_menu1.add_command(label = 'License',command = lambda:(windowExtra("License")))
+menubar1.add_cascade(label = "Help",menu = help_menu1,underline = 0)
 
 #playlist window
 global plW #playlistWindow
