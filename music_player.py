@@ -713,6 +713,11 @@ def addToPlaylist():
     global playlist
     global plWtitleNameTrue
     global plWtitleName
+    global recentFiles
+    global recentSongs
+    global recentPlaylists
+    global filesToKeep
+    howmany = filesToKeep.get()
     unsupportedFiles = ""
     if playlist == []:
         rememberme = True
@@ -723,7 +728,12 @@ def addToPlaylist():
     if songsToAdd == '':
         return
     for sOpllst in songsToAdd:#song or playlist
+        del recentFiles[howmany - 1]
+        print(recentFiles)
+        recentFiles.insert(0,sOpllst + '\n')
         if sOpllst.endswith('.m3u'):
+            del recentPlaylists[howmany - 1]
+            recentPlaylists.insert(0,sOpllst + '\n')
             if rememberme == True:
                 plWtitleNameTrue = True
                 lastSlash = sOpllst.rfind("/")
@@ -733,7 +743,21 @@ def addToPlaylist():
             for songFplaylist in lines:#song from playlist
                 songFplaylist = songFplaylist[:-1]
                 playlist.append(songFplaylist)
+        else:
+            del recentSongs[howmany - 1]
+            recentSongs.insert(0,sOpllst + '\n')
             #del songsToAdd[0]
+    print(recentFiles)
+    filepath = os.path.join(dirname,"texts/recent_files.txt")
+    with open(filepath,'w') as file:
+        file.writelines(recentFiles)
+    filepath = os.path.join(dirname,"texts/recent_songs.txt")
+    with open(filepath,'w') as file:
+        file.writelines(recentSongs)
+    filepath = os.path.join(dirname,"texts/recent_playlists.txt")
+    with open(filepath,'w') as file:
+        file.writelines(recentPlaylists)
+    refreshRecentFiles()
 
     for element in songsToAdd:
         if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
@@ -1455,7 +1479,7 @@ def infoWE():
     versionFrame.pack(side = tk.BOTTOM,fill = tk.X)
     licenseAttributionFrame = ttk.Frame(extraWindow)
     licenseAttributionFrame.pack(side = tk.TOP,fill = tk.X)
-    changelogButton = ttk.Button(versionFrame,text = "Changelog and beta feedback",command = lambda: (windowExtra("Changelog")))
+    changelogButton = ttk.Button(versionFrame,text = "Changelog",command = lambda: (windowExtra("Changelog")))
     changelogButton.pack(side = tk.RIGHT)
     version = ttk.Label(versionFrame,text = "Version 1.0 BETA 7")
     version.pack(fill = tk.X)
@@ -1488,6 +1512,8 @@ def settingsWE():
     loopPlaylistCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     loopMoveCheckbutton = ttk.Checkbutton(extraWindow,text = "Loop the playlist when moving elements (first song ^ last song; last song ▿ first song)",command = lambda: (settings("loopMove")),variable = loopMove,onvalue = True,offvalue = False)
     loopMoveCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+    filesToKeepSpinbox = ttk.Spinbox(extraWindow,from_ = 0, to = 20,textvariable = filesToKeep,command = filesToKeepChanged)
+    filesToKeepSpinbox.pack(side = tk.TOP,anchor = tk.NW)
     messageLogsButton = ttk.Button(extraWindow,text = "Message Logs",command = lambda: (windowExtra("messageLogs")))
     messageLogsButton.pack(side = tk.BOTTOM,anchor = tk.W)
 
@@ -1581,7 +1607,6 @@ def messageLogsWE():
         elements = messageErrorLog[element:element + 4]
         tree3.insert('',tk.END,values = (elements[0],elements[1],elements[2],str(elements[3]) + "ms",count))
         count = count + 1
-    #die scrollbars sind nd sichtbar
     #wenn man nds ausgewählt hat (halt bei der song-/playlistauswahl sollte ich denke ich das logo von der warnung zur info machen
     #außerdem sollte ich gucken, ob ich nd aus infos, warnings und erros info messages warning messages und error messages amche, oder nur bei infos/info das messages ranhänge naja gute nacht, vergiss nd das morgen mitzunehmen
 
@@ -1615,6 +1640,7 @@ def attributionButtonsWE():#irgendwie mehrere seiten oder so machen (7 links pas
         attributionsButton.pack(side = tk.BOTTOM,fill = tk.X)
 
 def changelogWE():
+    extraWindow.title("Changelog")
     text = ""
     filepath = os.path.join(dirname,"texts/changelog_and_feedback.txt")
     with open(filepath,'r') as file:
@@ -1627,6 +1653,7 @@ def changelogWE():
     textLabel.config(state = 'disabled',font = 'Helvetica 9')
 
 def licenseWE():
+    extraWindow.title("License")
     text = ""
     filepath = os.path.join(dirname,"texts/license.txt")
     with open(filepath,'r') as file:
@@ -1695,7 +1722,6 @@ def windowExtra(extraType):
     file_menu3 = tk.Menu(menubar3,tearoff = False)
     file_menu3.add_command(label = 'Open',command = addToPlaylist)
     sub_menu3 = tk.Menu(file_menu3,tearoff = False)
-    sub_menu3.add_command(label = 'Recent file 1')
     file_menu3.add_cascade(label = "Recent files",menu = sub_menu3)
     file_menu3.add_command(label = 'Save as...',command = savePlaylist)
     file_menu3.add_command(label = 'Delete all',command = deleteAllSongs)
@@ -1711,6 +1737,14 @@ def windowExtra(extraType):
     view_menu3.add_command(label = 'Mini mode',command = lambda: (settingsFmenu("miniMode")))
     menubar3.add_cascade(label = "View",menu = view_menu3,underline = 0)
             #help_menu
+    help_menu3 = tk.Menu(menubar3,tearoff = False)
+    help_menu3.add_command(label = 'About & help',command = lambda:(windowExtra("info")))
+    help_menu3.add_command(label = 'Changelog',command = lambda:(windowExtra("Changelog")))
+    help_menu3.add_command(label = 'License',command = lambda:(windowExtra("License")))
+    help_menu3.add_separator()
+    help_menu3.add_command(label = 'Options',command = lambda:(windowExtra("settings")))
+    help_menu3.add_command(label = 'Message logs',command = lambda:(windowExtra("messageLogs")))
+    menubar3.add_cascade(label = "Help",menu = help_menu3,underline = 0)
     #frames
     toolbarFrameExtra = ttk.Frame(extraWindow,width = 50)
     toolbarFrameExtra.pack(side = tk.LEFT,fill = tk.Y)
@@ -1998,6 +2032,39 @@ def loadingThreading():
 def reverseTuple(tuple):
     newTuple = tuple[::-1]
     return newTuple
+
+def refreshRecentFiles():
+    global sub_menu1
+    global sub_menu21
+    global sub_menu22
+    global sub_menu3
+    global recentFiles
+    global recentSongs
+    global recentPlaylists
+    global playlist
+    global pPlaylist
+    for filename in  recentFiles:
+        sub_menu1.delete(0,tk.END)
+    for filename in  recentSongs:
+        sub_menu21.delete(0,tk.END)
+    for filename in  recentPlaylists:
+        sub_menu22.delete(0,tk.END)
+    try:
+        for filename in  recentFiles:
+            sub_menu3.delete(0,tk.END)
+    except:
+        pass
+    for filename in recentFiles:
+        sub_menu1.add_command(label = filename[:-2],command = lambda: (playlist.append(filename[:-2])))#oookay morgen hier die sache machen, dass die songs auch wirklich in die playlist hinzugefügt werden. vlt musst du eine extra funktion dafür machen, aber guck am besten nochmal bei addtoplaylist nach
+    for filename in recentSongs:
+        sub_menu21.add_command(label = filename[:-2],command = lambda: ())
+    for filename in recentPlaylists:
+        sub_menu22.add_command(label = filename[:-2])
+    try:
+        for filename in recentFiles:
+            sub_menu3.add_command(label = filename[:-2])
+    except:
+        pass
 
 def buildTwoWindows(ToF):
     message(1,"Not yet supported","This does not work yet.\nRight now you can only have the playlist in an extra Window","ok",5000)
@@ -2301,6 +2368,62 @@ def notebookTabChange(event):
     global selectedLog
     selectedLog = str(logs.index("current"))
 
+def filesToKeepChanged():
+    global filesToKeep
+    global recentFiles
+    global recentSongs
+    global recentPlaylists
+    howmany = filesToKeep.get()
+    filepath = os.path.join(dirname,"texts/settings.txt")
+    with open(filepath,'r') as file:
+        lines = file.readlines()
+    lines[5] = str(howmany) + '\n'
+    with open(filepath,'w') as file:
+        file.writelines(lines)
+    temp_list = []
+    count = howmany
+    while count > 0:
+        temp_list.insert(0,recentFiles[count - 1])
+        count = count - 1
+    recentFiles = []
+    recentFiles = temp_list
+    temp_list = []
+    count = howmany
+    while count > 0:
+        temp_list.insert(0,recentSongs[count - 1])
+        count = count - 1
+    recentSongs = []
+    recentSongs = temp_list
+    temp_list = []
+    count = howmany
+    while count > 0:
+        temp_list.insert(0,recentPlaylists[count - 1])
+        count = count - 1
+    recentPlaylists = []
+    recentPlaylists = temp_list
+    filepath = os.path.join(dirname,"texts/recent_files.txt")
+    with open(filepath,'r') as file:
+        lines = file.readlines()
+    del lines
+    lines = recentFiles
+    with open(filepath,'w') as file:
+        file.writelines(lines)
+    filepath = os.path.join(dirname,"texts/recent_songs.txt")
+    with open(filepath,'r') as file:
+        lines = file.readlines()
+    del lines
+    lines = recentSongs
+    with open(filepath,'w') as file:
+        file.writelines(lines)
+    filepath = os.path.join(dirname,"texts/recent_playlists.txt")
+    with open(filepath,'r') as file:
+        lines = file.readlines()
+    del lines
+    lines = recentPlaylists
+    with open(filepath,'w') as file:
+        file.writelines(lines)
+    refreshRecentFiles()
+
 def settingsFmenu(setting):
     if setting == "volumeSliderText":
         volumeSliderText = volumeSliderTextOnOff.get()
@@ -2387,7 +2510,6 @@ main_window.config(menu = menubar1)
 file_menu1 = tk.Menu(menubar1,tearoff = False)
 file_menu1.add_command(label = 'Open',command = addToPlaylist)
 sub_menu1 = tk.Menu(file_menu1,tearoff = False)
-sub_menu1.add_command(label = 'Recent file 1')
 file_menu1.add_cascade(label = "Recent files",menu = sub_menu1)
 file_menu1.add_command(label = 'Save as...',command = savePlaylist)
 file_menu1.add_command(label = 'Delete all',command = deleteAllSongs)
@@ -2408,9 +2530,12 @@ menubar1.add_cascade(label = "View",menu = view_menu1,underline = 0)
 #changelog
 #halt alle sachen die im help menu standardmäßig sind und/oder die im info window sind
 help_menu1 = tk.Menu(menubar1,tearoff = False)
-help_menu1.add_command(label = 'About TkMusic',command = lambda:(windowExtra("info")))
+help_menu1.add_command(label = 'About & help',command = lambda:(windowExtra("info")))
 help_menu1.add_command(label = 'Changelog',command = lambda:(windowExtra("Changelog")))
 help_menu1.add_command(label = 'License',command = lambda:(windowExtra("License")))
+help_menu1.add_separator()
+help_menu1.add_command(label = 'Options',command = lambda:(windowExtra("settings")))
+help_menu1.add_command(label = 'Message logs',command = lambda:(windowExtra("messageLogs")))
 menubar1.add_cascade(label = "Help",menu = help_menu1,underline = 0)
 
 #playlist window
@@ -2428,12 +2553,11 @@ plW.config(menu = menubar2)
         #file_menu
 file_menu2 = tk.Menu(menubar2,tearoff = False)
 file_menu2.add_command(label = 'Add',command = addToPlaylist)
-sub_menu2 = tk.Menu(file_menu2,tearoff = False)
-sub_menu2.add_command(label = 'Recent song 1')
-file_menu2.add_cascade(label = "Recent songs",menu = sub_menu2)
-sub_menu3 = tk.Menu(file_menu2,tearoff = False)
-sub_menu3.add_command(label = 'Recent playlist 1')
-file_menu2.add_cascade(label = "Recent playlists",menu = sub_menu3)
+sub_menu21 = tk.Menu(file_menu2,tearoff = False)
+file_menu2.add_cascade(label = "Recent songs",menu = sub_menu21)
+sub_menu22 = tk.Menu(file_menu2,tearoff = False)
+# sub_menu3.add_command(label = 'Recent playlist 1')
+file_menu2.add_cascade(label = "Recent playlists",menu = sub_menu22)
 file_menu2.add_command(label = 'Save as...',command = savePlaylist)
 file_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
 file_menu2.add_separator()
@@ -2456,11 +2580,13 @@ sliderVar = tk.IntVar()
 sliderVarExtra = tk.IntVar()
 sliderVarMini = tk.IntVar()
 volume = tk.IntVar()
+filesToKeep = tk.IntVar()
 volumeSliderTextOnOff = tk.BooleanVar()
 loopPlaylist = tk.BooleanVar()
 loopMove = tk.BooleanVar()
 twoWindows = tk.BooleanVar()
 #variables from settings
+    #settings.txt
 filepath_settings = os.path.join(dirname,"texts/settings.txt")
 with open(filepath_settings,'r') as file:
     lines = file.readlines()
@@ -2479,6 +2605,26 @@ loopMove.set(bool(loopMoveText))
 twoWindowsString = lines[4]
 twoWindowsText = twoWindowsString[:-1]
 twoWindows.set(bool(twoWindowsText))
+filesToKeepText = lines[5]
+filesToKeep.set(int(filesToKeepText))
+    #recent_files.txt
+filepath_recent_files = os.path.join(dirname,"texts/recent_files.txt")
+with open(filepath_recent_files,'r') as file:
+    lines = file.readlines()
+recentFiles = [] + lines
+    #recent_files.txt
+filepath_recent_songs = os.path.join(dirname,"texts/recent_songs.txt")
+with open(filepath_recent_songs,'r') as file:
+    lines = file.readlines()
+recentSongs = [] + lines
+    #recent_playlists.txt
+filepath_recent_playlists = os.path.join(dirname,"texts/recent_playlists.txt")
+with open(filepath_recent_playlists,'r') as file:
+    lines = file.readlines()
+recentPlaylists = [] + lines
+print(recentFiles)
+print(recentPlaylists)
+print(recentSongs)
 #variables for start
 playlist = []
 pPlaylist = []#played playlist
@@ -2767,6 +2913,7 @@ main_window.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
 #end
+refreshRecentFiles()
 plW.mainloop()
 main_window.mainloop()
 
@@ -2774,4 +2921,4 @@ main_window.mainloop()
 #vlt eine option zum verändern des styles/themes, der farben/(zumindest) der farbe des ausgewählten elements in der playlist
 #auf meinem linux pc wird nicht der gesamte text von length im playlist fenster angezeigt
 #entweder das extra window (wieder ig) nicht größenverstellbar machen, oder gucken, ob das programm vlt doch größenverstellbar sein kann
-#bei den playlist fenstern ein icon hinzufügen
+#option machen, mit der man anschalten kann, dass songs aus playlisten auch in den recent songs angezeigt werden
