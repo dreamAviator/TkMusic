@@ -26,6 +26,7 @@ import random
 import datetime#auch music
 import time
 import platform
+import notify2
 import os
 import sys
 #um relative pfade zu absoluten pfaden umzuwandeln
@@ -44,6 +45,8 @@ os.environ['PATH'] += ';' + vlc_path
 import vlc
 instance = vlc.Instance("--no-xlib")
 player = instance.media_player_new()
+#notify2
+notify2.init('TkMusic')
 
 
 #music control functions
@@ -709,7 +712,7 @@ def sliderChangePos(event):
             pass
 
 #playlist functions
-def addToPlaylist():
+def addToPlaylist(mbsong):#maybe song
     global playlist
     global plWtitleNameTrue
     global plWtitleName
@@ -724,7 +727,10 @@ def addToPlaylist():
     else:
         rememberme = False
     plWtitleNameTrue = False
-    songsToAdd = askopenfilenames()
+    if mbsong == "no":
+        songsToAdd = askopenfilenames()
+    else:
+        songsToAdd = mbsong
     if songsToAdd == '':
         return
     for sOpllst in songsToAdd:#song or playlist
@@ -777,7 +783,7 @@ def addToPlaylist():
     updatePlaylist(-1,-1)
 
 def addToPlaylistKey(event):
-    addToPlaylist()
+    addToPlaylist("no")
 
 def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     global tree
@@ -1720,7 +1726,7 @@ def windowExtra(extraType):
     extraWindow.config(menu = menubar3)
             #file_menu
     file_menu3 = tk.Menu(menubar3,tearoff = False)
-    file_menu3.add_command(label = 'Open',command = addToPlaylist)
+    file_menu3.add_command(label = 'Open',command = lambda: (addToPlaylist("no")))
     sub_menu3 = tk.Menu(file_menu3,tearoff = False)
     file_menu3.add_cascade(label = "Recent files",menu = sub_menu3)
     file_menu3.add_command(label = 'Save as...',command = savePlaylist)
@@ -1887,6 +1893,7 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
     global messageInfoLog
     global messageWarningLog
     global messageErrorLog
+    m = notify2.Notification(title,message).show()
     if image == 1:
         messageInfoLog.append(title)
         messageInfoLog.append(message)
@@ -2055,14 +2062,16 @@ def refreshRecentFiles():
     except:
         pass
     for filename in recentFiles:
-        sub_menu1.add_command(label = filename[:-2],command = lambda: (playlist.append(filename[:-2])))#oookay morgen hier die sache machen, dass die songs auch wirklich in die playlist hinzugefügt werden. vlt musst du eine extra funktion dafür machen, aber guck am besten nochmal bei addtoplaylist nach
+        print("hehehehsoifhde")
+        print(filename)
+        sub_menu1.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
     for filename in recentSongs:
-        sub_menu21.add_command(label = filename[:-2],command = lambda: ())
+        sub_menu21.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
     for filename in recentPlaylists:
-        sub_menu22.add_command(label = filename[:-2])
+        sub_menu22.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
     try:
         for filename in recentFiles:
-            sub_menu3.add_command(label = filename[:-2])
+            sub_menu3.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
     except:
         pass
 
@@ -2508,7 +2517,7 @@ menubar1 = tk.Menu(main_window)
 main_window.config(menu = menubar1)
         #file_menu
 file_menu1 = tk.Menu(menubar1,tearoff = False)
-file_menu1.add_command(label = 'Open',command = addToPlaylist)
+file_menu1.add_command(label = 'Open',command = lambda: (addToPlaylist("no")))
 sub_menu1 = tk.Menu(file_menu1,tearoff = False)
 file_menu1.add_cascade(label = "Recent files",menu = sub_menu1)
 file_menu1.add_command(label = 'Save as...',command = savePlaylist)
@@ -2552,7 +2561,7 @@ menubar2 = tk.Menu(plW)
 plW.config(menu = menubar2)
         #file_menu
 file_menu2 = tk.Menu(menubar2,tearoff = False)
-file_menu2.add_command(label = 'Add',command = addToPlaylist)
+file_menu2.add_command(label = 'Add',command = lambda: (addToPlaylist("no")))
 sub_menu21 = tk.Menu(file_menu2,tearoff = False)
 file_menu2.add_cascade(label = "Recent songs",menu = sub_menu21)
 sub_menu22 = tk.Menu(file_menu2,tearoff = False)
@@ -2801,7 +2810,7 @@ songCover.pack(ipady = 20)
 
 #playlist window
     #btmBtnsFrame
-addToPlaylistButton = ttk.Button(btmBtnsFrame,image = add_to_playlist_image,command = addToPlaylist)
+addToPlaylistButton = ttk.Button(btmBtnsFrame,image = add_to_playlist_image,command = lambda: (addToPlaylist("no")))
 addToPlaylistButton.pack(side = tk.LEFT)
 savePlaylistButton = ttk.Button(btmBtnsFrame,image = save_playlist_image,command = savePlaylist)
 savePlaylistButton.pack(side = tk.LEFT)
