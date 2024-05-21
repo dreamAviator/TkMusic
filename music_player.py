@@ -1178,6 +1178,17 @@ def delFrompllst():#delete from playlist
 def delFrompllstKey(event):
     delFrompllst()
 
+def del Duplicates():#noch fixen
+    global playlist
+    global pPlaylist
+    nPlaylist = []
+    [nPlaylist.append(song) for song in playlist if song not in nPlaylist]
+    playlist = nPlaylist
+    nPplaylist = []
+    [nPplaylist.append(song) for song in pPlaylist if song not in pPlaylist]
+    pPlaylist = nPplaylist
+    updatePlaylist(0,0)#noch etwas hinzufügen, dass wenn ein duplikat gerade abgespielt wird, entweder zum nächsten song geskippt wird, oder das gecheckt wird und wenn das der fall ist, eine weitere option erscheint. generell könnte man aber auch eine option machen, die fragt, ob immer das erste vorkommnis oder ein anderes genommen werden soll
+
 def deleteAllSongs():
     global playlist
     global pPlaylist
@@ -2581,6 +2592,7 @@ edit_menu2.add_command(label = 'Move one or more elements to the bottom',command
 edit_menu2.add_command(label = 'Move one or more elements one place up',command = upInPlaylist)
 edit_menu2.add_command(label = 'Move one or more elements one place down',command = downInPlaylist)
 edit_menu2.add_command(label = 'Delete one or more elements from the playlist',command = delFrompllst)
+edit_menu2.add_command(label = 'Delete duplicates',command = delDuplicates)
 edit_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
 menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
 
