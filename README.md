@@ -33,7 +33,7 @@ These have been tested and work:
 - Opus
 - MP2		(MPEG-1 Audio Layer 2)
 
-If the selected file isn't one of these formats, the program will say, the file is not supported.
+If the selected file isn't one of these formats, you will get a warning message saying, that this format is not supported
 
 These have been tested and do not work:
 - AMR  (Adaptive Multi-Rate ACELP Codec file)
