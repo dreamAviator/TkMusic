@@ -1178,15 +1178,16 @@ def delFrompllst():#delete from playlist
 def delFrompllstKey(event):
     delFrompllst()
 
-def del Duplicates():#noch fixen
+def delDuplicates():#noch fixen
+    global song
     global playlist
     global pPlaylist
-    nPlaylist = []
-    [nPlaylist.append(song) for song in playlist if song not in nPlaylist]
-    playlist = nPlaylist
-    nPplaylist = []
-    [nPplaylist.append(song) for song in pPlaylist if song not in pPlaylist]
-    pPlaylist = nPplaylist
+    bPlaylist = pPlaylist + playlist#big playlist
+    nPlaylist = []#new playlist
+    [nPlaylist.append(item) for item in bPlaylist if item not in nPlaylist]
+    where = nPlaylist.index(song)
+    pPlaylist = nPlaylist[:where]
+    playlist = nPlaylist[where:]
     updatePlaylist(0,0)#noch etwas hinzufügen, dass wenn ein duplikat gerade abgespielt wird, entweder zum nächsten song geskippt wird, oder das gecheckt wird und wenn das der fall ist, eine weitere option erscheint. generell könnte man aber auch eine option machen, die fragt, ob immer das erste vorkommnis oder ein anderes genommen werden soll
 
 def deleteAllSongs():
