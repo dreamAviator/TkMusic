@@ -1,7 +1,20 @@
 # TkMusic
 ### A music player written in python, that uses Tkinter and the vlc-python module
 
-Normally the python-vlc module needs to have the VLC Media Player installed, but this program also works, when the VLC Media Player is not installed, because all the necessary files are in the project files.
+
+
+### Features:
+- Play music
+- Many supported formats (list below)
+- Although using the python-vlc module, vlc does not have to be installed*
+- Create and edit playlists, open them with any other media player**
+- View and edit metadata (including the song cover)
+- Works on Windows and Linux with the same code
+- Straightforward not bad looking UI
+- Open Source
+*Normally when using the python-vlc module, the VLC Media Player has to be installed. Here, all the necessary files from the VLC Media Player are included, so you don't have to install it
+**Playlists are saved in the m3u or m3u8 format, an open playlist format a lot of media players support
+
 
 
 ### Supported file formats:
