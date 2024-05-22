@@ -14,6 +14,7 @@
 - Open Source
 
 *Normally when using the python-vlc module, the VLC Media Player has to be installed. Here, all the necessary files from the VLC Media Player are included, so you don't have to install it
+
 **Playlists are saved in the m3u or m3u8 format, an open playlist format a lot of media players support
 
 
