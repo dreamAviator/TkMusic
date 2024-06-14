@@ -720,8 +720,11 @@ def addToPlaylist(mbsong):#maybe song
     global recentSongs
     global recentPlaylists
     global filesToKeep
+    songsToAdd = []
     howmany = filesToKeep.get()
     unsupportedFiles = ""
+    print("addtofiles")
+    print(mbsong)
     if playlist == []:
         rememberme = True
     else:
@@ -730,7 +733,7 @@ def addToPlaylist(mbsong):#maybe song
     if mbsong == "no":
         songsToAdd = askopenfilenames()
     else:
-        songsToAdd = mbsong
+        songsToAdd.append(mbsong)
     if songsToAdd == '':
         return
     for sOpllst in songsToAdd:#song or playlist
@@ -765,6 +768,8 @@ def addToPlaylist(mbsong):#maybe song
         file.writelines(recentPlaylists)
     refreshRecentFiles()
 
+    print("here we go again again lol")
+    print(songsToAdd)
     for element in songsToAdd:
         if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
             unsupportedFiles = unsupportedFiles + '\n' + element
@@ -1905,7 +1910,7 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
     global messageInfoLog
     global messageWarningLog
     global messageErrorLog
-    m = notify2.Notification(title,message).show()
+    m = notify2.Notification(title,message).show()#funktion hinzufügen, mti der man die anzeige der programmeigenen benachrichtigungen/der betriebssystem benachrichtigungen ausschalten kann. zumindest die ohne buttons
     if image == 1:
         messageInfoLog.append(title)
         messageInfoLog.append(message)
@@ -2073,17 +2078,21 @@ def refreshRecentFiles():
             sub_menu3.delete(0,tk.END)
     except:
         pass
+    count = 0
+    print("recent files")
+    print(recentFiles)
     for filename in recentFiles:
-        print("hehehehsoifhde")
-        print(filename)
-        sub_menu1.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
+        sub_menu1.add_command(label=filename[:-1], command=lambda f=filename[:-1]: addToPlaylist(str(f)))#von duckduckgo gpt3.5
+        #sub_menu1.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
+        #sub_menu1.add_command(label = filename[:-1],command = addToPlaylist(str(filename)))
+        print("fuck this")
     for filename in recentSongs:
-        sub_menu21.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
+        sub_menu21.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
     for filename in recentPlaylists:
-        sub_menu22.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
+        sub_menu22.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
     try:
         for filename in recentFiles:
-            sub_menu3.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
+            sub_menu3.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
     except:
         pass
 
