@@ -10,12 +10,14 @@
 - Create and edit playlists, open them with any other media player**
 - View and edit metadata (including the song cover)
 - Works on Windows and Linux with the same code
-- Straightforward not bad looking UI
+- Straightforward not bad looking UI***
 - Open Source
 
 *Normally when using the python-vlc module, the VLC Media Player has to be installed. Here, all the necessary files from the VLC Media Player are included, so you don't have to install it
 
 **Playlists are saved in the m3u or m3u8 format, an open playlist format a lot of media players support
+
+***The tkinter File picker looks horrendous and outdated on linux, so I'm using PyQt5 for the file picker
 
 
 
