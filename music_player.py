@@ -5,10 +5,8 @@
 #gui
 import tkinter as tk
 from tkinter import ttk
-from tkinter.filedialog import askopenfilename
-from tkinter.filedialog import askopenfilenames
-from tkinter.filedialog import asksaveasfilename
 from tkinter.scrolledtext import ScrolledText
+from PyQt5.QtWidgets import QApplication, QFileDialog
 #gui + music (song cover)
 from PIL import Image
 #music
@@ -731,7 +729,7 @@ def addToPlaylist(mbsong):#maybe song
         rememberme = False
     plWtitleNameTrue = False
     if mbsong == "no":
-        songsToAdd = askopenfilenames()
+        songsToAdd = openFilesDialog()
     else:
         songsToAdd.append(mbsong)
     if songsToAdd == '':
@@ -1210,11 +1208,17 @@ def savePlaylist():
     #global progressPercent
     #progress()
     #progressPercent = 100 / (len(playlist) + len(pPlaylist) + 2)
-    saveThere = asksaveasfilename(filetypes = (("Standard playlist file (older)","*.m3u"),("Standard playlist file (newer) !not yet supported!","*.m3u8"),("Text file","*.txt")))
-    if saveThere == '':
+    saveThere,selectedFilter = saveFileDialog()
+    if saveThere == None:
         return
-    elif saveThere.endswith(".m3u") != True:
-        saveThere = saveThere + ".m3u"
+    elif "(*.m3u)" in selectedFilter:
+        extension = ".m3u"
+    elif "(*.m3u8)" in selectedFilter:
+        extension = ".m3u8"
+    elif "(*.txt)" in selectedFilter:
+        extension = ".txt"
+    if saveThere.endswith(extension) == False:
+        saveThere = saveThere + extension
     lastSlash = saveThere.rfind("/")
     playlistName = saveThere[lastSlash + 1:]
     try:#falls die playlist schon existiert, dass man sie ordentlich überschreiben kann
@@ -1504,7 +1508,7 @@ def infoWE():
     licenseAttributionFrame.pack(side = tk.TOP,fill = tk.X)
     changelogButton = ttk.Button(versionFrame,text = "Changelog",command = lambda: (windowExtra("Changelog")))
     changelogButton.pack(side = tk.RIGHT)
-    version = ttk.Label(versionFrame,text = "Version 1.0 BETA 7")
+    version = ttk.Label(versionFrame,text = "Version 1.0 BETA 9")
     version.pack(fill = tk.X)
     attributions = ttk.Button(licenseAttributionFrame,text = "Attributions",command = lambda: (windowExtra("attributions")))
     attributions.pack(side = tk.RIGHT)
@@ -2507,6 +2511,19 @@ def settings(setting):
     with open(filepath,'w') as file:
         file.writelines(lines)
 
+
+def openFilesDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    options |= QFileDialog.ReadOnly
+    files, _ = QFileDialog.getOpenFileNames(None, "Open Songs or Playlists", "", "All Files (*)",options = options)
+    return files
+
+def saveFileDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    fileName,selectedFilter = QFileDialog.getSaveFileName(None,"Save Playlist","","m3u Playlist Files (older standard) (*.m3u);;m3u8 Playlist Files (newer standard) (*.m3u8);;Text Files (*.txt);;All Files (*)",options = options)
+    return fileName,selectedFilter
 
 def exitProgram():
     global exiting
