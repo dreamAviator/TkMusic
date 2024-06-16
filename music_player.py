@@ -2528,6 +2528,11 @@ def saveFileDialog():
 def exitProgram():
     global exiting
     global ThreadStopped
+    global plW
+    global main_window
+    message(1,"Quitting...","This might take a some time","ok",0)
+    main_window.title("Quitting...")
+    plW.title("Quitting...")
     exiting = True
     #time.sleep(2)
     sys.exit()
