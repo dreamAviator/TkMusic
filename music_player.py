@@ -180,7 +180,7 @@ def loadSong():
             except:
                 pass
         else:
-            
+
             try:
                 songNameText.config(text = songName)
             except:
@@ -499,7 +499,7 @@ def nextSong(where):
         nextSong("nextSong")
     threading()
     if where == "skipF" or where == "skipB" or where == "fst" or where == "lst" or where == "end":
-        if miniModeActive == False:
+        if miniModeActive.get() == False:
             items = tree.get_children()
             for item_id in items:
                 values = tree.item(item_id,"values")
@@ -515,7 +515,7 @@ def nextSong(where):
                         remainingLength("fst")
                     elif where == "lst":
                         remainingLength("lst")
-        elif miniModeActive == True:
+        elif miniModeActive.get() == True:
             items = treeMiniMode.get_children()
             for item_id in items:
                 values = treeMiniMode.item(item_id,"values")
@@ -718,6 +718,7 @@ def addToPlaylist(mbsong):#maybe song
     global recentSongs
     global recentPlaylists
     global filesToKeep
+    loading_Threading()
     songsToAdd = []
     howmany = filesToKeep.get()
     unsupportedFiles = ""
@@ -730,10 +731,14 @@ def addToPlaylist(mbsong):#maybe song
     plWtitleNameTrue = False
     if mbsong == "no":
         songsToAdd = openFilesDialog()
+        print(songsToAdd)
     else:
         songsToAdd.append(mbsong)
-    if songsToAdd == '':
+    if songsToAdd == []:
+        loading_stop()
         return
+    print("addtoplaylist")
+    print("here loadingthreading addtoplaylist")
     for sOpllst in songsToAdd:#song or playlist
         del recentFiles[howmany - 1]
         print(recentFiles)
@@ -783,6 +788,8 @@ def addToPlaylist(mbsong):#maybe song
     if rememberme == True:
         nextSong("add")
         return
+    loading_stop()
+    print("i wanna be a girl")
     updatePlaylist(-1,-1)
 
 def addToPlaylistKey(event):
@@ -799,18 +806,24 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     global plWminiMode
     global treeMiniMode
     global remainingPlaylistLengthLabelMini
-    if miniModeActive == False:
+    print("update playlist")
+    print("hree loading threading updateplaylist")
+    loading_Threading()
+    if miniModeActive.get() == False:
         plW.title("Playlist loading...")
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         plWminiMode.title("Playlist loading...")
 #    loadingThreading()
     row_number = 1
-    if miniModeActive == False:
+    print("why u not doing anything?!?")
+    if miniModeActive.get() == False:
+        print("okay here u should do smth")
         for item in tree.get_children():
             tree.delete(item)
         playlistLengthLabel.config(text = "loading...")
         remainingPlaylistLengthLabel.config(text = "loading...")
         for pSong in pPlaylist:#played song
+            print("here it should fill the treeee")
             Title = getSongName(pSong)
             Artist = getSongArtist(pSong)
             #length = getSongLength(pSong)
@@ -822,7 +835,7 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
             #length = getSongLength(song)
             tree.insert('',tk.END,values = (Title,Artist,"loading",row_number))
             row_number = row_number + 1
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         for item in treeMiniMode.get_children():
             treeMiniMode.delete(item)
         remainingPlaylistLengthLabelMini.config(text = "loading...")
@@ -850,6 +863,7 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     #    if values and values[0] == str(len(pPlaylist) + 1):
     #        tree.selection_set(item_id)
     #        return
+    loading_stop()
     updatePlaylistThread()
 
 def plstSelSee(selectCount,seeCount):#plstSelSee = plstSelSeeAndSee;0 = none; -1 = last
@@ -859,7 +873,7 @@ def plstSelSee(selectCount,seeCount):#plstSelSee = plstSelSeeAndSee;0 = none; -1
     global pPlaylist
     global miniModeActive
     global playlistSelectionLabelMini
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         items = tree.get_children()
         for item_id in items:
             tree.item(item_id,tags = ("not_playing"))
@@ -880,7 +894,7 @@ def plstSelSee(selectCount,seeCount):#plstSelSee = plstSelSeeAndSee;0 = none; -1
             elif seeCount == -1:
                 if values[3] == str(len(pPlaylist) + len(playlist)):
                     tree.see(item_id)
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         items = treeMiniMode.get_children()
         for item_id in items:
             treeMiniMode.item(item_id,tags = ("not_playing"))
@@ -918,15 +932,18 @@ def length_for_playlist():
     global plWtitleNameTrue
     global plWtitleName
     global miniModeActive
-    if miniModeActive == False:
+    print("length for playlist")
+    print("here loading thre<ding length forplaylist")
+    loading_Threading()
+    if miniModeActive.get() == False:
         plW.title("Playlist duration loading...")
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         plWminiMode.title("Playlist duration loading...")
     notFound = ""
     notFoundList1 = []
     notFoundList2 = []
     try:
-        if miniModeActive == False:
+        if miniModeActive.get() == False:
             items = tree.get_children()
             count = 0
             playlistLengthSec = 0#insgesamte länge der playlist
@@ -987,8 +1004,10 @@ def length_for_playlist():
                     pass
             if notFoundList1 != [] or notFoundList2 != []:
                 message(2,"File(s) not found","These files couldn't be found and were removed from the playlist:\n" + notFound,"ok",0)
+                loading_stop()
+                print("update playlust new started")
                 updatePlaylist(0,0)
-        if miniModeActive == True:
+        if miniModeActive.get() == True:
             items = treeMiniMode.get_children()
             count = 0
             playlistLengthSec = 0#insgesamte länge der playlist
@@ -1048,20 +1067,27 @@ def length_for_playlist():
                     pass
             if notFoundList1 != [] or notFoundList2 != []:
                 message(2,"File(s) not found","These files couldn't be found and were removed from the playlist:\n" + notFound,"ok",0)
+                loading_stop()
+                print("update playlist neuzustarten")
                 updatePlaylist(0,0)
     except Exception as e:
+        loading_stop()
         print(e)
-        
-    if miniModeActive == False:
+
+    if miniModeActive.get() == False:
         if plWtitleNameTrue:
             plW.title(plWtitleName)
+            loading_stop()
             return
         plW.title("Playlist")
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         if plWtitleNameTrue:
             plWminiMode.title(plWtitleName)
+            loading_stop()
             return
         plWminiMode.title("Playlist")
+    print("length for playliust finished")
+    loading_stop()
 
 def remainingLength(ForB):#okay hier wird das noch ein problem wenn ich nicht die gesamte länge anzeige
     global remainingPlaylistLengthLabel
@@ -1100,15 +1126,15 @@ def remainingLength(ForB):#okay hier wird das noch ein problem wenn ich nicht di
 
 def playFromPlaylist():
     global miniModeActive
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         selectedItems = tree.selection()
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         selectedItems = tree.selection()
     if len(selectedItems) > 1 or len(selectedItems) == 0:
         return
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         selectedRow = tree.item(selectedItems)
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         selectedRow = tree.item(selectedItems)
     values = selectedRow['values']
     count = values[3]
@@ -1133,17 +1159,17 @@ def playFromPlaylistEvent(event):
 
 def delFrompllst():#delete from playlist
     global miniModeActive
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         selectedItems = tree.selection()
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     counts = []
     for item in selectedItems:
-        if miniModeActive == False:
+        if miniModeActive.get() == False:
             selectedRow = tree.item(item)
-        elif miniModeActive == True:
+        elif miniModeActive.get() == True:
             selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
@@ -1205,11 +1231,13 @@ def savePlaylist():
     global playlist
     global pPlaylist
     global miniModeActive
+    loading_Threading()
     #global progressPercent
     #progress()
     #progressPercent = 100 / (len(playlist) + len(pPlaylist) + 2)
     saveThere,selectedFilter = saveFileDialog()
-    if saveThere == None:
+    if saveThere == "":
+        loading_stop()
         return
     elif "(*.m3u)" in selectedFilter:
         extension = ".m3u"
@@ -1241,9 +1269,9 @@ def savePlaylist():
         with open(saveThere, "a") as f:
             f.write(element + '\n')
     #    makeProgress()
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         plW.title(playlistName)
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         plWminiMode.title(playlistName)
     message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)
 
@@ -1252,16 +1280,16 @@ def upInPlaylist():
     global playlist
     global pPlaylist
     global miniModeActive
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         selectedItems = tree.selection()
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     for item in selectedItems:
-        if miniModeActive == False:
+        if miniModeActive.get() == False:
             selectedRow = tree.item(item)
-        elif miniModeActive == True:
+        elif miniModeActive.get() == True:
             selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
@@ -1306,16 +1334,16 @@ def downInPlaylist():
     global playlist
     global pPlaylist
     global miniModeActive
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         selectedItems = tree.selection()
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     for item in selectedItems:
-        if miniModeActive == False:
+        if miniModeActive.get() == False:
             selectedRow = tree.item(item)
-        elif miniModeActive == True:
+        elif miniModeActive.get() == True:
             selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
@@ -1357,16 +1385,16 @@ def topInPlaylist():
     global playlist
     global pPlaylist
     global miniModeActive
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         selectedItems = tree.selection()
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0 or len(selectedItems) < 1:#nur vorläufig so machen, später einen fix dafür rausbringen, dass man mehrere selecten kann. vielleicht irgendwie mit einem counter track behalten, wie viele items nach unten die anderen items gerutscht sind.
         return
     for item in selectedItems:
-        if miniModeActive == False:
+        if miniModeActive.get() == False:
             selectedRow = tree.item(item)
-        elif miniModeActive == True:
+        elif miniModeActive.get() == True:
             selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
@@ -1393,16 +1421,16 @@ def bottomInPlaylist():
     global playlist
     global pPlaylist
     global miniModeActive
-    if miniModeActive == False:
+    if miniModeActive.get() == False:
         selectedItems = tree.selection()
-    elif miniModeActive == True:
+    elif miniModeActive.get() == True:
         selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0 or len(selectedItems) < 1:#nur vorläufig so machen, später einen fix dafür rausbringen, dass man mehrere selecten kann. vielleicht irgendwie mit einem counter track behalten, wie viele items nach oben die anderen items gerutscht sind.
         return
     for item in selectedItems:
-        if miniModeActive == False:
+        if miniModeActive.get() == False:
             selectedRow = tree.item(item)
-        elif miniModeActive == True:
+        elif miniModeActive.get() == True:
             selectedRow == treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
@@ -1772,6 +1800,8 @@ def windowExtra(extraType):
     help_menu3.add_command(label = 'Options',command = lambda:(windowExtra("settings")))
     help_menu3.add_command(label = 'Message logs',command = lambda:(windowExtra("messageLogs")))
     menubar3.add_cascade(label = "Help",menu = help_menu3,underline = 0)
+    #
+    refreshRecentFiles()
     #frames
     toolbarFrameExtra = ttk.Frame(extraWindow,width = 50)
     toolbarFrameExtra.pack(side = tk.LEFT,fill = tk.Y)
@@ -2016,46 +2046,49 @@ def makeProgress():
     if progressbar['value'] < 100:
         progressbar['value'] = progressbar['value'] + progressPercent
 
-def loading():
-    global loadingWindow
-    global loading_icon_1
-    global loading_icon_2
-    global loading_icon_3
-    global loading_image_1
-    global loading_image_2
-    global loading_image_3
-    try:
-        loadingWindow.destroy()
-    except:
-        pass
-    loadingWindow = tk.Toplevel()
-    loadingWindow.geometry('500x360+100+100')
-    loadingWindow.resizable(False,False)
-    loadingLabel1 = ttk.Label(loadingWindow,image = loading_image_1)
-    loadingLabel1.pack()
-    loadingLabel2 = ttk.Label(loadingWindow,text = "Loading...")
-    loadingLabel2.pack()
-    while True:
-        loadingWindow.title("Loading...")
-        loadingWindow.iconbitmap(loading_icon_1)
-        loadingLabel1.config(image = loading_image_1)
-        loadingLabel2.config(text = "Loading...")
-        time.sleep(0.2)
-        loadingWindow.title("Loading.")
-        loadingWindow.iconbitmap(loading_icon_2)
-        loadingLabel1.config(image = loading_image_2)
-        loadingLabel2.config(text = "Loading.")
-        time.sleep(0.2)
-        loadingWindow.title("Loading..")
-        loadingWindow.iconbitmap(loading_icon_3)
-        loadingLabel1.config(image = loading_image_3)
-        loadingLabel2.config(text = "Loading..")
-        time.sleep(0.2)
-        
+def loading_Threading():
+    print("loading_threading started")
+    loading_thread = Thread(target = loading)
+    loading_thread.start()
 
-def loadingThreading():
-    loadingThread = Thread(target = loading)
-    loadingThread.start()
+def loading():
+    print("now ir should be loading")
+    global main_window
+    global plW
+    global cursor_state
+    print(cursor_state)
+    while cursor_state == "normal" and exiting != True:
+        if platform.system() == "Linux":
+            main_window.config(cursor = "watch")
+            main_window.update_idletasks()
+            plW.config(cursor = "watch")
+            print("lets trieeeeee")
+            plW.update_idletasks()
+        else:
+            main_window.config(cursor = "wait")
+            main_window.update_idletasks()
+            plW.config(cursor = "wait")
+            plW.update_idletasks()
+    print(cursor_state)
+    cursor_state = "loading"
+    print("loading start done")
+
+def loading_stop():
+    global cursor_state
+    print("now it shiuold not be loading")
+    print(cursor_state)
+    while cursor_state == "loading":
+        main_window.config(cursor = "")
+        main_window.update_idletasks()
+        plW.config(cursor = "")
+        plW.update_idletasks()
+    cursor_state = "normal"
+    print("loading stop done")
+
+
+#def loadingThreading():
+#    loadingThread = Thread(target = loading)
+#    loadingThread.start()
 
 def reverseTuple(tuple):
     newTuple = tuple[::-1]
@@ -2092,11 +2125,15 @@ def refreshRecentFiles():
         print("fuck this")
     for filename in recentSongs:
         sub_menu21.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
+        print("fuckening this")
     for filename in recentPlaylists:
         sub_menu22.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
+        print("fuckeningening this")
     try:
+        print("i'm trying now lol")
         for filename in recentFiles:
             sub_menu3.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
+            print("fuckeningeningening this")
     except:
         pass
 
@@ -2208,7 +2245,7 @@ def buildMiniMode():
     miniModeWindow = tk.Toplevel()
     miniModeWindow.geometry(miniModeSize)
     miniModeWindow.title("Song Name | TkMusic")
-    #iconshit 
+    #iconshit
     miniModeWindow.protocol("WM_DELETE_WINDOW",exitProgram)
     #Frames
     musicControlFrameMini = ttk.Frame(miniModeWindow,height = 50)
@@ -2417,21 +2454,30 @@ def filesToKeepChanged():
     temp_list = []
     count = howmany
     while count > 0:
-        temp_list.insert(0,recentFiles[count - 1])
+        try:
+            temp_list.insert(0,recentFiles[count - 1])
+        except:
+            temp_list.insert(0,"empty file\n")
         count = count - 1
     recentFiles = []
     recentFiles = temp_list
     temp_list = []
     count = howmany
     while count > 0:
-        temp_list.insert(0,recentSongs[count - 1])
+        try:
+            temp_list.insert(0,recentSongs[count - 1])
+        except:
+            temp_list.insert(0,"empty file\n")
         count = count - 1
     recentSongs = []
     recentSongs = temp_list
     temp_list = []
     count = howmany
     while count > 0:
-        temp_list.insert(0,recentPlaylists[count - 1])
+        try:
+            temp_list.insert(0,recentPlaylists[count - 1])
+        except:
+            temp_list.insert(0,"empty file\n")
         count = count - 1
     recentPlaylists = []
     recentPlaylists = temp_list
@@ -2464,7 +2510,20 @@ def settingsFmenu(setting):
         if volumeSliderText == False:
             volumeSliderTextOnOff.set("True")
         else:
-            volumeSliderTextOnOff.set("")
+            volumeSliderTextOnOff.set("False")
+    elif setting == "twoWindows":
+        twoWindowsText = twoWindows.get()
+        if twoWindowsText == False:
+            twoWindows.set("True")
+        else:
+            twoWindows.set("False")
+    elif setting == "miniMode":
+        miniModeActiveText = miniModeActive.get()
+        if miniModeActiveText == False:
+            miniModeActive.set("True")
+        else:
+            miniModeActive.set("False")
+    settings(setting)
 
 def settings(setting):
     global loopPlaylist
@@ -2508,6 +2567,16 @@ def settings(setting):
             buildTwoWindows(True)
         lines[4] = ""
         lines[4] = twoWindowsText + '\n'
+    elif setting == "miniMode":
+        miniModeActiveText = miniModeActive.get()
+        if miniModeActiveText == False:
+            miniModeActiveText = ""
+            buildMiniMode(False)
+        else:
+            miniModeActiveText  ="True"
+            buildMiniMode(True)
+        lines[6] = ""
+        lines[6] = miniModeActiveText + '\n'
     with open(filepath,'w') as file:
         file.writelines(lines)
 
@@ -2530,6 +2599,7 @@ def exitProgram():
     global ThreadStopped
     global plW
     global main_window
+    loading_stop()
     message(1,"Quitting...","This might take a some time","ok",0)
     main_window.title("Quitting...")
     plW.title("Quitting...")
@@ -2638,6 +2708,7 @@ volumeSliderTextOnOff = tk.BooleanVar()
 loopPlaylist = tk.BooleanVar()
 loopMove = tk.BooleanVar()
 twoWindows = tk.BooleanVar()
+miniModeActive = tk.BooleanVar()
 #variables from settings
     #settings.txt
 filepath_settings = os.path.join(dirname,"texts/settings.txt")
@@ -2694,11 +2765,11 @@ plstSelection = "0/0"
 songName = "Title"
 songArtist = "Artist"
 songFilename = "Filename"
+cursor_state = "normal"
 sliderPressed = False
 volumePressed = False
 exiting = False
 ThreadStopped = False
-miniModeActive = False
 plWtitleNameTrue = False
 numberforminimode_main_window = 1
 numberforminimode_plW = 1
@@ -2960,8 +3031,6 @@ main_window.bind("<Shift-Left>",stepRewindSongKey)
     #open info page/window
 #main_window.bind_all('s',windowExtra("settings"))
 #main_window.bind_all('S',windowExtra("settings"))
-main_window.bind("<Unmap>",buildMiniMode_main_window)
-plW.bind("<Unmap>",buildMiniMode_plW)
 main_window.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
