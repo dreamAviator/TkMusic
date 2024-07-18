@@ -718,7 +718,6 @@ def addToPlaylist(mbsong):#maybe song
     global recentSongs
     global recentPlaylists
     global filesToKeep
-    loading_Threading()
     songsToAdd = []
     howmany = filesToKeep.get()
     unsupportedFiles = ""
@@ -735,8 +734,8 @@ def addToPlaylist(mbsong):#maybe song
     else:
         songsToAdd.append(mbsong)
     if songsToAdd == []:
-        loading_stop()
         return
+    loading_Threading()
     print("addtoplaylist")
     print("here loadingthreading addtoplaylist")
     for sOpllst in songsToAdd:#song or playlist
@@ -1231,13 +1230,11 @@ def savePlaylist():
     global playlist
     global pPlaylist
     global miniModeActive
-    loading_Threading()
     #global progressPercent
     #progress()
     #progressPercent = 100 / (len(playlist) + len(pPlaylist) + 2)
     saveThere,selectedFilter = saveFileDialog()
     if saveThere == "":
-        loading_stop()
         return
     elif "(*.m3u)" in selectedFilter:
         extension = ".m3u"
@@ -2064,13 +2061,14 @@ def loading():
             plW.config(cursor = "watch")
             print("lets trieeeeee")
             plW.update_idletasks()
+            cursor_state = "loading"
         else:
             main_window.config(cursor = "wait")
             main_window.update_idletasks()
             plW.config(cursor = "wait")
             plW.update_idletasks()
+            cursor_state = "loading"
     print(cursor_state)
-    cursor_state = "loading"
     print("loading start done")
 
 def loading_stop():
@@ -2082,7 +2080,7 @@ def loading_stop():
         main_window.update_idletasks()
         plW.config(cursor = "")
         plW.update_idletasks()
-    cursor_state = "normal"
+        cursor_state = "normal"
     print("loading stop done")
 
 
