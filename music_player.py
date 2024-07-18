@@ -44,7 +44,7 @@ import vlc
 instance = vlc.Instance("--no-xlib")
 player = instance.media_player_new()
 #notify2
-notify2.init('TkMusic')
+notify2.init('TkMusic')#das scheint auf windows nicht zu funktionieren, bzw sagt der mir da, da fehlt ein dbus module, dass notify2 importieren möchte
 
 
 #music control functions
