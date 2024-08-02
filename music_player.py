@@ -44,7 +44,7 @@ import vlc
 instance = vlc.Instance("--no-xlib")
 player = instance.media_player_new()
 #notify2
-notify2.init('TkMusic')#das scheint auf windows nicht zu funktionieren, bzw sagt der mir da, da fehlt ein dbus module, dass notify2 importieren möchte
+notify2.init('TkMusic')
 
 
 #music control functions
@@ -1210,12 +1210,35 @@ def delDuplicates():#noch fixen
     global song
     global playlist
     global pPlaylist
-    bPlaylist = pPlaylist + playlist#big playlist
-    nPlaylist = []#new playlist
-    [nPlaylist.append(item) for item in bPlaylist if item not in nPlaylist]
-    where = nPlaylist.index(song)
-    pPlaylist = nPlaylist[:where]
-    playlist = nPlaylist[where:]
+#    bPlaylist = pPlaylist + playlist#big playlist
+#    nPlaylist = []#new playlist
+#    [nPlaylist.append(item) for item in bPlaylist if item not in nPlaylist]
+#    where = nPlaylist.index(song)
+#    pPlaylist = nPlaylist[:where]
+#    playlist = nPlaylist[where:]
+    checkElement = []
+    newPp = []
+    newP = []
+    for element in pPlaylist:#musst dir was ausdenken, was passiert wenn ein song abgespielt wird der gerade gelöscht wurde
+        try:
+            place = checkElement.index(element)#vlt brauche ich place für die idee da unten irgendwann nochmal
+        except:
+            newPp.append(element)
+            checkElement.append(element)
+    for element in playlist:
+        try:
+            print("trying")
+            place = checkElement.index(element)
+        except:
+            print("except")
+            newP.append(element)
+            checkElement.append(element)
+    pPlaylist = []
+    playlist = []
+    for element in newPp:
+        pPlaylist.append(element)
+    for element in newP:
+        playlist.append(element)
     updatePlaylist(0,0)#noch etwas hinzufügen, dass wenn ein duplikat gerade abgespielt wird, entweder zum nächsten song geskippt wird, oder das gecheckt wird und wenn das der fall ist, eine weitere option erscheint. generell könnte man aber auch eine option machen, die fragt, ob immer das erste vorkommnis oder ein anderes genommen werden soll
 
 def deleteAllSongs():
@@ -1258,14 +1281,12 @@ def savePlaylist():
     #    makeProgress()
     #    makeProgress()
         pass
-    for element in playlist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
-    #    makeProgress()
     for element in pPlaylist:
         with open(saveThere, "a") as f:
             f.write(element + '\n')
-    #    makeProgress()
+    for element in playlist:
+        with open(saveThere, "a") as f:
+            f.write(element + '\n')
     if miniModeActive.get() == False:
         plW.title(playlistName)
     elif miniModeActive.get() == True:
@@ -1533,7 +1554,7 @@ def infoWE():
     licenseAttributionFrame.pack(side = tk.TOP,fill = tk.X)
     changelogButton = ttk.Button(versionFrame,text = "Changelog",command = lambda: (windowExtra("Changelog")))
     changelogButton.pack(side = tk.RIGHT)
-    version = ttk.Label(versionFrame,text = "Version 1.0 BETA 9")
+    version = ttk.Label(versionFrame,text = "Version 1.0 BETA 10")
     version.pack(fill = tk.X)
     attributions = ttk.Button(licenseAttributionFrame,text = "Attributions",command = lambda: (windowExtra("attributions")))
     attributions.pack(side = tk.RIGHT)
