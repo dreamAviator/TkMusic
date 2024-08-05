@@ -1,7 +1,7 @@
     #TkMusic
     #This program can play music.
     #Copyright (C) 2023  Nathan Baron
-
+print("loading...")
 #gui
 import tkinter as tk
 from tkinter import ttk
@@ -45,6 +45,8 @@ instance = vlc.Instance("--no-xlib")
 player = instance.media_player_new()
 #notify2
 notify2.init('TkMusic')
+
+notify2.Notification("loading","loading...").show()
 
 
 #music control functions
@@ -1107,11 +1109,17 @@ def remainingLength(ForB):#okay hier wird das noch ein problem wenn ich nicht di
         remainingPlaylistLengthLabel.config(text = remainingLength)
         return
     try:
+        print("excepting")
+        whereSpace = remainingPlaylistLengthOld.find(" ")
+        print("printing days now")
+        print(whereSpace)
+        days = remainingPlaylistLengthOld[:whereSpace - 1]
+        print(days)
+        hours, minutes, seconds = map(int, remainingPlaylistLengthOld[-8:].split(':'))
+        remainingLengthSecOld = days * 86400 + hours * 3600 + minutes * 60 + seconds
+    except:
         hours, minutes, seconds = map(int, remainingPlaylistLengthOld.split(':'))
         remainingLengthSecOld = hours * 3600 + minutes * 60 + seconds
-    except:
-        minutes, seconds = map(int, remainingPlaylistLengthOld.split(':'))
-        remainingLengthSecOld = minutes * 60 + seconds
     length,songLengthSec = getSongLength(song)
     if ForB == "f":
         remainingLengthSec = remainingLengthSecOld - songLengthSec
@@ -1220,6 +1228,7 @@ def delDuplicates():#noch fixen
     newPp = []
     newP = []
     for element in pPlaylist:#musst dir was ausdenken, was passiert wenn ein song abgespielt wird der gerade gelöscht wurde
+    #mb kann dann entweder zum ersten vorkommen dieses songs gespielt werden oder man muss sich irgendwie anders merken wo der dann hin soll
         try:
             place = checkElement.index(element)#vlt brauche ich place für die idee da unten irgendwann nochmal
         except:
@@ -3063,3 +3072,4 @@ main_window.mainloop()
 #auf meinem linux pc wird nicht der gesamte text von length im playlist fenster angezeigt
 #entweder das extra window (wieder ig) nicht größenverstellbar machen, oder gucken, ob das programm vlt doch größenverstellbar sein kann
 #option machen, mit der man anschalten kann, dass songs aus playlisten auch in den recent songs angezeigt werden
+#wenn man zu einem anderen song skipped bevor er fertig geladen hat, gibt es einen fehler
