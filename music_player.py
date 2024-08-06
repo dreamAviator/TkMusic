@@ -24,9 +24,17 @@ import random
 import datetime#auch music
 import time
 import platform
-import notify2
 import os
 import sys
+#messages
+if platform.system() == "Windows":
+    from win10toast import ToastNotifier
+    toast = ToastNotifier
+elif platform.system() == "Linux":
+    import notify2
+    notify2.init('TkMusic')
+
+    notify2.Notification("loading","loading...").show()
 #um relative pfade zu absoluten pfaden umzuwandeln
 dirname = os.path.dirname(__file__)
 #vlcdll_path = os.path.join(dirname, 'vlc\libvlc.dll')
@@ -43,10 +51,6 @@ os.environ['PATH'] += ';' + vlc_path
 import vlc
 instance = vlc.Instance("--no-xlib")
 player = instance.media_player_new()
-#notify2
-notify2.init('TkMusic')
-
-notify2.Notification("loading","loading...").show()
 
 
 #music control functions
@@ -1971,7 +1975,7 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
     global messageInfoLog
     global messageWarningLog
     global messageErrorLog
-    m = notify2.Notification(title,message).show()#funktion hinzufügen, mti der man die anzeige der programmeigenen benachrichtigungen/der betriebssystem benachrichtigungen ausschalten kann. zumindest die ohne buttons
+
     if image == 1:
         messageInfoLog.append(title)
         messageInfoLog.append(message)
@@ -1998,6 +2002,10 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
         messageType = "Error"
     else:
         print("Yo the programmer made a mistake I'm sorry")
+        if platform.system() == "Windows":
+            toast.show_toast(title,message,duration = time,icon_path = icon,threaded = True)
+        elif platform.system() == "Linux":
+            m = notify2.Notification(title,message).show()#funktion hinzufügen, mti der man die anzeige der programmeigenen benachrichtigungen/der betriebssystem benachrichtigungen ausschalten kann. zumindest die ohne buttons
     messageWindow = tk.Toplevel()
     if platform.system() == "Windows":
         messageWindow.iconbitmap(icon)
