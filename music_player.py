@@ -1304,6 +1304,8 @@ def savePlaylist():
         plW.title(playlistName)
     elif miniModeActive.get() == True:
         plWminiMode.title(playlistName)
+    recentFiles.insert(0,saveThere + '\n')
+    recentPlaylists.insert(0,saveThere + '\n')
     message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)
 
 def upInPlaylist():
@@ -2302,7 +2304,7 @@ def buildMiniMode():
     songCoverMini = ttk.Label(musicControlFrameMiniL,image = song_cover_image_smol)
     songCoverMini.pack()
         #musicControlFrameMiniR
-    exitButtonMini = ttk.Button(musicControlFrameMiniR,image = exit_button_image,command = exitProgram)
+    exitButtonMini = ttk.Button(musicControlFrameMiniR,image = exit_button_image,command = restorenormal_mode)
     exitButtonMini.pack(side = tk.RIGHT)
     forwardButtonMini = ttk.Button(musicControlFrameMiniR,image = forward_button_image_smol,command = fastForward)
     forwardButtonMini.pack(side = tk.RIGHT)
@@ -2388,6 +2390,9 @@ def buildMiniMode():
     treeMiniMode.configure(yscroll = scrollbarMiniMode.set)
     scrollbarMiniMode.pack(side = tk.RIGHT,fill = tk.Y)
     updatePlaylist(0,0)
+
+def restorenormal_mode():
+    pass
 
 def restoremain_window():
     pass
