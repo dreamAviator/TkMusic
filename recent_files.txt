@@ -1,5 +1,0 @@
-/home/nathan/Musik/current.m3u
-/home/nathan/Dokumente/Python/testykfronadfiabfdiaheheheha/msuik/1237702_Creo---Lost.mp3
-/home/nathan/Dokumente/Python/testykfronadfiabfdiaheheheha/msuik/821173_ALESDA---Wake-Up.mp3
-/home/nathan/Dokumente/Python/testykfronadfiabfdiaheheheha/msuik/864021_Au5---Moonland-Derpcat-Rem.mp3
-/home/nathan/Musik/current.m3u
