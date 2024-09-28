@@ -2236,6 +2236,8 @@ def buildMiniMode_plW(event):
         buildMiniMode()
 
 def buildMiniMode():
+    message(1,"Not yet supported","This does not work yet.","ok",5000)
+    return
     global main_window
     global plW
     global main_window_size
@@ -2614,7 +2616,7 @@ def settings(setting):
             miniModeActiveText = ""
             buildMiniMode(False)
         else:
-            miniModeActiveText  ="True"
+            miniModeActiveText = "True"
             buildMiniMode(True)
         lines[6] = ""
         lines[6] = miniModeActiveText + '\n'
