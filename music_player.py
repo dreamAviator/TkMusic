@@ -1,6 +1,6 @@
     #TkMusic
     #This program can play music.
-    #Copyright (C) 2023  Nathan Baron
+    #Copyright (C) 2024 Lilly, dreamAviator, Nathan Baron
 print("loading...")
 #gui
 import tkinter as tk
@@ -16,6 +16,8 @@ from mutagen.id3 import ID3, TIT2, TPE1
 from mutagen.mp3 import MP3
 from mutagen.oggvorbis import OggVorbis
 from mutagen.mp4 import MP4
+#metadata editor
+#import metadata_editor
 #other
 from threading import *
 import webbrowser
@@ -3084,7 +3086,8 @@ main_window.mainloop()
 
 #verschiedene sprachen, du brauchst eine textdatei wo alle dinge drinstehen, und die nennst du dann "language_Deutsch.txt", und die englische wird dann eben "language_United States.txt". das programm guckt dann eben in einem ornder (maybe in einem eigenen maysbe in dem texts ornder) nach allen ("language_...") dateien, und zeigt in eionem dropdown menü alle optionen an, sodass man dann da eine auswählen kann. vlt schaffst du den wechsel sogar ohne das programm neuzustarten
 #vlt eine option zum verändern des styles/themes, der farben/(zumindest) der farbe des ausgewählten elements in der playlist
-#auf meinem linux pc wird nicht der gesamte text von length im playlist fenster angezeigt
+#auf meinem linux pc (der kleine) wird nicht der gesamte text von length im playlist fenster angezeigt
 #entweder das extra window (wieder ig) nicht größenverstellbar machen, oder gucken, ob das programm vlt doch größenverstellbar sein kann
 #option machen, mit der man anschalten kann, dass songs aus playlisten auch in den recent songs angezeigt werden
 #wenn man zu einem anderen song skipped bevor er fertig geladen hat, gibt es einen fehler
+#ein rechtsklick menü für jeden song und eine option im menu. metadata_editor() beim menü und beim rechtsklick metadata_editor.loadFiles(ausgewählter songs)
