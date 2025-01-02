@@ -1,0 +1,10 @@
+volume				(Integer)
+volumeSliderText	(True/False)
+loopPlaylist		(True/False)
+loopMove			(True/False)
+twoWindows			(True/False)
+filesToKeepText     (Integer)
+miniMode (noch nicht vorhanden)
+shuffleReset        (True/False)
+
+index for settings

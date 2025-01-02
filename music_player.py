@@ -1491,19 +1491,26 @@ def bottomInPlaylistKey(event):
 def shufflePlaylist():
     global playlist
     global pPlaylist
+    global shuffleReset
     if playlist == [] and pPlaylist == []:
         return
     pSong = []
     pSong.append(playlist[0])
     del playlist[0]
-    count = len(pPlaylist)
-    while count > 0:
-        playlist.append(pPlaylist[0])
-        del pPlaylist[0]#nicht einfach del pPlaylist, weil sonst die variable selbst gelöscht wird
-        count = count - 1
-    random.shuffle(playlist)
-    playlist.insert(0,pSong[0])
-    updatePlaylist(1,1)
+    if shuffleReset.get() == True:
+        count = len(pPlaylist)
+        while count > 0:
+            playlist.append(pPlaylist[0])
+            del pPlaylist[0]#nicht einfach del pPlaylist, weil sonst die variable selbst gelöscht wird
+            count = count - 1
+        random.shuffle(playlist)
+        playlist.insert(0,pSong[0])
+        updatePlaylist(1,1)
+    else:
+        random.shuffle(playlist)
+        random.shuffle(pPlaylist)
+        playlist.insert(0,pSong[0])
+        updatePlaylist(len(pPlaylist) + 1,len(pPlaylist) + 1)
 
 def changeVolume(event):
     global volumePressed
@@ -1604,6 +1611,8 @@ def settingsWE():
     loopMoveCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     filesToKeepSpinbox = ttk.Spinbox(extraWindow,from_ = 0, to = 20,textvariable = filesToKeep,command = filesToKeepChanged)
     filesToKeepSpinbox.pack(side = tk.TOP,anchor = tk.NW)
+    shufflePositionResetCheckbutton = ttk.Checkbutton(extraWindow,text = "Put the current song first when shuffling the playlist.",command = lambda: (settings("shuffleReset")),variable = shuffleReset,onvalue = True,offvalue = False)
+    shufflePositionResetCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     messageLogsButton = ttk.Button(extraWindow,text = "Message Logs",command = lambda: (windowExtra("messageLogs")))
     messageLogsButton.pack(side = tk.BOTTOM,anchor = tk.W)
 
@@ -2622,6 +2631,14 @@ def settings(setting):
             buildMiniMode(True)
         lines[6] = ""
         lines[6] = miniModeActiveText + '\n'
+    elif setting == "shuffleReset":
+        shuffleResetText = shuffleReset.get()
+        if shuffleResetText == False:
+            shuffleResetText = ""
+        else:
+            shuffleResetText = "True"
+        lines[7] = ""
+        lines[7] = shuffleResetText + '\n'
     with open(filepath,'w') as file:
         file.writelines(lines)
 
@@ -2754,6 +2771,7 @@ loopPlaylist = tk.BooleanVar()
 loopMove = tk.BooleanVar()
 twoWindows = tk.BooleanVar()
 miniModeActive = tk.BooleanVar()
+shuffleReset = tk.BooleanVar()
 #variables from settings
     #settings.txt
 filepath_settings = os.path.join(dirname,"texts/settings.txt")
@@ -2776,6 +2794,9 @@ twoWindowsText = twoWindowsString[:-1]
 twoWindows.set(bool(twoWindowsText))
 filesToKeepText = lines[5]
 filesToKeep.set(int(filesToKeepText))
+shuffleResetString = lines[7]
+shuffleResetText = shuffleResetString[:-1]
+shuffleReset.set(bool(shuffleResetText))
     #recent_files.txt
 filepath_recent_files = os.path.join(dirname,"texts/recent_files.txt")
 with open(filepath_recent_files,'r') as file:
