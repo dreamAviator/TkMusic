@@ -17,7 +17,7 @@
 
 **Playlists are saved in the m3u or m3u8 format, an open playlist format a lot of media players support
 
-***The tkinter File picker looks horrendous and outdated on linux, so I'm using PyQt5 for the file picker
+***The tkinter File picker looks horrendous and outdated on linux, so I'm using PyQt5 for the file picker. In general the tkinter interface on Linux does not look good, it looks old. If you are on Windows it looks like any other Windows application tho.
 
 
 
