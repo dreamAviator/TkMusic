@@ -1,5 +1,0 @@
-100
-True
-True
-True
-True
