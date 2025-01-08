@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import QApplication, QFileDialog
 #metadata
 import mutagen
 from mutagen import File
-from mutagen.mp4 import MP4
+from mutagen.mp4 import MP4, MP4Tags
 from mutagen.id3 import ID3, TIT2, TPE1, TALB
 #file tasks
 import shutil
@@ -72,11 +72,38 @@ def start():
             title = ""
             interpreter = ""
             album = ""
-            for element in pattern_data:
-                if len(element) != 1:
-                    #halt irgendwie element entzfernen sodass du bnur noch den songnamen als titel,interpret,album hast oder so, idk, dafür wäre getrennt maybe euinfacher actually ;-;
+            songNameToEdit = songName[:-4]
+            for i in range(len(pattern_data)):
+                element = pattern_data[i]
+                print("element")
+                print(element)
+                print("songNameToEdit")
+                print(songNameToEdit)
+                print("title")
+                print(title)
+                print("interpreter")
+                print(interpreter)
+                if element != "t" and element != "i" and element != "a":
+                    where = songNameToEdit.find(element)
+                    songNameToEdit = songNameToEdit[where + len(element):]
                 else:
-                    songName.replace(element,"%"",1)
+                    if i != len(pattern_data) - 1:
+                        elementtwo = pattern_data[i + 1]
+                        wheretwo = songNameToEdit.find(elementtwo)
+                        if element == "t":
+                            title = songNameToEdit[:wheretwo]
+                        elif element == "i":
+                            interpreter = songNameToEdit[:wheretwo]
+                        elif element == "a":
+                            album = songNameToEdit[:wheretwo]
+                    else:
+                        if element == "t":
+                            title = songNameToEdit
+                        elif element == "i":
+                            interpreter = songNameToEdit
+                        elif element == "a":
+                            album = songNameToEdit
+
             print("song " + song)
             print("title " + title)
             print("interpreter " + interpreter)
@@ -88,7 +115,8 @@ def start():
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
-                    audioToEdit["\xa9nam"] = title
+                    tags = audioToEdit.tags
+                    tags["\xa9nam"] = title
                     audioToEdit.save()
             if interpreter != "":
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
@@ -97,7 +125,8 @@ def start():
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
-                    audioToEdit["\xa9art"] = interpreter
+                    tags = audioToEdit.tags
+                    tags["\xa9ART"] = interpreter
                     audioToEdit.save()
             if album != "":
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
@@ -106,7 +135,8 @@ def start():
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
-                    audioToEdit["\xa9alb"] = album
+                    tags = audioToEdit.tags
+                    tags["\xa9alb"] = album
                     audioToEdit.save()
 
 def startEvent(event):
