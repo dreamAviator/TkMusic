@@ -12,12 +12,12 @@ from PIL import Image
 #music
 import mutagen
 from mutagen import File
-from mutagen.id3 import ID3, TIT2, TPE1
+from mutagen.id3 import ID3, TIT2, TPE1, TALB
 from mutagen.mp3 import MP3
 from mutagen.oggvorbis import OggVorbis
-from mutagen.mp4 import MP4
+from mutagen.mp4 import MP4, MP4Tags
 #metadata editor
-#import metadata_editor
+import shutil
 #other
 from threading import *
 import webbrowser
@@ -2650,8 +2650,213 @@ def settings(setting):
         file.writelines(lines)
 
 #metadata editor
+def editMetadataOfSelected():
+    toEdit = []
+    global miniModeActive
+    if miniModeActive.get() == False:
+        selectedItems = tree.selection()
+        print(selectedItems)
+    elif miniModeActive.get() == True:
+        selectedItems = treeMiniMode.selection()
+    if len(selectedItems) == 0:
+        return
+    counts = []
+    for item in selectedItems:
+        if miniModeActive.get() == False:
+            selectedRow = tree.item(item)
+        elif miniModeActivee.get() == True:
+            selectedRow = treeMiniMode.item(item)
+        values = selectedRow['values']
+        count = values[3]
+        counts.append(count)
+    for count in counts:
+        if count <= len(pPlaylist):
+            toEdit.append(pPlaylist[count - 1])
+        elif count - len(pPlaylist) - 1 == 0:
+            toEdit.append(playlist[0])
+        else:
+            toEdit.append(playlist[count - len(pPlaylist) - 1])
+    loadFilesP2(toEdit)
+    metadataEditorStart()
+
 def metadataEditorStart():
+    if metadataWindow.wm_state() == "withdrawn":
+        metadataWindow.deiconify()
+    else:
+        metadataWindow.withdraw()
+
+def loadFilesP1():#part1
+    global filenamesME
+    loadFilesP2(openFilesDialog())
+
+def loadFilesP2(filenamesMEtemp):
+    for filename in filenamesMEtemp:
+        filenamesME.append(filename)
+    fileCountTextBEME.config(text = str(len(filenamesME)) + " File/s")
+    for filename in filenamesME:
+        selectedFilesTreeBEME.insert('',tk.END,values = (filename))
+        selectedFilesTreeSEME.insert('',tk.END,values = (filename))
+        selectedFilesTreeREME.insert('',tk.END,values = (filename))
+
+def deleteFiles():
     pass
+
+def start():
+    global saveDirectoryME
+    global filenamesME
+    global namePattern
+    filenamesMEtwo = []
+    if saveDirectoryME == "":
+        print("error 1")
+        return
+    if filenamesME == []:
+        print("error 2")
+        return
+    for song in filenamesME:
+        print("cpying " + song)
+        lastslash = song.rfind("/")
+        songName = song[lastslash + 1:]
+        shutil.copy(song,saveDirectoryME + "/" + songName)
+        filenamesMEtwo.append(saveDirectoryME + "/" + songName)
+    selectedMode = modesME.index(modesME.select())
+    if selectedMode == 1:
+        pattern = namePattern.get()
+        print("pattern")
+        print(pattern)
+        if "%" not in pattern:
+            print("error 3")
+            return
+        pattern_data = []
+        while len(pattern) != 1:
+            pattern = pattern[1:]
+            where = pattern.find("%")
+            pattern_data.append(pattern[:where])
+            pattern = pattern[where:]
+        for song in filenamesMEtwo:
+            lastslash = song.rfind("/")
+            songName = song[lastslash + 1:]
+            fileExtension = songName.rfind('.')
+            title = ""
+            interpreter = ""
+            album = ""
+            songNameToEdit = songName[:-4]
+            for i in range(len(pattern_data)):
+                element = pattern_data[i]
+                print("element")
+                print(element)
+                print("songNameToEdit")
+                print(songNameToEdit)
+                print("title")
+                print(title)
+                print("interpreter")
+                print(interpreter)
+                if element != "t" and element != "i" and element != "a":
+                    where = songNameToEdit.find(element)
+                    songNameToEdit = songNameToEdit[where + len(element):]
+                else:
+                    if i != len(pattern_data) - 1:
+                        elementtwo = pattern_data[i + 1]
+                        wheretwo = songNameToEdit.find(elementtwo)
+                        if element == "t":
+                            title = songNameToEdit[:wheretwo]
+                        elif element == "i":
+                            interpreter = songNameToEdit[:wheretwo]
+                        elif element == "a":
+                            album = songNameToEdit[:wheretwo]
+                    else:
+                        if element == "t":
+                            title = songNameToEdit
+                        elif element == "i":
+                            interpreter = songNameToEdit
+                        elif element == "a":
+                            album = songNameToEdit
+
+            print("song " + song)
+            print("title " + title)
+            print("interpreter " + interpreter)
+            print("album " + album)
+            if title != "":
+                if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = ID3(song)
+                    audioToEdit["TIT2"] = TIT2(encoding=3, text=title)
+                    audioToEdit.save()
+                elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                    audioToEdit = MP4(song)
+                    tags = audioToEdit.tags
+                    tags["\xa9nam"] = title
+                    audioToEdit.save()
+            if interpreter != "":
+                if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = ID3(song)
+                    audioToEdit["TPE1"] = TPE1(encoding=3, text=interpreter)
+                    audioToEdit.save()
+                elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                    audioToEdit = MP4(song)
+                    tags = audioToEdit.tags
+                    tags["\xa9ART"] = interpreter
+                    audioToEdit.save()
+            if album != "":
+                if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = ID3(song)
+                    audioToEdit["TALB"] = TALB(encoding=3, text=album)
+                    audioToEdit.save()
+                elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                    audioToEdit = MP4(song)
+                    tags = audioToEdit.tags
+                    tags["\xa9alb"] = album
+                    audioToEdit.save()
+    for indexOne,filename in filenamesME:
+        for indexTwo,pllstFile in enumerate(playlist):#playlistFile
+            if filename == pllstFile:
+                del playlist[indexTwo]
+                playlist.insert(indexTwo,filenamesMEtwo[indexOne])
+    for indexOne,filename in filenamesME:
+        for indexTwo,pllstFile in enumerate(pPlaylist):#playlistFile
+            if filename == pllstFile:
+                del pPlaylist[indexTwo]
+                pPlaylist.insert(indexTwo,filenamesMEtwo[indexOne])
+    updatePlaylist(0,0)
+
+def startEvent(event):
+    start()
+
+def namePatternHelp():#einf eine help message sache machen.
+    print("name pattern")
+    print(namePattern.get())
+
+    #system
+def whereSave():
+    global saveDirectoryME
+    saveDirectoryME = openDirectoryDialog()
+    selectedMode = modesME.index(modesME.select())
+    if selectedMode == 1:
+        whereSaveButtonME.config(text = saveDirectoryME)
+
+    #gui
+def openFilesDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    options |= QFileDialog.ReadOnly
+    files,_ = QFileDialog.getOpenFileNames(None,"Select Audio Files","","All Files (*)",options = options)#hier noch einmal nur supported oder tested oder so hinzufügen
+    return files
+
+def openDirectoryDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    options |= QFileDialog.ShowDirsOnly | QFileDialog.ReadOnly
+    directory = QFileDialog.getExistingDirectory(None, "Select Directory", "", options=options)
+    return directory
+
+def notebookTabMEChange(event):
+    selectedTab = modesME.index(modesME.select())
+    if selectedTab == 0:
+        modesME.select(1)#hier halt den vorher ausgewählten
+        start()
+    elif selectedTab == 5:
+        modesME.select(1)#hier halt den vorher ausgewählten
+        metadataEditorStart()
+    else:#write in settingsME yk
+        pass
 
 #general
 def openFilesDialog():
@@ -2775,6 +2980,13 @@ edit_menu2.add_command(label = 'Delete duplicates',command = delDuplicates)
 edit_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
 menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
 
+#metadata editor window
+#tkinter
+metadataWindow = tk.Tk()
+metadataWindow.title("TkMetaEditor")
+metadataWindow.geometry('500x360+100+100')
+metadataWindow.resizable(False,False)
+
 #variables
 sliderVar = tk.IntVar()
 sliderVarExtra = tk.IntVar()
@@ -2787,6 +2999,12 @@ loopMove = tk.BooleanVar()
 twoWindows = tk.BooleanVar()
 miniModeActive = tk.BooleanVar()
 shuffleReset = tk.BooleanVar()
+#metadata_editor
+filenamesME = []
+notebookTabME = 1#das halt durch die settingsME auslesen. der letzte geöffnete tab
+#du kannst maybe die gleiche settingsME datei verwenden wie für den music player
+namePattern = tk.StringVar()
+saveDirectoryME = ""
 #variables from settings
     #settings.txt
 filepath_settings = os.path.join(dirname,"texts/settings.txt")
@@ -3061,7 +3279,7 @@ rcmenu2.add_command(label = "Move up",command = upInPlaylist)
 rcmenu2.add_command(label = "Move down",command = downInPlaylist)
 rcmenu2.add_command(label = "Move to the bottom",command = bottomInPlaylist)
 rcmenu2.add_separator()
-rcmenu2.add_command(label = "Edit metadata",command = metadataEditorStart)#hier natürlich ein anderer command
+rcmenu2.add_command(label = "Edit metadata",command = editMetadataOfSelected)#hier natürlich ein anderer command
 tree.bind("<Button-3>",rcmenuCheck)# event:rcmenu1.post(event.x_root,event.y_root))
 
 #FRAMES
@@ -3130,10 +3348,109 @@ main_window.bind("<Shift-Left>",stepRewindSongKey)
 main_window.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
+#metadata editor window
+modesME = ttk.Notebook(metadataWindow)
+modesME.pack(side = tk.TOP,fill = tk.BOTH)
+startTabME = ttk.Frame(modesME)
+batchEditME = ttk.Frame(modesME)
+singleEditME = ttk.Frame(modesME)
+renameME = ttk.Frame(modesME)
+settingsME = ttk.Frame(modesME)
+quitTabME = ttk.Frame(modesME)
+
+modesME.add(startTabME,text = "Start")
+modesME.add(batchEditME,text = "Batch edit")
+modesME.add(singleEditME,text = "Single edit")
+modesME.add(renameME,text = "Rename")
+modesME.add(settingsME,text = "Settings")
+modesME.add(quitTabME,text = "Quit")
+modesME.select(notebookTabME)
+modesME.bind('<<NotebookTabChanged>>',notebookTabMEChange)
+
+columnsME = ('File')
+
+progressbarBEME = ttk.Progressbar(metadataWindow,orient = 'horizontal',mode = 'determinate',length = 500)
+progressbarBEME.pack(side = tk.BOTTOM)
+separatorBE1ME = ttk.Separator(metadataWindow,orient = 'horizontal')
+separatorBE1ME.pack(side = tk.BOTTOM,fill = tk.X,pady = 10)
+
+#batchEditME - be
+selectFilesFrameBEME = ttk.Frame(batchEditME)
+selectFilesFrameBEME.pack(side = tk.TOP,fill = tk.X)
+selectFilesFrameInnerBEME = ttk.Frame(selectFilesFrameBEME)
+selectFilesFrameInnerBEME.pack(side = tk.LEFT)
+namePatternFrameME = ttk.Frame(batchEditME)
+namePatternFrameME.pack(side = tk.TOP,fill = tk.X)
+
+fileCountTextBEME = ttk.Label(selectFilesFrameInnerBEME,text = "0 File/s")
+fileCountTextBEME.pack(side = tk.BOTTOM)
+deleteFilesButtonBEME = ttk.Button(selectFilesFrameInnerBEME,text = "Delete Files",command = deleteFiles)
+deleteFilesButtonBEME.pack(side = tk.BOTTOM)
+selectFilesButtonBEME = ttk.Button(selectFilesFrameInnerBEME,text = "Select Files",command = loadFilesP1)
+selectFilesButtonBEME.pack(side = tk.BOTTOM,fill = tk.X)
+scrollbarBEME = ttk.Scrollbar(selectFilesFrameBEME)
+selectedFilesTreeBEME = ttk.Treeview(selectFilesFrameBEME,yscrollcommand = scrollbarBEME.set,columns = columnsME,show = "headings",height = 4)
+scrollbarBEME.configure(command = selectedFilesTreeBEME.yview)
+scrollbarBEME.pack(side = tk.RIGHT,fill = tk.Y)
+selectedFilesTreeBEME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+
+namePatternTextME = ttk.Label(namePatternFrameME,text = "Naming pattern")
+namePatternTextME.pack(side = tk.TOP,anchor = tk.NW)
+namePatternHelpButtonME = ttk.Button(namePatternFrameME,text = "What's that?",command = namePatternHelp)
+namePatternHelpButtonME.pack(side = tk.RIGHT)
+namePatternEntryME = ttk.Entry(namePatternFrameME,textvariable = namePattern)
+namePatternEntryME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+
+whereSaveTextME = ttk.Label(batchEditME,text = "Save location")
+whereSaveTextME.pack(side = tk.TOP,anchor = tk.NW)
+whereSaveButtonME = ttk.Button(batchEditME,text = "Select folder",command = whereSave)
+whereSaveButtonME.pack(side = tk.TOP,anchor = tk.NW)
+
+
+#singleEditME - se
+selectFilesFrameSEME = ttk.Frame(singleEditME)
+selectFilesFrameSEME.pack(side = tk.TOP,fill = tk.X)
+selectFilesFrameInnerSEME = ttk.Frame(selectFilesFrameSEME)
+selectFilesFrameInnerSEME.pack(side = tk.LEFT)
+
+fileCountTextSEME = ttk.Label(selectFilesFrameInnerSEME,text = "0 File/s")
+fileCountTextSEME.pack(side = tk.BOTTOM)
+deleteFilesButtonSEME = ttk.Button(selectFilesFrameInnerSEME,text = "Delete Files",command = deleteFiles)
+deleteFilesButtonSEME.pack(side = tk.BOTTOM)
+selectFilesButtonSEME = ttk.Button(selectFilesFrameSEME,text = "Select Files",command = loadFilesP1)
+selectFilesButtonSEME.pack(side = tk.LEFT,anchor = tk.W)
+scrollbarSEME = ttk.Scrollbar(selectFilesFrameSEME)
+selectedFilesTreeSEME = ttk.Treeview(selectFilesFrameSEME,yscrollcommand = scrollbarSEME.set,columns = columnsME,show = "tree",height = 4)#find mal heraus wieso das hier nicht funktioniert
+scrollbarSEME.configure(command = selectedFilesTreeSEME.yview)
+scrollbarSEME.pack(side = tk.RIGHT,fill = tk.Y)
+selectedFilesTreeSEME.pack(side = tk.RIGHT,fill = tk.X,expand = True)
+
+
+#renameME - RE
+selectFilesFrameREME = ttk.Frame(renameME)
+selectFilesFrameREME.pack(side = tk.TOP,fill = tk.X)
+selectFilesFrameInnerREME = ttk.Frame(selectFilesFrameREME)
+selectFilesFrameInnerREME.pack(side = tk.LEFT)
+
+fileCountTextREME = ttk.Label(selectFilesFrameInnerREME,text = "0 File/s")
+fileCountTextREME.pack(side = tk.BOTTOM)
+deleteFilesButtonREME = ttk.Button(selectFilesFrameInnerREME,text = "Delete Files",command = deleteFiles)
+deleteFilesButtonREME.pack(side = tk.BOTTOM)
+selectFilesButtonREME = ttk.Button(selectFilesFrameInnerREME,text = "Select Files",command = loadFilesP1)
+selectFilesButtonREME.pack(side = tk.BOTTOM,fill = tk.X)
+scrollbarREME = ttk.Scrollbar(selectFilesFrameREME)
+selectedFilesTreeREME = ttk.Treeview(selectFilesFrameREME,yscrollcommand = scrollbarREME.set,columns = columnsME,show = "headings",height = 4)
+scrollbarREME.configure(command = selectedFilesTreeREME.yview)
+scrollbarREME.pack(side = tk.RIGHT,fill = tk.Y)
+selectedFilesTreeREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+
 #end
+namePattern.set("testlol")#okok name pattern problem sonst läufts supa
+metadataEditorStart()
 refreshRecentFiles()
 plW.mainloop()
 main_window.mainloop()
+metadataWindow.mainloop()
 
 #verschiedene sprachen, du brauchst eine textdatei wo alle dinge drinstehen, und die nennst du dann "language_Deutsch.txt", und die englische wird dann eben "language_United States.txt". das programm guckt dann eben in einem ornder (maybe in einem eigenen maysbe in dem texts ornder) nach allen ("language_...") dateien, und zeigt in eionem dropdown menü alle optionen an, sodass man dann da eine auswählen kann. vlt schaffst du den wechsel sogar ohne das programm neuzustarten
 #vlt eine option zum verändern des styles/themes, der farben/(zumindest) der farbe des ausgewählten elements in der playlist
