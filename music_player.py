@@ -19,7 +19,7 @@ from mutagen.mp4 import MP4, MP4Tags
 #metadata editor
 import shutil
 #other
-from threading import *
+from threading import Thread
 import webbrowser
 import functools
 import random
@@ -2785,6 +2785,12 @@ def start():
             print("album " + album)
             if title != "":
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = MP3(song)
+                    try:
+                        audioToEdit.add_tags()
+                    except:
+                        pass
+                    audioToEdit.save()
                     audioToEdit = ID3(song)
                     audioToEdit["TIT2"] = TIT2(encoding=3, text=title)
                     audioToEdit.save()
@@ -2795,6 +2801,12 @@ def start():
                     audioToEdit.save()
             if interpreter != "":
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = MP3(song)
+                    try:
+                        audioToEdit.add_tags()
+                    except:
+                        pass
+                    audioToEdit.save()
                     audioToEdit = ID3(song)
                     audioToEdit["TPE1"] = TPE1(encoding=3, text=interpreter)
                     audioToEdit.save()
@@ -2805,6 +2817,12 @@ def start():
                     audioToEdit.save()
             if album != "":
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = MP3(song)
+                    try:
+                        audioToEdit.add_tags()
+                    except:
+                        pass
+                    audioToEdit.save()
                     audioToEdit = ID3(song)
                     audioToEdit["TALB"] = TALB(encoding=3, text=album)
                     audioToEdit.save()
@@ -2813,16 +2831,27 @@ def start():
                     tags = audioToEdit.tags
                     tags["\xa9alb"] = album
                     audioToEdit.save()
-    for indexOne,filename in filenamesME:
+    print("playlist")
+    print(playlist)
+    print("pplaylist")
+    print(pPlaylist)
+    print("\n")
+    print(filenamesME)
+    print(filenamesMEtwo)
+    for indexOne,filename in enumerate(filenamesME):
         for indexTwo,pllstFile in enumerate(playlist):#playlistFile
             if filename == pllstFile:
                 del playlist[indexTwo]
                 playlist.insert(indexTwo,filenamesMEtwo[indexOne])
-    for indexOne,filename in filenamesME:
+    for indexOne,filename in enumerate(filenamesME):
         for indexTwo,pllstFile in enumerate(pPlaylist):#playlistFile
             if filename == pllstFile:
                 del pPlaylist[indexTwo]
                 pPlaylist.insert(indexTwo,filenamesMEtwo[indexOne])
+    print("playlist")
+    print(playlist)
+    print("pplaylist")
+    print(pPlaylist)
     updatePlaylist(0,0)
 
 def startEvent(event):
