@@ -1825,6 +1825,8 @@ def windowExtra(extraType):
     file_menu3.add_command(label = 'Save as...',command = savePlaylist)
     file_menu3.add_command(label = 'Delete all',command = deleteAllSongs)
     file_menu3.add_separator()
+    file_menu3.add_command(label = "Metadata editor",command = metadataEditorStart)
+    file_menu3.add_separator()
     file_menu3.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
     file_menu3.add_separator()
     file_menu3.add_command(label='Exit',command=exitProgram)
@@ -2826,6 +2828,9 @@ def start():
 def startEvent(event):
     start()
 
+def namePatternChange(event):
+    namePattern.set(namePatternEntryME.get())
+
 def namePatternHelp():#einf eine help message sache machen.
     print("name pattern")
     print(namePattern.get())
@@ -3286,6 +3291,7 @@ rcmenu2.add_command(label = "Move to the top",command = topInPlaylist)
 rcmenu2.add_command(label = "Move up",command = upInPlaylist)
 rcmenu2.add_command(label = "Move down",command = downInPlaylist)
 rcmenu2.add_command(label = "Move to the bottom",command = bottomInPlaylist)
+rcmenu2.add_command(label = "Delete",command = delFrompllst)
 rcmenu2.add_separator()
 rcmenu2.add_command(label = "Edit metadata",command = editMetadataOfSelected)#hier natürlich ein anderer command
 tree.bind("<Button-3>",rcmenuCheck)# event:rcmenu1.post(event.x_root,event.y_root))
@@ -3408,6 +3414,7 @@ namePatternHelpButtonME = ttk.Button(namePatternFrameME,text = "What's that?",co
 namePatternHelpButtonME.pack(side = tk.RIGHT)
 namePatternEntryME = ttk.Entry(namePatternFrameME,textvariable = namePattern)
 namePatternEntryME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+namePatternEntryME.bind('<KeyRelease>',namePatternChange)
 
 whereSaveTextME = ttk.Label(batchEditME,text = "Save location")
 whereSaveTextME.pack(side = tk.TOP,anchor = tk.NW)
@@ -3453,7 +3460,6 @@ scrollbarREME.pack(side = tk.RIGHT,fill = tk.Y)
 selectedFilesTreeREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
 
 #end
-namePattern.set("testlol")
 metadataEditorStart()
 refreshRecentFiles()
 plW.mainloop()
