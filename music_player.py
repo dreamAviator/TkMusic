@@ -2682,6 +2682,12 @@ def editMetadataOfSelected():
 def metadataEditorStart():
     if metadataWindow.wm_state() == "withdrawn":
         metadataWindow.deiconify()
+        print(namePattern.get())
+        print(namePatternEntryME.get())
+        namePattern.set(namePatternEntryME.get())
+        print(namePattern.get())
+        print(namePatternEntryME.get())
+        #namePatternEntryME.config(textvariable = namePattern)
     else:
         metadataWindow.withdraw()
 
@@ -2823,6 +2829,7 @@ def startEvent(event):
 def namePatternHelp():#einf eine help message sache machen.
     print("name pattern")
     print(namePattern.get())
+    print(namePatternEntryME.get())
 
     #system
 def whereSave():
@@ -3004,6 +3011,7 @@ filenamesME = []
 notebookTabME = 1#das halt durch die settingsME auslesen. der letzte geöffnete tab
 #du kannst maybe die gleiche settingsME datei verwenden wie für den music player
 namePattern = tk.StringVar()
+#namePattern.trace("r",lambda:print("hello"))
 saveDirectoryME = ""
 #variables from settings
     #settings.txt
@@ -3445,7 +3453,7 @@ scrollbarREME.pack(side = tk.RIGHT,fill = tk.Y)
 selectedFilesTreeREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
 
 #end
-namePattern.set("testlol")#okok name pattern problem sonst läufts supa
+namePattern.set("testlol")
 metadataEditorStart()
 refreshRecentFiles()
 plW.mainloop()
