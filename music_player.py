@@ -2077,6 +2077,13 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
     messageLabel = ttk.Label(messageFrame,text = message)
     messageLabel.pack()
 
+def rcmenuCheck(event):
+    selection = tree.selection()
+    if selection == ():
+        rcmenu1.post(event.x_root,event.y_root)
+    else:
+        rcmenu2.post(event.x_root,event.y_root)
+
 def progress():
     global progressbar
     try:
@@ -2751,11 +2758,11 @@ file_menu2.add_command(label='Exit',command=exitProgram)
 menubar2.add_cascade(label="File",menu=file_menu2,underline=0)
         #edit_menu
 edit_menu2 = tk.Menu(menubar2,tearoff = False)#das erste edit menu, aber ist in menubar 2, der übersicht halber ist das nummer 2
-edit_menu2.add_command(label = 'Move one or more elements to the top',command = topInPlaylist)
-edit_menu2.add_command(label = 'Move one or more elements to the bottom',command = bottomInPlaylist)
-edit_menu2.add_command(label = 'Move one or more elements one place up',command = upInPlaylist)
-edit_menu2.add_command(label = 'Move one or more elements one place down',command = downInPlaylist)
-edit_menu2.add_command(label = 'Delete one or more elements from the playlist',command = delFrompllst)
+edit_menu2.add_command(label = 'Move to the top',command = topInPlaylist)
+edit_menu2.add_command(label = 'Move up',command = upInPlaylist)
+edit_menu2.add_command(label = 'Move down',command = downInPlaylist)
+edit_menu2.add_command(label = 'Move to the bottom',command = bottomInPlaylist)
+edit_menu2.add_command(label = 'Delete',command = delFrompllst)
 edit_menu2.add_command(label = 'Delete duplicates',command = delDuplicates)
 edit_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
 menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
@@ -3033,6 +3040,20 @@ tree.pack(side = tk.LEFT,fill = tk.Y)
 tree.bind('<Motion>','break')
 
 tree.bind('<Double-1>',playFromPlaylistEvent)
+
+#right click menu
+rcmenu1 = tk.Menu(tree,tearoff = 0)#right click menu
+rcmenu1.add_command(label = "Delete all",command = deleteAllSongs)
+rcmenu1.add_command(label = "Delete duplicates",command = delDuplicates)
+
+rcmenu2 = tk.Menu(tree,tearoff = 0)
+rcmenu2.add_command(label = "Move to the top",command = topInPlaylist)
+rcmenu2.add_command(label = "Move up",command = upInPlaylist)
+rcmenu2.add_command(label = "Move down",command = downInPlaylist)
+rcmenu2.add_command(label = "Move to the bottom",command = bottomInPlaylist)
+rcmenu2.add_command(label = "Delete",command = delFrompllst)
+rcmenu2.add_separator()
+tree.bind("<Button-3>",rcmenuCheck)# event:rcmenu1.post(event.x_root,event.y_root))
 
 #FRAMES
 btmBtnsFFrame = ttk.Frame(btmBtnsFrame)#bottom buttons frame frame
