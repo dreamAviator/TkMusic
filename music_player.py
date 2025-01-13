@@ -2796,8 +2796,9 @@ def start():
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
-                    tags = audioToEdit.tags
-                    tags["\xa9nam"] = title
+                    if audioToEdit.tags == None:
+                        audioToEdit.tags = MP4Tags()
+                    audioToEdit["\xa9nam"] = title
                     audioToEdit.save()
             if interpreter != "":
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
@@ -2812,8 +2813,10 @@ def start():
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
-                    tags = audioToEdit.tags
-                    tags["\xa9ART"] = interpreter
+                    if audioToEdit.tags == None:
+                        print("tags leer 2")
+                        audioToEdit.tags = MP4Tags()
+                    audioToEdit["\xa9ART"] = interpreter
                     audioToEdit.save()
             if album != "":
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
@@ -2828,8 +2831,9 @@ def start():
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
-                    tags = audioToEdit.tags
-                    tags["\xa9alb"] = album
+                    if audioToEdit.tags == None:
+                        audioToEdit.tags = MP4Tags()
+                    audioToEdit["\xa9alb"] = album
                     audioToEdit.save()
     print("playlist")
     print(playlist)
@@ -3322,7 +3326,7 @@ rcmenu2.add_command(label = "Move down",command = downInPlaylist)
 rcmenu2.add_command(label = "Move to the bottom",command = bottomInPlaylist)
 rcmenu2.add_command(label = "Delete",command = delFrompllst)
 rcmenu2.add_separator()
-rcmenu2.add_command(label = "Edit metadata",command = editMetadataOfSelected)#hier natürlich ein anderer command
+rcmenu2.add_command(label = "Edit metadata",command = editMetadataOfSelected)
 tree.bind("<Button-3>",rcmenuCheck)# event:rcmenu1.post(event.x_root,event.y_root))
 
 #FRAMES
