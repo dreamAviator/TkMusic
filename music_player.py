@@ -1283,6 +1283,10 @@ def savePlaylist():
     if saveThere.endswith(extension) == False:
         saveThere = saveThere + extension
     lastSlash = saveThere.rfind("/")
+    if saveThere.endswith(".m3u"):
+        pllstformat = "m3u"
+    elif saveThere.endswith(".m3u8"):
+        pllstformat = "m3u8"
     playlistName = saveThere[lastSlash + 1:]
     try:#falls die playlist schon existiert, dass man sie ordentlich überschreiben kann
         with open(saveThere,"r") as file:
@@ -1296,12 +1300,17 @@ def savePlaylist():
     #    makeProgress()
     #    makeProgress()
         pass
-    for element in pPlaylist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
-    for element in playlist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
+    if pllstformat == "m3u":
+        for element in pPlaylist:
+            with open(saveThere, "a") as f:
+                f.write(element + '\n')
+        for element in playlist:
+            with open(saveThere, "a") as f:
+                f.write(element + '\n')
+    elif pllstformat == "m3u8":
+        lines = []
+        lines.append("#EXTM3U")
+        #hier jetzt für jeden song die länge, den artist und titel herausfinden, bei nicht bekannt unknown hinschreiben und als titel den dateinamen, und halt davor #extinf
     if miniModeActive.get() == False:
         plW.title(playlistName)
     elif miniModeActive.get() == True:
