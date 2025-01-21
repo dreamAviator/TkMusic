@@ -1309,7 +1309,41 @@ def savePlaylist():
                 f.write(element + '\n')
     elif pllstformat == "m3u8":
         lines = []
-        lines.append("#EXTM3U")
+        lines.append("#EXTM3U\n")
+        for song in pPlaylist:
+            _,songLengthSec = getSongLength(song)
+            try:
+                dot = songLengthSec.rfind(".")
+                sognLengthSec = songLengthSec[:dot]
+            except:
+                pass
+            title = getSongName(song)
+            artist = getSongArtist(song)
+            if title == "unknown":
+                songLS = song.rfind("/")
+                dot = song.rfind(".")
+                title = song[songLS + 1:dot]
+            line = "EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            lines.append(line)
+            lines.append(song)
+        for song in playlist:
+            _,songLengthSec = getSongLength(song)
+            try:
+                dot = songLengthSec.rfind(".")
+                sognLengthSec = songLengthSec[:dot]
+            except:
+                pass
+            title = getSongName(song)
+            artist = getSongArtist(song)
+            if title == "unknown":
+                songLS = song.rfind("/")
+                dot = song.rfind(".")
+                title = song[songLS + 1:dot]
+            line = "EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            lines.append(line)
+            lines.append(song + "\n")
+        with open(saveThere,"a") as f:
+            f.writelines(lines)
         #hier jetzt für jeden song die länge, den artist und titel herausfinden, bei nicht bekannt unknown hinschreiben und als titel den dateinamen, und halt davor #extinf
     if miniModeActive.get() == False:
         plW.title(playlistName)
@@ -1317,7 +1351,7 @@ def savePlaylist():
         plWminiMode.title(playlistName)
     recentFiles.insert(0,saveThere + '\n')
     recentPlaylists.insert(0,saveThere + '\n')
-    message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)
+    message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)#irgendwo beim einladen eine einstellung machen, dass entweder die meatdaten aus der m3u8  priorisiert werden oder die aus den audiodateien
 
 def upInPlaylist():
     global loopMove
