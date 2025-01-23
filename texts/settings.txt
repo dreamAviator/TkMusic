@@ -1,9 +1,0 @@
-77
-True
-True
-True
-
-5
-
-
-2
