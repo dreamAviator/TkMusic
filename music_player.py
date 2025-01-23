@@ -762,6 +762,21 @@ def addToPlaylist(mbsong):#maybe song
             for songFplaylist in lines:#song from playlist
                 songFplaylist = songFplaylist[:-1]
                 playlist.append(songFplaylist)
+        elif sOpllst.endswith('.m3u8'):
+            del recentPlaylists[howmany - 1]
+            recentPlaylists.insert(0,s0pllst + '\n')
+            if rememberme == True:
+                plWtitleNameTrue = True
+                lastSlash = s0pllst.rfind("/")
+                plWtitleName = sOpllst[lastSlash + 1:]
+            with open(sOpllst,'r') as file:
+                lines = file.readlines()
+            for line in lines:
+                if line != "#EXTM3U":
+                    if line.startswith("#EXTINF:"):
+                        doubledot = line.find(":")
+                        comma = line.find(",")
+                        separator = line.find(" - ")
         else:
             del recentSongs[howmany - 1]
             recentSongs.insert(0,sOpllst + '\n')
@@ -1314,7 +1329,7 @@ def savePlaylist():
             _,songLengthSec = getSongLength(song)
             try:
                 dot = songLengthSec.rfind(".")
-                sognLengthSec = songLengthSec[:dot]
+                sognLengthSec = songLengthSec[:dot]#das hier noch fixen
             except:
                 pass
             title = getSongName(song)
@@ -1323,7 +1338,7 @@ def savePlaylist():
                 songLS = song.rfind("/")
                 dot = song.rfind(".")
                 title = song[songLS + 1:dot]
-            line = "EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
             lines.append(line)
             lines.append(song)
         for song in playlist:
@@ -1656,6 +1671,8 @@ def settingsWE():
     filesToKeepSpinbox.pack(side = tk.TOP,anchor = tk.NW)
     shufflePositionResetCheckbutton = ttk.Checkbutton(extraWindow,text = "Put the current song first when shuffling the playlist.",command = lambda: (settings("shuffleReset")),variable = shuffleReset,onvalue = True,offvalue = False)
     shufflePositionResetCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+    preferPllstDataCheckbutton = ttk.Checkbutton(extraWindow,text = "Prefer data from m3u8 files over metadata from audio files",command = lambda: (settings("preferPllstData")),variable = preferPllstData,onvalue = True,offvalue = False)
+    preferPllstDataCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     messageLogsButton = ttk.Button(extraWindow,text = "Message Logs",command = lambda: (windowExtra("messageLogs")))
     messageLogsButton.pack(side = tk.BOTTOM,anchor = tk.W)
 
@@ -2689,6 +2706,14 @@ def settings(setting):
             shuffleResetText = "True"
         lines[7] = ""
         lines[7] = shuffleResetText + '\n'
+    elif setting == "preferPllstData":
+        preferPllstDataText = preferPllstData.get()
+        if preferPllstDataText == False:
+            preferPllstDataText = ""
+        else:
+            preferPllstDataText = "True"
+        lines[9] = ""
+        lines[9] = preferPllstDataText + '\n'
     with open(filepath,'w') as file:
         file.writelines(lines)
 
@@ -2822,6 +2847,7 @@ loopMove = tk.BooleanVar()
 twoWindows = tk.BooleanVar()
 miniModeActive = tk.BooleanVar()
 shuffleReset = tk.BooleanVar()
+preferPllstData = tk.BooleanVar()
 #variables from settings
     #settings.txt
 filepath_settings = os.path.join(dirname,"texts/settings.txt")
@@ -2847,6 +2873,9 @@ filesToKeep.set(int(filesToKeepText))
 shuffleResetString = lines[7]
 shuffleResetText = shuffleResetString[:-1]
 shuffleReset.set(bool(shuffleResetText))
+preferPllstDataString = lines[9]
+preferPllstDataText = preferPllstDataString[:-1]
+preferPllstData.set(bool(preferPllstDataText))
     #recent_files.txt
 filepath_recent_files = os.path.join(dirname,"texts/recent_files.txt")
 with open(filepath_recent_files,'r') as file:
