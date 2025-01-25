@@ -750,7 +750,7 @@ def addToPlaylist(mbsong):#maybe song
         del recentFiles[howmany - 1]
         print(recentFiles)
         recentFiles.insert(0,sOpllst + '\n')
-        if sOpllst.endswith('.m3u'):
+        if sOpllst.endswith('.m3u') or sOpllst.endswith('.txt'):
             del recentPlaylists[howmany - 1]
             recentPlaylists.insert(0,sOpllst + '\n')
             if rememberme == True:
@@ -764,19 +764,27 @@ def addToPlaylist(mbsong):#maybe song
                 playlist.append(songFplaylist)
         elif sOpllst.endswith('.m3u8'):
             del recentPlaylists[howmany - 1]
-            recentPlaylists.insert(0,s0pllst + '\n')
+            recentPlaylists.insert(0,sOpllst + '\n')
             if rememberme == True:
                 plWtitleNameTrue = True
-                lastSlash = s0pllst.rfind("/")
+                lastSlash = sOpllst.rfind("/")
                 plWtitleName = sOpllst[lastSlash + 1:]
             with open(sOpllst,'r') as file:
                 lines = file.readlines()
             for line in lines:
                 if line != "#EXTM3U":
                     if line.startswith("#EXTINF:"):
-                        doubledot = line.find(":")
                         comma = line.find(",")
                         separator = line.find(" - ")
+                        line = line[8:]
+                        lengthSec = line[:comma]
+                        line = line[comma + 1:]
+                        interpreter = line[:separator]
+                        line = line[separator + 4:]
+                        title = line
+                    else:
+                        playlist.append(line[:-1])
+            del playlist[0]
         else:
             del recentSongs[howmany - 1]
             recentSongs.insert(0,sOpllst + '\n')
@@ -796,11 +804,15 @@ def addToPlaylist(mbsong):#maybe song
     print("here we go again again lol")
     print(songsToAdd)
     for element in songsToAdd:
-        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
+        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u') and not element.lower().endswith('.txt') and not element.lower().endswith('.m3u8'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
             unsupportedFiles = unsupportedFiles + '\n' + element
             print("unsupported file format")
             continue
         if element.endswith(".m3u"):
+            continue
+        elif element.endswith(".txt"):
+            continue
+        elif element.endswith(".m3u8"):
             continue
         playlist.append(element)
     if unsupportedFiles != "":
@@ -1340,7 +1352,7 @@ def savePlaylist():
                 title = song[songLS + 1:dot]
             line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
             lines.append(line)
-            lines.append(song)
+            lines.append(song + "\n")
         for song in playlist:
             _,songLengthSec = getSongLength(song)
             try:
@@ -1354,7 +1366,7 @@ def savePlaylist():
                 songLS = song.rfind("/")
                 dot = song.rfind(".")
                 title = song[songLS + 1:dot]
-            line = "EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
             lines.append(line)
             lines.append(song + "\n")
         with open(saveThere,"a") as f:
@@ -1671,7 +1683,7 @@ def settingsWE():
     filesToKeepSpinbox.pack(side = tk.TOP,anchor = tk.NW)
     shufflePositionResetCheckbutton = ttk.Checkbutton(extraWindow,text = "Put the current song first when shuffling the playlist.",command = lambda: (settings("shuffleReset")),variable = shuffleReset,onvalue = True,offvalue = False)
     shufflePositionResetCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
-    preferPllstDataCheckbutton = ttk.Checkbutton(extraWindow,text = "Prefer data from m3u8 files over metadata from audio files",command = lambda: (settings("preferPllstData")),variable = preferPllstData,onvalue = True,offvalue = False)
+    preferPllstDataCheckbutton = ttk.Checkbutton(extraWindow,text = "Prefer data from m3u8 files over metadata from audio files (not doing anything yet)",command = lambda: (settings("preferPllstData")),variable = preferPllstData,onvalue = True,offvalue = False)
     preferPllstDataCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     messageLogsButton = ttk.Button(extraWindow,text = "Message Logs",command = lambda: (windowExtra("messageLogs")))
     messageLogsButton.pack(side = tk.BOTTOM,anchor = tk.W)
@@ -2728,7 +2740,7 @@ def openFilesDialog():
 def saveFileDialog():
     app = QApplication(sys.argv)
     options = QFileDialog.Options()
-    fileName,selectedFilter = QFileDialog.getSaveFileName(None,"Save Playlist","","m3u Playlist Files (older standard) (*.m3u);;m3u8 Playlist Files (newer standard) (*.m3u8);;Text Files (*.txt);;All Files (*)",options = options)
+    fileName,selectedFilter = QFileDialog.getSaveFileName(None,"Save Playlist","","m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)",options = options)
     return fileName,selectedFilter
 
 def exitProgram():
