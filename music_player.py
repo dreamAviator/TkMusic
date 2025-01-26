@@ -1809,7 +1809,7 @@ def attributionButtonsWE():#irgendwie mehrere seiten oder so machen (7 links pas
 def changelogWE():
     extraWindow.title("Changelog")
     text = ""
-    filepath = os.path.join(dirname,"texts/changelog_and_feedback.txt")
+    filepath = os.path.join(dirname,"texts/changelog.txt")
     with open(filepath,'r') as file:
         lines = file.readlines()
     for line in lines:
