@@ -1,4 +1,4 @@
-9th beta release #i don't know how to write eighth
+11th beta release #i don't know how to write eighth
 -------------------
 +The playlist now shows which song out of how many songs is selected, the length of the entire playlist and the length of the remaining playlist (including the currently played song [might get changed later, so that it shows the length of the playlist excluding the parts of the current song, that already played).
 
@@ -49,39 +49,3 @@
 -	things removed
 /	other changes
 (_)	invisible changes
--------------------
-
-
-Things that don't work at all:
--showing the song cover
-
-Things that don't work as they should/I'm not happy with:
--if you have the volume slider value turned on, if you didn't interact with the slider at least one time the distance between the text and the slider will be bigger than normal in both the main window, and the extra windows.
--sometimes the playlist will be cursed...idk why
-
-Things that are a bit slow but not really problematic:
--the text labels that show the volume and the current song position, can be a bit slow when dragging the sliders around, but it should work fine.
-
-Things that are too slow:
-
-
-Please add things to these subjects, by opening the file "changelog_and_feedback.txt" from the explorer.
-
-If you encounter any issues
-
---Deutsch--
-
-Dinge die gar nicht funktionieren:
--das Anzeigen des Song Covers
-
-Dinge die nicht so funktionieren wie sie sollen/mit denen ich nicht zufrieden bin:
--Wenn die Option zum Anzeigen der Lautstaerke an ist und man nicht mit dem Slider interagiert hat, ist der Abstand zwischen dem Text und dem Slider selbst groeßer als normal. Das gilt sowohl fuer das Main Fenster, als auch fuer die Extra Fenster.
--die Position des Changelog Knopfes
-
-Dinge die etwas langsam sind, aber nicht so doll stoeren sollten:
--die Text Label die die Lautstaerke und die aktuelle Song Position anzeigen, koennen langsam sein, wenn man den Slider doll bewegt, aber das sollte nicht wirklich ein Problem sein.
-
-Dinge die zu langsam sind:
-
-
-Bitte ergaenzt hier die themen, indem ihr die datei "changelog_and_feedback.txt" vom Explorer aus oeffnet.
