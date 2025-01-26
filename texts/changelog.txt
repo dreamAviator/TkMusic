@@ -14,13 +14,13 @@
 
 +A menu was added
 
-+A right click menu in the playlist was added #entfernen, nur beim metadaten editor
++A right click menu in the playlist was added
 
-+A mini mode was added
++A mini mode was added (scrapped at least for this release)
 
 +Recent files were added
 
-+An option to display the main window and the playlist window in one window was added
++metadata editor was added (only in version _2)
 
 +#Now the currently playing song is not automatically selected in the playlist, but instead the text of the currently playing song is green. Also when you move elements, your selected element remains selected after you moved it, so you can press the move button mutliple times without having to select the element again (this does not work for moving multiple elements yet).
 
