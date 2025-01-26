@@ -1648,7 +1648,7 @@ def infoWE():
     licenseAttributionFrame.pack(side = tk.TOP,fill = tk.X)
     changelogButton = ttk.Button(versionFrame,text = "Changelog",command = lambda: (windowExtra("Changelog")))
     changelogButton.pack(side = tk.RIGHT)
-    version = ttk.Label(versionFrame,text = "Version 1.0 BETA 11")
+    version = ttk.Label(versionFrame,text = "Version 1.0 BETA 11_1")
     version.pack(fill = tk.X)
     attributions = ttk.Button(licenseAttributionFrame,text = "Attributions",command = lambda: (windowExtra("attributions")))
     attributions.pack(side = tk.RIGHT)
