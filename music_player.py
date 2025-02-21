@@ -750,7 +750,7 @@ def addToPlaylist(mbsong):#maybe song
         del recentFiles[howmany - 1]
         print(recentFiles)
         recentFiles.insert(0,sOpllst + '\n')
-        if sOpllst.endswith('.m3u'):
+        if sOpllst.endswith('.m3u') or sOpllst.endswith('.txt'):
             del recentPlaylists[howmany - 1]
             recentPlaylists.insert(0,sOpllst + '\n')
             if rememberme == True:
@@ -762,6 +762,29 @@ def addToPlaylist(mbsong):#maybe song
             for songFplaylist in lines:#song from playlist
                 songFplaylist = songFplaylist[:-1]
                 playlist.append(songFplaylist)
+        elif sOpllst.endswith('.m3u8'):
+            del recentPlaylists[howmany - 1]
+            recentPlaylists.insert(0,sOpllst + '\n')
+            if rememberme == True:
+                plWtitleNameTrue = True
+                lastSlash = sOpllst.rfind("/")
+                plWtitleName = sOpllst[lastSlash + 1:]
+            with open(sOpllst,'r') as file:
+                lines = file.readlines()
+            for line in lines:
+                if line != "#EXTM3U":
+                    if line.startswith("#EXTINF:"):
+                        comma = line.find(",")
+                        separator = line.find(" - ")
+                        line = line[8:]
+                        lengthSec = line[:comma]
+                        line = line[comma + 1:]
+                        interpreter = line[:separator]
+                        line = line[separator + 4:]
+                        title = line
+                    else:
+                        playlist.append(line[:-1])
+            del playlist[0]
         else:
             del recentSongs[howmany - 1]
             recentSongs.insert(0,sOpllst + '\n')
@@ -781,7 +804,7 @@ def addToPlaylist(mbsong):#maybe song
     print("here we go again again lol")
     print(songsToAdd)
     for element in songsToAdd:
-        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
+        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u') and not element.lower().endswith('.txt') and not element.lower().endswith('.m3u8'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
             unsupportedFiles = unsupportedFiles + '\n' + element
             print("unsupported file format")
             continue
@@ -1283,6 +1306,10 @@ def savePlaylist():
     if saveThere.endswith(extension) == False:
         saveThere = saveThere + extension
     lastSlash = saveThere.rfind("/")
+    if saveThere.endswith(".m3u"):
+        pllstformat = "m3u"
+    elif saveThere.endswith(".m3u8"):
+        pllstformat = "m3u8"
     playlistName = saveThere[lastSlash + 1:]
     try:#falls die playlist schon existiert, dass man sie ordentlich überschreiben kann
         with open(saveThere,"r") as file:
@@ -1296,19 +1323,58 @@ def savePlaylist():
     #    makeProgress()
     #    makeProgress()
         pass
-    for element in pPlaylist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
-    for element in playlist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
+    if pllstformat == "m3u":
+        for element in pPlaylist:
+            with open(saveThere, "a") as f:
+                f.write(element + '\n')
+        for element in playlist:
+            with open(saveThere, "a") as f:
+                f.write(element + '\n')
+    elif pllstformat == "m3u8":
+        lines = []
+        lines.append("#EXTM3U\n")
+        for song in pPlaylist:
+            _,songLengthSec = getSongLength(song)
+            try:
+                dot = songLengthSec.rfind(".")
+                sognLengthSec = songLengthSec[:dot]#das hier noch fixen
+            except:
+                pass
+            title = getSongName(song)
+            artist = getSongArtist(song)
+            if title == "unknown":
+                songLS = song.rfind("/")
+                dot = song.rfind(".")
+                title = song[songLS + 1:dot]
+            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            lines.append(line)
+            lines.append(song + "\n")
+        for song in playlist:
+            _,songLengthSec = getSongLength(song)
+            try:
+                dot = songLengthSec.rfind(".")
+                sognLengthSec = songLengthSec[:dot]
+            except:
+                pass
+            title = getSongName(song)
+            artist = getSongArtist(song)
+            if title == "unknown":
+                songLS = song.rfind("/")
+                dot = song.rfind(".")
+                title = song[songLS + 1:dot]
+            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            lines.append(line)
+            lines.append(song + "\n")
+        with open(saveThere,"a") as f:
+            f.writelines(lines)
+        #hier jetzt für jeden song die länge, den artist und titel herausfinden, bei nicht bekannt unknown hinschreiben und als titel den dateinamen, und halt davor #extinf
     if miniModeActive.get() == False:
         plW.title(playlistName)
     elif miniModeActive.get() == True:
         plWminiMode.title(playlistName)
     recentFiles.insert(0,saveThere + '\n')
     recentPlaylists.insert(0,saveThere + '\n')
-    message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)
+    message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)#irgendwo beim einladen eine einstellung machen, dass entweder die meatdaten aus der m3u8  priorisiert werden oder die aus den audiodateien
 
 def upInPlaylist():
     global loopMove
@@ -2660,7 +2726,7 @@ def openFilesDialog():
 def saveFileDialog():
     app = QApplication(sys.argv)
     options = QFileDialog.Options()
-    fileName,selectedFilter = QFileDialog.getSaveFileName(None,"Save Playlist","","m3u Playlist Files (older standard) (*.m3u);;m3u8 Playlist Files (newer standard) (*.m3u8);;Text Files (*.txt);;All Files (*)",options = options)
+    fileName,selectedFilter = QFileDialog.getSaveFileName(None,"Save Playlist","","m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)",options = options)
     return fileName,selectedFilter
 
 def exitProgram():
@@ -3132,4 +3198,3 @@ main_window.mainloop()
 #entweder das extra window (wieder ig) nicht größenverstellbar machen, oder gucken, ob das programm vlt doch größenverstellbar sein kann
 #option machen, mit der man anschalten kann, dass songs aus playlisten auch in den recent songs angezeigt werden
 #wenn man zu einem anderen song skipped bevor er fertig geladen hat, gibt es einen fehler
-#ein rechtsklick menü für jeden song und eine option im menu. metadata_editor() beim menü und beim rechtsklick metadata_editor.loadFiles(ausgewählter songs)
