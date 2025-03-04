@@ -750,7 +750,7 @@ def addToPlaylist(mbsong):#maybe song
         del recentFiles[howmany - 1]
         print(recentFiles)
         recentFiles.insert(0,sOpllst + '\n')
-        if sOpllst.endswith('.m3u') or sOpllst.endswith('.txt'):
+        if sOpllst.endswith('.m3u'):
             del recentPlaylists[howmany - 1]
             recentPlaylists.insert(0,sOpllst + '\n')
             if rememberme == True:
@@ -762,29 +762,6 @@ def addToPlaylist(mbsong):#maybe song
             for songFplaylist in lines:#song from playlist
                 songFplaylist = songFplaylist[:-1]
                 playlist.append(songFplaylist)
-        elif sOpllst.endswith('.m3u8'):
-            del recentPlaylists[howmany - 1]
-            recentPlaylists.insert(0,sOpllst + '\n')
-            if rememberme == True:
-                plWtitleNameTrue = True
-                lastSlash = sOpllst.rfind("/")
-                plWtitleName = sOpllst[lastSlash + 1:]
-            with open(sOpllst,'r') as file:
-                lines = file.readlines()
-            for line in lines:
-                if line != "#EXTM3U":
-                    if line.startswith("#EXTINF:"):
-                        comma = line.find(",")
-                        separator = line.find(" - ")
-                        line = line[8:]
-                        lengthSec = line[:comma]
-                        line = line[comma + 1:]
-                        interpreter = line[:separator]
-                        line = line[separator + 4:]
-                        title = line
-                    else:
-                        playlist.append(line[:-1])
-            del playlist[0]
         else:
             del recentSongs[howmany - 1]
             recentSongs.insert(0,sOpllst + '\n')
@@ -804,7 +781,7 @@ def addToPlaylist(mbsong):#maybe song
     print("here we go again again lol")
     print(songsToAdd)
     for element in songsToAdd:
-        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u') and not element.lower().endswith('.txt') and not element.lower().endswith('.m3u8'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
+        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
             unsupportedFiles = unsupportedFiles + '\n' + element
             print("unsupported file format")
             continue
@@ -1306,10 +1283,6 @@ def savePlaylist():
     if saveThere.endswith(extension) == False:
         saveThere = saveThere + extension
     lastSlash = saveThere.rfind("/")
-    if saveThere.endswith(".m3u"):
-        pllstformat = "m3u"
-    elif saveThere.endswith(".m3u8"):
-        pllstformat = "m3u8"
     playlistName = saveThere[lastSlash + 1:]
     try:#falls die playlist schon existiert, dass man sie ordentlich überschreiben kann
         with open(saveThere,"r") as file:
@@ -1323,58 +1296,19 @@ def savePlaylist():
     #    makeProgress()
     #    makeProgress()
         pass
-    if pllstformat == "m3u":
-        for element in pPlaylist:
-            with open(saveThere, "a") as f:
-                f.write(element + '\n')
-        for element in playlist:
-            with open(saveThere, "a") as f:
-                f.write(element + '\n')
-    elif pllstformat == "m3u8":
-        lines = []
-        lines.append("#EXTM3U\n")
-        for song in pPlaylist:
-            _,songLengthSec = getSongLength(song)
-            try:
-                dot = songLengthSec.rfind(".")
-                sognLengthSec = songLengthSec[:dot]#das hier noch fixen
-            except:
-                pass
-            title = getSongName(song)
-            artist = getSongArtist(song)
-            if title == "unknown":
-                songLS = song.rfind("/")
-                dot = song.rfind(".")
-                title = song[songLS + 1:dot]
-            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
-            lines.append(line)
-            lines.append(song + "\n")
-        for song in playlist:
-            _,songLengthSec = getSongLength(song)
-            try:
-                dot = songLengthSec.rfind(".")
-                sognLengthSec = songLengthSec[:dot]
-            except:
-                pass
-            title = getSongName(song)
-            artist = getSongArtist(song)
-            if title == "unknown":
-                songLS = song.rfind("/")
-                dot = song.rfind(".")
-                title = song[songLS + 1:dot]
-            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
-            lines.append(line)
-            lines.append(song + "\n")
-        with open(saveThere,"a") as f:
-            f.writelines(lines)
-        #hier jetzt für jeden song die länge, den artist und titel herausfinden, bei nicht bekannt unknown hinschreiben und als titel den dateinamen, und halt davor #extinf
+    for element in pPlaylist:
+        with open(saveThere, "a") as f:
+            f.write(element + '\n')
+    for element in playlist:
+        with open(saveThere, "a") as f:
+            f.write(element + '\n')
     if miniModeActive.get() == False:
         plW.title(playlistName)
     elif miniModeActive.get() == True:
         plWminiMode.title(playlistName)
     recentFiles.insert(0,saveThere + '\n')
     recentPlaylists.insert(0,saveThere + '\n')
-    message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)#irgendwo beim einladen eine einstellung machen, dass entweder die meatdaten aus der m3u8  priorisiert werden oder die aus den audiodateien
+    message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)
 
 def upInPlaylist():
     global loopMove
@@ -2726,8 +2660,25 @@ def openFilesDialog():
 def saveFileDialog():
     app = QApplication(sys.argv)
     options = QFileDialog.Options()
-    fileName,selectedFilter = QFileDialog.getSaveFileName(None,"Save Playlist","","m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)",options = options)
+    fileName,selectedFilter = QFileDialog.getSaveFileName(None,"Save Playlist","","m3u Playlist Files (older standard) (*.m3u);;m3u8 Playlist Files (newer standard) (*.m3u8);;Text Files (*.txt);;All Files (*)",options = options)
     return fileName,selectedFilter
+
+def loadLanguages():
+    languageList = []
+    for filename in os.listdir(os.path.join(dirname,'texts/language')):
+        if filename.startswith("language_"):
+            filepath = os.path.join(os.path.join(dirname,'texts/language'),filename)
+            underscore = filename.find("_")
+            languageList.append([filename[underscore + 1:],filepath])
+    print(languageList)
+    return languageList
+
+def loadLanguage(language,languageList):
+    for languageListList in languageList:
+        if languageListList[0] == language:
+            languagePath = languageListList[1]
+            break
+    return
 
 def exitProgram():
     global exiting
@@ -2747,6 +2698,11 @@ def exitProgram():
 def hideInBackground(event):#auch playlistWindow in hintergrund bringen
     pass
 
+with open(os.path.join(dirname,'texts/language/selection.txt')) as languageFile:
+    language = languageFile.readlines()[0]
+languageList = loadLanguages()
+loadLanguage(language,languageList)
+
 #root_window
 root = tk.Tk()
 root.withdraw()
@@ -2757,7 +2713,7 @@ global main_windowWidth
 main_windowWidth = 500
 main_windowWidthStr = str(main_windowWidth)
 main_window = tk.Toplevel()
-main_window.title("Music Player")
+main_window.title(mainWindowTitleLangText)
 main_window.geometry(main_windowWidthStr + 'x360+100+100')
 main_window.bind('<Escape>',hideInBackground)
     #menus
@@ -2765,34 +2721,34 @@ menubar1 = tk.Menu(main_window)
 main_window.config(menu = menubar1)
         #file_menu
 file_menu1 = tk.Menu(menubar1,tearoff = False)
-file_menu1.add_command(label = 'Open',command = lambda: (addToPlaylist("no")))
+file_menu1.add_command(label = file_menu1_command1_label_langtext,command = lambda: (addToPlaylist("no")))
 sub_menu1 = tk.Menu(file_menu1,tearoff = False)
-file_menu1.add_cascade(label = "Recent files",menu = sub_menu1)
-file_menu1.add_command(label = 'Save as...',command = savePlaylist)
-file_menu1.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu1.add_cascade(label = file_menu1_cascade1_label_langtext,menu = sub_menu1)
+file_menu1.add_command(label = file_menu1_command2_label_langtext,command = savePlaylist)
+file_menu1.add_command(label = file_menu1_command3_label_langtext,command = deleteAllSongs)
 file_menu1.add_separator()
-file_menu1.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
+file_menu1.add_command(label = file_menu1_command4_label_langtext,command = lambda: (windowExtra("settings")))
 file_menu1.add_separator()
-file_menu1.add_command(label='Exit',command=exitProgram)
-menubar1.add_cascade(label="File",menu=file_menu1,underline=0)
+file_menu1.add_command(label=file_menu1_command5_label_langtext,command=exitProgram)
+menubar1.add_cascade(label=menubar1_cascade1_label_langtext,menu=file_menu1,underline=0)
         #view_menu
 view_menu1 = tk.Menu(menubar1,tearoff = False)
-view_menu1.add_command(label = 'Show the value of the volume slider',command = lambda: (settingsFmenu("volumeSliderText")))
-view_menu1.add_command(label = 'Two windows',command = lambda: (settingsFmenu("twoWindows")))
-view_menu1.add_command(label = 'Mini mode',command = lambda: (settingsFmenu("miniMode")))
-menubar1.add_cascade(label = "View",menu = view_menu1,underline = 0)
+view_menu1.add_command(label = view_menu1_command1_label_langtext,command = lambda: (settingsFmenu("volumeSliderText")))
+view_menu1.add_command(label = view_menu1_command2_label_langtext,command = lambda: (settingsFmenu("twoWindows")))
+view_menu1.add_command(label = view_menu1_command3_label_langtext,command = lambda: (settingsFmenu("miniMode")))
+menubar1.add_cascade(label = menubar1_cascade2_label_langtext,menu = view_menu1,underline = 0)
         #help_menu
 #keyboard shortcuts
 #license
 #changelog
 #halt alle sachen die im help menu standardmäßig sind und/oder die im info window sind
 help_menu1 = tk.Menu(menubar1,tearoff = False)
-help_menu1.add_command(label = 'About & help',command = lambda:(windowExtra("info")))
-help_menu1.add_command(label = 'Changelog',command = lambda:(windowExtra("Changelog")))
-help_menu1.add_command(label = 'License',command = lambda:(windowExtra("License")))
+help_menu1.add_command(label = help_menu1_command1_label_langtext,command = lambda:(windowExtra("info")))
+help_menu1.add_command(label = help_menu1_command2_label_langtext,command = lambda:(windowExtra("Changelog")))
+help_menu1.add_command(label = help_menu1_command3_label_langtext,command = lambda:(windowExtra("License")))
 help_menu1.add_separator()
-help_menu1.add_command(label = 'Options',command = lambda:(windowExtra("settings")))
-help_menu1.add_command(label = 'Message logs',command = lambda:(windowExtra("messageLogs")))
+help_menu1.add_command(label = help_menu1_command4_label_langtext,command = lambda:(windowExtra("settings")))
+help_menu1.add_command(label = help_menu1_command5_label_langtext,command = lambda:(windowExtra("messageLogs")))
 menubar1.add_cascade(label = "Help",menu = help_menu1,underline = 0)
 
 #playlist window
@@ -2809,29 +2765,29 @@ menubar2 = tk.Menu(plW)
 plW.config(menu = menubar2)
         #file_menu
 file_menu2 = tk.Menu(menubar2,tearoff = False)
-file_menu2.add_command(label = 'Add',command = lambda: (addToPlaylist("no")))
+file_menu2.add_command(label = file_menu2_command1_label_langtext,command = lambda: (addToPlaylist("no")))
 sub_menu21 = tk.Menu(file_menu2,tearoff = False)
-file_menu2.add_cascade(label = "Recent songs",menu = sub_menu21)
+file_menu2.add_cascade(label = file_menu2_cascade1_label_langtext,menu = sub_menu21)
 sub_menu22 = tk.Menu(file_menu2,tearoff = False)
 # sub_menu3.add_command(label = 'Recent playlist 1')
-file_menu2.add_cascade(label = "Recent playlists",menu = sub_menu22)
-file_menu2.add_command(label = 'Save as...',command = savePlaylist)
-file_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu2.add_cascade(label = file_menu2_cascade2_label_langtext,menu = sub_menu22)
+file_menu2.add_command(label = file_menu2_command2_label_langtext,command = savePlaylist)
+file_menu2.add_command(label = file_menu2_command3_label_langtext,command = deleteAllSongs)
 file_menu2.add_separator()
-file_menu2.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
+file_menu2.add_command(label = file_menu2_command4_label_langtext,command = lambda: (windowExtra("settings")))
 file_menu2.add_separator()
-file_menu2.add_command(label='Exit',command=exitProgram)
-menubar2.add_cascade(label="File",menu=file_menu2,underline=0)
+file_menu2.add_command(label=file_menu2_command5_label_langtext,command=exitProgram)
+menubar2.add_cascade(label=file_menu2_cascade3_label_langtext,menu=file_menu2,underline=0)
         #edit_menu
 edit_menu2 = tk.Menu(menubar2,tearoff = False)#das erste edit menu, aber ist in menubar 2, der übersicht halber ist das nummer 2
-edit_menu2.add_command(label = 'Move to the top',command = topInPlaylist)
-edit_menu2.add_command(label = 'Move up',command = upInPlaylist)
-edit_menu2.add_command(label = 'Move down',command = downInPlaylist)
-edit_menu2.add_command(label = 'Move to the bottom',command = bottomInPlaylist)
-edit_menu2.add_command(label = 'Delete',command = delFrompllst)
-edit_menu2.add_command(label = 'Delete duplicates',command = delDuplicates)
-edit_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
-menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
+edit_menu2.add_command(label = edit_menu2_command1_label_langtext,command = topInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command2_label_langtext,command = upInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command3_label_langtext,command = downInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command4_label_langtext,command = bottomInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command5_label_langtext,command = delFrompllst)
+edit_menu2.add_command(label = edit_menu2_command6_label_langtext,command = delDuplicates)
+edit_menu2.add_command(label = edit_menu2_command7_label_langtext,command = deleteAllSongs)
+menubar2.add_cascade(label = menubar2_cascade1_label_langtext,menu = edit_menu2,underline = 0)
 
 #variables
 sliderVar = tk.IntVar()
@@ -2901,9 +2857,9 @@ songLength = "00:00"
 playlistLength = "00:00:00"
 remainingPlaylistLength = "00:00:00"
 plstSelection = "0/0"
-songName = "Title"
-songArtist = "Artist"
-songFilename = "Filename"
+songName = songName_variable
+songArtist = songArtist_variable
+songFilename = songFilename_variable
 cursor_state = "normal"
 sliderPressed = False
 volumePressed = False
@@ -3198,3 +3154,4 @@ main_window.mainloop()
 #entweder das extra window (wieder ig) nicht größenverstellbar machen, oder gucken, ob das programm vlt doch größenverstellbar sein kann
 #option machen, mit der man anschalten kann, dass songs aus playlisten auch in den recent songs angezeigt werden
 #wenn man zu einem anderen song skipped bevor er fertig geladen hat, gibt es einen fehler
+#ein rechtsklick menü für jeden song und eine option im menu. metadata_editor() beim menü und beim rechtsklick metadata_editor.loadFiles(ausgewählter songs)
