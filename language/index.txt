@@ -1,0 +1,38 @@
+main_window_title_langtext - "Music Player"
+file_menu1_command1_label_langtext - 'Open'
+file_menu1_cascade1_label_langtext - "Recent files"
+file_menu1_command2_label_langtext - 'Save as...'
+file_menu1_command3_label_langtext - 'Delete all'
+file_menu1_command4_label_langtext - 'Options'
+file_menu1_command5_label_langtext - 'Exit'
+menubar1_cascade1_label_langtext - "File"
+view_menu1_command1_label_langtext - 'Show the value of the volume slider'
+view_menu1_command2_label_langtext - 'Two windows'
+view_menu1_command3_label_langtext - 'Mini mode'
+menubar1_cascade2_label_langtext - "View"
+help_menu1_command1_label_langtext - 'About & help'
+help_menu1_command2_label_langtext - 'Changelog'
+help_menu1_command3_label_langtext - 'License'
+help_menu1_command4_label_langtext - 'Options'
+help_menu1_command5_label_langtext - 'Message logs'
+menubar1_cascade3_label_langtext - "Help"
+plW_title_langtext - "Playlist"
+file_menu2_command1_label_langtext - 'Add'
+file_menu2_cascade1_label_langtext - "Recent songs"
+file_menu2_cascade2_label_langtext - "Recent playlists
+file_menu2_command2_label_langtext - 'Save as...'
+file_menu2_command3_label_langtext - 'Delete all'
+file_menu2_command4_label_langtext - 'Options'
+file_menu2_command5_label_langtext - 'Exit'
+file_menu2_cascade3_label_langtext - "File"
+edit_menu2_command1_label_langtext - 'Move to the top'
+edit_menu2_command2_label_langtext - 'Move up'
+edit_menu2_command3_label_langtext - 'Move down'
+edit_menu2_command4_label_langtext - 'Move to the bottom'
+edit_menu2_command5_label_langtext - 'Delete'
+edit_menu2_command6_label_langtext - 'Delete duplicates'
+edit_menu2_command7_label_langtext - 'Delete all'
+menubar2_cascade1_label_langtext - "Edit"
+songName_variable - "Title"
+songArtist_variable - "Artist"
+songFilename_variable - "Filename"
