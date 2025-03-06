@@ -1323,12 +1323,51 @@ def savePlaylist():
     #    makeProgress()
     #    makeProgress()
         pass
-    for element in pPlaylist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
-    for element in playlist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
+    if pllstformat == "m3u":
+        for element in pPlaylist:
+            with open(saveThere, "a") as f:
+                f.write(element + '\n')
+        for element in playlist:
+            with open(saveThere, "a") as f:
+                f.write(element + '\n')
+    elif pllstformat == "m3u8":
+        lines = []
+        lines.append("#EXTM3U\n")
+        for song in pPlaylist:
+            _,songLengthSec = getSongLength(song)
+            try:
+                dot = songLengthSec.rfind(".")
+                sognLengthSec = songLengthSec[:dot]#das hier noch fixen
+            except:
+                pass
+            title = getSongName(song)
+            artist = getSongArtist(song)
+            if title == "unknown":
+                songLS = song.rfind("/")
+                dot = song.rfind(".")
+                title = song[songLS + 1:dot]
+            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            lines.append(line)
+            lines.append(song + "\n")
+        for song in playlist:
+            _,songLengthSec = getSongLength(song)
+            try:
+                dot = songLengthSec.rfind(".")
+                sognLengthSec = songLengthSec[:dot]
+            except:
+                pass
+            title = getSongName(song)
+            artist = getSongArtist(song)
+            if title == "unknown":
+                songLS = song.rfind("/")
+                dot = song.rfind(".")
+                title = song[songLS + 1:dot]
+            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            lines.append(line)
+            lines.append(song + "\n")
+        with open(saveThere,"a") as f:
+            f.writelines(lines)
+        #hier jetzt für jeden song die länge, den artist und titel herausfinden, bei nicht bekannt unknown hinschreiben und als titel den dateinamen, und halt davor #extinf
     if miniModeActive.get() == False:
         plW.title(playlistName)
     elif miniModeActive.get() == True:
