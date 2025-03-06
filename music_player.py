@@ -1306,6 +1306,10 @@ def savePlaylist():
     if saveThere.endswith(extension) == False:
         saveThere = saveThere + extension
     lastSlash = saveThere.rfind("/")
+    if saveThere.endswith(".m3u"):
+        pllstformat = "m3u"
+    elif saveThere.endswith(".m3u8"):
+        pllstformat = "m3u8"
     playlistName = saveThere[lastSlash + 1:]
     try:#falls die playlist schon existiert, dass man sie ordentlich überschreiben kann
         with open(saveThere,"r") as file:
