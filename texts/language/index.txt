@@ -1,1 +1,162 @@
-not yet made
+main_window_title_langtext - "Music Player"#ich beginne hier ab dem punkt, bei dem das fenster erstellt wird
+file_menu1_command1_label_langtext - 'Open'
+file_menu1_cascade1_label_langtext - "Recent files"
+file_menu1_command2_label_langtext - 'Save as...'
+file_menu1_command3_label_langtext - 'Delete all'
+file_menu1_command4_label_langtext - 'Options'
+file_menu1_command5_label_langtext - 'Exit'
+menubar1_cascade1_label_langtext - "File"
+view_menu1_command1_label_langtext - 'Show the value of the volume slider'
+view_menu1_command2_label_langtext - 'Two windows'
+view_menu1_command3_label_langtext - 'Mini mode'
+menubar1_cascade2_label_langtext - "View"
+help_menu1_command1_label_langtext - 'About & help'
+help_menu1_command2_label_langtext - 'Changelog'
+help_menu1_command3_label_langtext - 'License'
+help_menu1_command4_label_langtext - 'Options'
+help_menu1_command5_label_langtext - 'Message logs'
+menubar1_cascade3_label_langtext - "Help"
+plW_title_langtext - "Playlist"
+file_menu2_command1_label_langtext - 'Add'
+file_menu2_cascade1_label_langtext - "Recent songs"
+file_menu2_cascade2_label_langtext - "Recent playlists
+file_menu2_command2_label_langtext - 'Save as...'
+file_menu2_command3_label_langtext - 'Delete all'
+file_menu2_command4_label_langtext - 'Options'
+file_menu2_command5_label_langtext - 'Exit'
+file_menu2_cascade3_label_langtext - "File"
+edit_menu2_command1_label_langtext - 'Move to the top'
+edit_menu2_command2_label_langtext - 'Move up'
+edit_menu2_command3_label_langtext - 'Move down'
+edit_menu2_command4_label_langtext - 'Move to the bottom'
+edit_menu2_command5_label_langtext - 'Delete'
+edit_menu2_command6_label_langtext - 'Delete duplicates'
+edit_menu2_command7_label_langtext - 'Delete all'
+menubar2_cascade1_label_langtext - "Edit"
+songName_variable_langtext - "Title"
+songArtist_variable_langtext - "Artist"
+songFilename_variable_langtext - "Filename"
+tree_heading1_text_langtext - 'Title'
+tree_heading2_text_langtext - 'Artist'
+tree_heading3_text_langtext - 'Length'
+rcmenu1_command1_label_langtext - "Delete all"
+rcmenu1_command2_label_langtext - "Delete duplicates"
+rcmenu2_command1_label_langtext - "Move to the top"
+rcmenu2_command2_label_langtext - "Move up"
+rcmenu2_command3_label_langtext - "Move down"
+rcmenu2_command4_label_langtext - "Move to the bottom
+rcmenu2_command5_label_langtext - "Delete"
+playlistSelectedLabel_text_langtext - "playing song"
+playlistDurationLabel_text_langtext - "duration"
+remainingPlaylistDurationLabel_text_langtext - "remaining"#ab hier beginne ich von vorne im code
+fastForward_message1_title_langtext - "No next song"
+fastForward_message1_text_langtext - "There is no next song, you can't skip to the next song.\n" + "If you want the first song of the playlist to play, turn the feature on in the settings."
+fastForward_message2_title_langtext - "Error"
+fastForward_message2_text_langtext - "There was an error while trying to skip to the next song\n\n"
+rewindSong_message1_title_langtext - "No previous song"
+rewindSong_message1_text_langtext - "There is no previous song, you can't rewind.\n" + "If you want the last song of the playlist to play, turn the feature on in the settings."
+rewindSong_message2_title_langtext - "Error"
+rewindSong_message2_text_langtext - "There was an error while trying to skip to the previous song.\n\n"
+addToPlaylist_message1_title_langtext - "Unsupported Files"
+addToPlaylist_message1_text_langtext - "These files are not supported:\n"
+updatePlaylist_plW_title_langtext - "Playlist loading..."
+updatePlaylist_plWminiMode_title_langtext - "Playlist loading..."
+updatePlaylist_playlistLengthLabel_text_langtext - "loading..."
+updatePlaylist_remainingPlaylistLengthLabel_text_langtext - "loading..."
+tree_loading_text_langtext - "loading"
+updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext - "loading..."
+treeMiniMode_loading_text_langtext - "loading"
+length_for_playlist_plW_title_langtext - "Playlist duration loading..."
+length_for_playlist_plWminiMode_title_langtext - "Playlist duration loading..."
+length_for_playlist_message1_title_langtext - "File(s) not found"
+length_for_playlist_message1_text_langtext - "These files couldn't be found and were removed from the playlist:\n"
+length_for_playlist_message2_title_langtext - "File(s) not found"
+length_for_playlist_message2_text_langtext - "These files couldn't be found and were removed from the playlist:\n"
+savePlaylist_message1_title_langtext - "Saved successfully"
+savePlaylist_message1_text1_langtext - "Saved playlist "
+savePlaylist_message1_text2_langtext - " successfully"
+upInPlaylist_message1_title_langtext - "No previous song"
+upInPlaylist_message1_text_langtext - "Do you want to move an element to the bottom of the list when it's at the top of the list and you try to move it up?"
+downInPlaylist_message1_title_langtext - "No next song"
+downInPlaylist_message1_text_langtext - "Do you want to move an element to the top of the list when it's at the bottom of the list and you try to move it down?"
+infoWE_extraWindow_title_langtext - "Info & help"
+infoWE_changelogButton_text_langtext - "Changelog"
+infoWE_attributions_text_langtext - "Attributions"#ist ein button
+infoWE_licenseButton_text_langtext - "License"
+settingsWE_extraWindow_title_langtext - "Settings"
+settingsWE_twoWindowsCheckbutton_text_langtext - "Display the playlist in an extra window"
+settingsWE_showVolumeInfoCheckbutton_text_langtext - "Show the value of the volume slider"
+settingsWE_loopPlaylistCheckbutton_text_langtext - "Loop the playlist when skipping (last song -> first song; first song <- last song)"
+settingsWE_loopMoveCheckbutton_text_langtext - "Loop the playlist when moving elements (first song ^ last song; last song ▿ first song)"
+settingsWE_shufflePositionResetCheckbutton_text_langtext - "Put the current song first when shuffling the playlist."
+settingsWE_messageLogsButton_text_langtext - "Message Logs"
+messageLogsWE_extraWindow_title_langtext - "Message Logs (only updates on opening)"
+messageLogsWE_logs_add1_text_langtext - "Infos"
+messageLogsWE_logs_add2_text_langtext - "Warnings"
+messageLogsWE_logs_add3_text_langtext - "Errors"
+messageLogsWE_tree1_2_3_heading1_text_langtext - "Title"
+messageLogsWE_tree1_2_3_heading2_text_langtext - "Message"
+messageLogsWE_tree1_2_3_heading3_text_langtext - "Buttons"
+messageLogsWE_tree1_2_3_heading4_text_langtext - "Times"
+messageLogsWE_tree1_2_3_heading5_text_langtext - "Nr"
+attributionsWE_extraWindow_title_langtext - "Attributions"
+attributionsWE_attributionLinksButton_text_langtext - "Links"
+attributionButtonsWE_extraWindow_title_langtext - "Attributions"
+changelogWE_extraWindow_title_langtext - "Changelog"
+licenseWE_extraWindow_title_langtext - "License"
+windowExtra_file_menu3_command1_label_langtext - 'Open'
+windowExtra_file_menu3_cascade1_label_langtext - "Recent files"
+windowExtra_file_menu3_command2_label_langtext - 'Save as...'
+windowExtra_file_menu3_command3_label_langtext - 'Delete all'
+windowExtra_file_menu3_command4_label_langtext - 'Options'
+windowExtra_file_menu3_command5_label_langtext - 'Exit'
+windowExtra_menubar3_cascade1_label_langtext - "File"
+windowExtra_view_menu3_command1_label_langtext - 'Show the value of the volume slider'
+windowExtra_view_menu3_command2_label_langtext - 'Two windows'
+windowExtra_view_menu3_command3_label_langtext - 'Mini mode'
+windowExtra_menubar3_cascade2_label_langtext - "View"
+windowExtra_help_menu3_command1_label_langtext - 'About & help'
+windowExtra_help_menu3_command2_label_langtext - 'Changelog'
+windowExtra_help_menu3_command3_label_langtext - 'License'
+windowExtra_help_menu3_command4_label_langtext - 'Options'
+windowExtra_help_menu3_command5_label_langtext - 'Message logs'
+windowExtra_menubar3_cascade3_label_langtext - "Help"
+windowExtra_extraType_info_headline_text_langtext - "Info & help"
+windowExtra_extraType_settings_headline_text_langtext - "Settings"
+windowExtra_extraType_messageLogs_headline_text_langtext - "Message Logs"
+windowExtra_extraType_messageLogs_backButton_text_langtext - "Settings"
+windowExtra_extraType_attributions_headline_text_langtext - "Attributions"
+windowExtra_extraType_attributions_backButton_text_langtext - "Info & help"
+windowExtra_extraType_attributionButtons_headline_text_langtext - "Links"
+windowExtra_extraType_attributionButtons_backbutton_text_langtext - "Attributions"
+windowExtra_extraType_Changelog_headline_text_langtext - "Changelog and feedback"
+windowExtra_extraType_Changelog_backButton_text_langtext - "Info & help"
+progress_progressWindow_title_langtext - "Loading..."
+buildTwoWindows_message1_title_langtext - "Not yet supported"
+buildTwoWindows_message1_text_langtext - "This does not work yet.\nRight now you can only have the playlist in an extra Window"
+buildMiniMode_message1_title_langtext - "Not yet supported"
+buildMiniMode_message1_text_langtext - "This does not work yet."
+buildMiniMode_miniModeWindow_title_langtext - "Song Name | TkMusic"
+buildMiniMode_plWminiMode_title_langtext - "Playlist"
+buildMiniMode_treeMiniMode_heading1_text_langtext = 'Title'
+buildMiniMode_treeMiniMode_heading2_text_langtext = 'Artist'
+buildMiniMode_treeMiniMode_heading3_text_langtext = 'Length'
+messageLogClicked_time0_timeText_langtext - "Doesn't close automatically"
+messageLogClicked_messageInfo_title_langtext - "Message Details | "
+messageLogClicked_messageDetails_text_langtext - "Message Details"
+messageLogClicked_messageImageText_text_langtext - "Icon:\n"
+messageLogClicked_messageTitle_text_langtext - "Title:\n"
+messageLogClicked_messageMessage_text_langtext - "Message:\n"
+messageLogClicked_messageButtons_text_langtext - "Buttons:\n"
+messageLogClicked_messageTime_text_langtext - "Time:\n"
+messageLogClicked_previewButton_text_langtext - "Preview message"
+messageLogClicked_closeButton_text_langtext - "Close"
+empty_file_text_list - "empty file\n"
+saveFileDialog_QFileDialog_SaveFilterName1_langtext - "Save Playlist"
+saveFileDialog_QFileDialog_SaveFilterName2_langtext - "m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)"
+exitProgram_message1_title_langtext - "Quitting..."
+exitProgram_message1_text_langtext - "This might take a some time"
+exitProgram_main_window_title_langtext - "Quitting..."
+exitProgram_plW_title_langtext - "Quitting..."
+languageChange_message1_title_langtext - "Restart needed"
+languageChange_message1_text_langtext - "You need to restart the prorgam for the changes to take full effect"

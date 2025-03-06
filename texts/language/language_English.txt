@@ -1,0 +1,162 @@
+Music Player
+Open
+Recent files
+Save as...
+Delete all
+Options
+Exit
+File
+Show the value of the volume slider
+Two windows
+Mini mode
+View
+About & help
+Changelog
+License
+Options
+Message logs
+Help
+Playlist
+Add
+Recent songs
+Recent playlists
+Save as...
+Delete all
+Options
+Exit
+File
+Move to the top
+Move up
+Move down
+Move to the bottom
+Delete
+Delete duplicates
+Delete all
+Edit
+Title
+Artist
+Filename
+Title
+Artist
+Length
+Delete all
+Delete duplicates
+Move to the top
+Move up
+Move down
+Move to the bottom
+Delete
+playing song
+duration
+remaining
+No next song
+There is no next song, you cant skip to the next song.\n + If you want the first song of the playlist to play, turn the feature on in the settings.
+Error
+There was an error while trying to skip to the next song\n\n
+No previous song
+There is no previous song, you cant rewind.\n + If you want the first song of the playlist to play, turn the feature on in the settings.
+Error
+There was an error while trying to skip to the previous song.\n\n
+Unsupported Files
+These files are not supported:\n
+Playlist loading...
+Playlist loading...
+loading...
+loading...
+loading
+loading...
+loading
+Playlist duration loading...
+Playlist duration loading...
+File(s) not found
+These files couldnt be found and were removed from the playlist:\n
+File(s) not found
+These files couldnt be found and were removed from the playlist:\n
+Saved successfully!
+Saved playlist
+ successfully
+No previous song
+Do you want to move an element to the bottom of the list when its at the top of the list and you try to move it up?
+No next song
+Do you want to move an element to the top of the list when its at the bottom of the list and you try to move it down?
+Info & help
+Changelog
+Attributions
+License
+Settings
+Display the playlist in an extra window
+Show the value of the volume slider
+Loop the playlist when skipping (last song -> first song; first song <- last song)
+Loop the playlist when moving elements (first song ^ last song; last song ▿ first song)
+Put the current song first when shuffling the playlist.
+Message Logs
+Message Logs (only updates on opening)
+Infos
+Warnings
+Errors
+Title
+Message
+Buttons
+Times
+Nr
+Attributions
+Links
+Attributions
+Changelog
+License
+Open
+Recent files
+Save as...
+Delete all
+Options
+Exit
+File
+Show the value of the volume slider
+Two windows
+Mini mode
+View
+About & help
+Changelog
+License
+Options
+Message logs
+Help
+Info & help
+Settings
+Message Logs
+Settings
+Attributions
+Info & help
+Links
+Attributions
+Changelog and feedback
+Info & help
+Loading...
+Not yet supported
+This does not work yet.\nRight now you can only have the playlist in an extra Window
+Not yet supported
+This does not work yet.
+Song Name | TkMusic
+Playlist
+Title
+Artist
+Length
+Doesnt close automatically
+Message Details |
+Message Details
+Icon:\n
+Title:\n
+Message:\n
+Buttons:\n
+Time:\n
+Preview message
+Close
+empty file\n
+Save Playlist
+m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)
+Quitting...
+This might take a some time
+Quitting...
+Quitting...
+Restart needed
+You need to restart the prorgam for the changes to take full effect.

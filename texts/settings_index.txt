@@ -4,9 +4,9 @@ loopPlaylist		(True/False)
 loopMove			(True/False)
 twoWindows			(True/False)
 filesToKeepText     (Integer)
-miniMode (noch nicht vorhanden)
+miniMode            (noch nicht vorhanden)
 shuffleReset        (True/False)
 metadataEditorTab   (Integer)#not in use in this version)
-preferPllstData    (True/False)
+preferPllstData     (True/False)
 
 index for settings
