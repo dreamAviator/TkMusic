@@ -762,6 +762,29 @@ def addToPlaylist(mbsong):#maybe song
             for songFplaylist in lines:#song from playlist
                 songFplaylist = songFplaylist[:-1]
                 playlist.append(songFplaylist)
+        elif sOpllst.endswith('.m3u8'):
+            del recentPlaylists[howmany - 1]
+            recentPlaylists.insert(0,sOpllst + '\n')
+            if rememberme == True:
+                plWtitleNameTrue = True
+                lastSlash = sOpllst.rfind("/")
+                plWtitleName = sOpllst[lastSlash + 1:]
+            with open(sOpllst,'r') as file:
+                lines = file.readlines()
+            for line in lines:
+                if line != "#EXTM3U":
+                    if line.startswith("#EXTINF:"):
+                        comma = line.find(",")
+                        separator = line.find(" - ")
+                        line = line[8:]
+                        lengthSec = line[:comma]
+                        line = line[comma + 1:]
+                        interpreter = line[:separator]
+                        line = line[separator + 4:]
+                        title = line
+                    else:
+                        playlist.append(line[:-1])
+            del playlist[0]
         else:
             del recentSongs[howmany - 1]
             recentSongs.insert(0,sOpllst + '\n')
