@@ -804,7 +804,7 @@ def addToPlaylist(mbsong):#maybe song
     print("here we go again again lol")
     print(songsToAdd)
     for element in songsToAdd:
-        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
+        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u') and not element.lower().endswith('.txt') and not element.lower().endswith('.m3u8'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
             unsupportedFiles = unsupportedFiles + '\n' + element
             print("unsupported file format")
             continue
