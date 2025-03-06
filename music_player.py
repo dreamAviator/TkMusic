@@ -750,7 +750,7 @@ def addToPlaylist(mbsong):#maybe song
         del recentFiles[howmany - 1]
         print(recentFiles)
         recentFiles.insert(0,sOpllst + '\n')
-        if sOpllst.endswith('.m3u'):
+        if sOpllst.endswith('.m3u') or sOpllst.endswith('.txt'):
             del recentPlaylists[howmany - 1]
             recentPlaylists.insert(0,sOpllst + '\n')
             if rememberme == True:
