@@ -1374,7 +1374,7 @@ def savePlaylist():
         plWminiMode.title(playlistName)
     recentFiles.insert(0,saveThere + '\n')
     recentPlaylists.insert(0,saveThere + '\n')
-    message(1,savePlaylist_message1_title_langtext,savePlaylist_message1_text1_langtext + playlistName + savePlaylist_message1_text2_langtext,"nope",2000)
+    message(1,savePlaylist_message1_title_langtext,savePlaylist_message1_text1_langtext + playlistName + savePlaylist_message1_text2_langtext,"nope",2000)#irgendwo beim einladen eine einstellung machen, dass entweder die meatdaten aus der m3u8 priorisiert werden oder die aus den audiodateien
 
 def upInPlaylist():
     global loopMove
