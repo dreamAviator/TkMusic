@@ -153,7 +153,7 @@ Vorschau
 Schließen
 leere Datei\n
 Wiedergabeliste speichern
-m3u Wiedergabeliste Dateien (alter Standard) (*m3u);;m3u8 Wiedergabeliste Dateien (neuer Standard) (*.m3u8);,Text Dateien (*.txt);;Alle Dateien (*)
+m3u8 Wiedergabeliste Dateien (neuer Standard) (*.m3u8);m3u Wiedergabeliste Dateien (alter Standard) (*m3u),Text Dateien (*.txt);;Alle Dateien (*)
 Beenden...
 Das könnte eine Weile dauern
 Beenden...
