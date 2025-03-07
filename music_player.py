@@ -750,7 +750,7 @@ def addToPlaylist(mbsong):#maybe song
         del recentFiles[howmany - 1]
         print(recentFiles)
         recentFiles.insert(0,sOpllst + '\n')
-        if sOpllst.endswith('.m3u') or sOpllst.endswith('.txt'):
+        if sOpllst.endswith('.m3u'):
             del recentPlaylists[howmany - 1]
             recentPlaylists.insert(0,sOpllst + '\n')
             if rememberme == True:
@@ -762,29 +762,6 @@ def addToPlaylist(mbsong):#maybe song
             for songFplaylist in lines:#song from playlist
                 songFplaylist = songFplaylist[:-1]
                 playlist.append(songFplaylist)
-        elif sOpllst.endswith('.m3u8'):
-            del recentPlaylists[howmany - 1]
-            recentPlaylists.insert(0,sOpllst + '\n')
-            if rememberme == True:
-                plWtitleNameTrue = True
-                lastSlash = sOpllst.rfind("/")
-                plWtitleName = sOpllst[lastSlash + 1:]
-            with open(sOpllst,'r') as file:
-                lines = file.readlines()
-            for line in lines:
-                if line != "#EXTM3U":
-                    if line.startswith("#EXTINF:"):
-                        comma = line.find(",")
-                        separator = line.find(" - ")
-                        line = line[8:]
-                        lengthSec = line[:comma]
-                        line = line[comma + 1:]
-                        interpreter = line[:separator]
-                        line = line[separator + 4:]
-                        title = line
-                    else:
-                        playlist.append(line[:-1])
-            del playlist[0]
         else:
             del recentSongs[howmany - 1]
             recentSongs.insert(0,sOpllst + '\n')
@@ -804,7 +781,7 @@ def addToPlaylist(mbsong):#maybe song
     print("here we go again again lol")
     print(songsToAdd)
     for element in songsToAdd:
-        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u') and not element.lower().endswith('.txt') and not element.lower().endswith('.m3u8'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
+        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
             unsupportedFiles = unsupportedFiles + '\n' + element
             print("unsupported file format")
             continue
@@ -1306,10 +1283,6 @@ def savePlaylist():
     if saveThere.endswith(extension) == False:
         saveThere = saveThere + extension
     lastSlash = saveThere.rfind("/")
-    if saveThere.endswith(".m3u"):
-        pllstformat = "m3u"
-    elif saveThere.endswith(".m3u8"):
-        pllstformat = "m3u8"
     playlistName = saveThere[lastSlash + 1:]
     try:#falls die playlist schon existiert, dass man sie ordentlich überschreiben kann
         with open(saveThere,"r") as file:
@@ -1323,58 +1296,19 @@ def savePlaylist():
     #    makeProgress()
     #    makeProgress()
         pass
-    if pllstformat == "m3u":
-        for element in pPlaylist:
-            with open(saveThere, "a") as f:
-                f.write(element + '\n')
-        for element in playlist:
-            with open(saveThere, "a") as f:
-                f.write(element + '\n')
-    elif pllstformat == "m3u8":
-        lines = []
-        lines.append("#EXTM3U\n")
-        for song in pPlaylist:
-            _,songLengthSec = getSongLength(song)
-            try:
-                dot = songLengthSec.rfind(".")
-                sognLengthSec = songLengthSec[:dot]#das hier noch fixen
-            except:
-                pass
-            title = getSongName(song)
-            artist = getSongArtist(song)
-            if title == "unknown":
-                songLS = song.rfind("/")
-                dot = song.rfind(".")
-                title = song[songLS + 1:dot]
-            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
-            lines.append(line)
-            lines.append(song + "\n")
-        for song in playlist:
-            _,songLengthSec = getSongLength(song)
-            try:
-                dot = songLengthSec.rfind(".")
-                sognLengthSec = songLengthSec[:dot]
-            except:
-                pass
-            title = getSongName(song)
-            artist = getSongArtist(song)
-            if title == "unknown":
-                songLS = song.rfind("/")
-                dot = song.rfind(".")
-                title = song[songLS + 1:dot]
-            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
-            lines.append(line)
-            lines.append(song + "\n")
-        with open(saveThere,"a") as f:
-            f.writelines(lines)
-        #hier jetzt für jeden song die länge, den artist und titel herausfinden, bei nicht bekannt unknown hinschreiben und als titel den dateinamen, und halt davor #extinf
+    for element in pPlaylist:
+        with open(saveThere, "a") as f:
+            f.write(element + '\n')
+    for element in playlist:
+        with open(saveThere, "a") as f:
+            f.write(element + '\n')
     if miniModeActive.get() == False:
         plW.title(playlistName)
     elif miniModeActive.get() == True:
         plWminiMode.title(playlistName)
     recentFiles.insert(0,saveThere + '\n')
     recentPlaylists.insert(0,saveThere + '\n')
-    message(1,savePlaylist_message1_title_langtext,savePlaylist_message1_text1_langtext + playlistName + savePlaylist_message1_text2_langtext,"nope",2000)#irgendwo beim einladen eine einstellung machen, dass entweder die meatdaten aus der m3u8 priorisiert werden oder die aus den audiodateien
+    message(1,savePlaylist_message1_title_langtext,savePlaylist_message1_text1_langtext + playlistName + savePlaylist_message1_text2_langtext,"nope",2000)
 
 def upInPlaylist():
     global loopMove
@@ -1654,7 +1588,10 @@ def infoWE():
     licenseText.pack()#fill = tk.X,anchor = tk.CENTER)
     bSeparator = ttk.Separator(extraWindow,orient = 'horizontal')#bottom separator
     bSeparator.pack(side = tk.BOTTOM,fill = tk.X)
-    filepath = os.path.join(dirname,"texts/info.txt")
+    if language == "English":
+        filepath = os.path.join(dirname,"texts/info_English.txt")
+    if language == "Deutsch":
+        filepath = os.path.join(dirname,"texts/info_Deutsch.txt")
     with open(filepath,'r') as file:
         lines = file.readlines()
     infoTextText = ""
@@ -1778,7 +1715,10 @@ def messageLogsWE():
     #außerdem sollte ich gucken, ob ich nd aus infos, warnings und erros info messages warning messages und error messages amche, oder nur bei infos/info das messages ranhänge naja gute nacht, vergiss nd das morgen mitzunehmen
 
 def attributionsWE():
-    filepath = os.path.join(dirname,"texts/attributions.txt")
+    if language == "English":
+        filepath = os.path.join(dirname,"texts/attributions_English.txt")
+    if language == "Deutsch":
+        filepath = os.path.join(dirname,"texts/attributions_Deutsch.txt")
     with open(filepath,"r") as file:
         text = file.read()
     extraWindow.title(attributionsWE_extraWindow_title_langtext)
@@ -1809,7 +1749,10 @@ def attributionButtonsWE():#irgendwie mehrere seiten oder so machen (7 links pas
 def changelogWE():
     extraWindow.title(changelogWE_extraWindow_title_langtext)
     text = ""
-    filepath = os.path.join(dirname,"texts/changelog.txt")
+    if language == "English":
+        filepath = os.path.join(dirname,"texts/changelog_English.txt")
+    elif language == "Deutsch":
+        filepath = os.path.join(dirname,"texts/changelog_Deutsch.txt")
     with open(filepath,'r') as file:
         lines = file.readlines()
     for line in lines:
