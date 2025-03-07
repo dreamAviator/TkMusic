@@ -1,0 +1,16 @@
+Ich habe Icons verwendet von:
+
+Dirtyworks			Icon-Icons
+William Richon			Flaticon
+Pixel perfect			Flaticon
+Freepik			Flaticon
+karthiks_18			Flaticon
+Iconjam			Flaticon
+Smashicons			Flaticon/Smashicons
+JoelM			openclipart.org
+
+Tkinter Feder
+
+Links zu diesen Leuten sind über den Button "Links" zu erreichen.
+
+Einige icons wurden von mir erstellt, indem ein oder mehrere Icons bearbeitet wurden.
