@@ -73,7 +73,7 @@ Diese Dateien wurden nicht gefunden und wurden aus der Wiedergabeliste entfernt:
 Datei(en) nicht gefunden
 Diese Dateien wurden nicht gefunden und wurden aus der Wiedergabelsite entfernt:\n
 Gespeichert!
-Playlist
+Wiedergabeliste
  erfolgreich gespeichert!
 Kein vorheriger Song
 Willst du Songs ganz nach unten verschieben wenn sie ganz oben in der Liste sind und du versuchst sie nach oben zu verschieben?
@@ -133,7 +133,7 @@ Changelog und Feedback
 Info & Hilfe
 Lädt...
 Noch nicht unterstützt
-Das funktioniert noch nicht.\nAktuell kannst du die Playlist nur in einem extra Fenster anzeigen lassen
+Das funktioniert noch nicht.\nAktuell kannst du die Wiedergabeliste nur in einem extra Fenster anzeigen lassen
 Noch nicht unterstützt
 Das funktioniert noch nicht.
 Song Name | TkMusic
