@@ -8,11 +8,11 @@ from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 from PyQt5.QtWidgets import QApplication, QFileDialog
 #gui + music (song cover)
-from PIL import Image
+from PIL import Image as pilImage
 #music
 import mutagen
 from mutagen import File
-from mutagen.id3 import ID3, TIT2, TPE1, TALB
+from mutagen.id3 import ID3, TIT2, TPE1, TALB, APIC
 from mutagen.mp3 import MP3
 from mutagen.oggvorbis import OggVorbis
 from mutagen.mp4 import MP4, MP4Tags
@@ -113,7 +113,7 @@ def loadSong():
     #songArt_pillow1 = Image.open(songArt)
     #songArt_pillow2 = ImageTk.PhotoImage(songArt)
     if songArt != "nothing":
-        jpg_image = Image.open(songArt)
+        jpg_image = pilImage.open(songArt)
         new_size = (200,200)
         new_size_smol = (50,50)
         jpg_image_resized = jpg_image.resize(new_size)
@@ -2780,26 +2780,104 @@ def loadFilesP1():#part1
 
 def loadFilesP2(filenamesMEtemp):
     for filename in filenamesMEtemp:
-        filenamesME.append(filename)
+        if filename not in filenamesME:
+            filenamesME.append(filename)
+    updateSelectedFilesTree(filenamesME)
+
+def updateSelectedFilesTree(filenamesME):
+    for item in selectedFilesTreeBEME.get_children():
+        selectedFilesTreeBEME.delete(item)
+    for item in selectedFilesTreeREME.get_children():
+        selectedFilesTreeREME.delete(item)
     fileCountTextBEME.config(text = str(len(filenamesME)) + " File/s")
+    fileCountTextREME.config(text = str(len(filenamesME)) + " File/s")
     for filename in filenamesME:
-        selectedFilesTreeBEME.insert('',tk.END,values = (filename))
-        selectedFilesTreeSEME.insert('',tk.END,values = (filename))
-        selectedFilesTreeREME.insert('',tk.END,values = (filename))
+        tupel = (filename,)
+        selectedFilesTreeBEME.insert('',tk.END,values = (tupel))
+        selectedFilesTreeREME.insert('',tk.END,values = (tupel))
 
 def deleteFiles():
-    pass
+    selectedItems = selectedFilesTreeBEME.selection()
+    for item in selectedItems:
+        where = filenamesME.index(selectedFilesTreeBEME.item(item,"values")[0])
+        del filenamesME[where]
+        selectedFilesTreeBEME.delete(item)
+    selectedItems = selectedFilesTreeREME.selection()
+    for item in selectedItems:
+        where = filenamesME.index(selectedFilesTreeREME.item(item,"values")[0])
+        del filenamesME[where]
+        selectedFilesTreeREME.delete(item)
+    updateSelectedFilesTree(filenamesME)
+
+def loadFileSEME():
+    global filenameME
+    global currentImageME
+    currentImageME = "default"
+    filenameMEtemp = openFileDialog()
+    if filenameMEtemp == "":
+        return
+    filenameME = filenameMEtemp
+    selectFileButtonSEME.config(text = filenameME)
+    lastSlash = filenameME.rfind("/")
+    filenameMEname = filenameME[lastSlash + 1:]
+    title,interpreter,album,_,cover = getMetadataME(filenameME)
+    if title == None:
+        title = "None"
+    if interpreter == None:
+        interpreter = "None"
+    if album == None:
+        album = "None"
+    titleString,interpreterString,albumString = makeMetadataToStringME(title,interpreter,album)
+    fileInfoTreeSEME.item("filename",values = ("Filename",filenameMEname))
+    fileInfoTreeSEME.item("title",values = ("Title",titleString))
+    fileInfoTreeSEME.item("interpret",values = ("Interpreter",interpreterString))
+    fileInfoTreeSEME.item("album",values = ("Album",albumString))
+    if cover != None:
+        jpg_image = pilImage.open(cover)
+        new_size = (100,100)
+        jpg_image_resized = jpg_image_resize(new_size)
+        jpg_image_resized.save(os.path.join(dirname,'icons/song_cover_me.png'),format = 'PNG')
+        songCoverImageMEnew = tk.PhotoImage(file = os.path.join(dirname,'icons/song_cover_me.png'))
+        songCoverButtonME.image = songCoverImageMEnew
+        songCoverButtonME.config(image = songCoverImageMEnew)
+    else:
+        songCoverButtonME.image(songCoverImageME)
+        songCoverButtonME.config(image = songCoverImageME)
+
+def loadImageME():
+    global newCoverMEfilepath
+    global currentImageME
+    filenameMEtemp = openFileDialog()
+    if filenametemp == "":
+        return
+    currentImageME = "custom"
+    newCoverMEfilepath = filenameMEtemp
+    newCoverME = pilImage.open(filenameMEtemp)
+    newCoverME.save(os.path.join(dirname,'icons/new_song_cover_me.png'),format = 'PNG')
+    imagePreview_old_size_ME = pilImage.open(filenameMEtemp)
+    new_size = (100,100)
+    imagePreviewME = imagePreview_old_size_ME.resize(new_size)
+    imagePreviewME.save(os.path.join(dirname,'icons/new_song_cover_preview_me.png'),format = 'PNG')
+    newSongCoverPreviewImageME = tk.PhotoImage(file = os.path.join(dirname,'icons/new_song_cover_preview_me.png'))
+    songCoverButtonME.image = newSongCoverPreviewImageME
+    songCoverButtonME.config(image = newSongCoverPreviewImageME)
 
 def start():
     global saveDirectoryME
     global filenamesME
-    global namePattern
+    selectedMode = modesME.index(modesME.select())
+    if selectedMode == 2:
+        singleEditMEoperation()
+        updatePlaylist(0,0)
+        return
     filenamesMEtwo = []
     if saveDirectoryME == "":
         print("error 1")
+        message(2,"No save directory selected","You need to select a save directory","ok",5000)
         return
     if filenamesME == []:
         print("error 2")
+        message(2,"No file(s) selected","You need to select at least one file to edit","ok",5000)
         return
     for song in filenamesME:
         print("cpying " + song)
@@ -2807,16 +2885,10 @@ def start():
         songName = song[lastslash + 1:]
         shutil.copy(song,saveDirectoryME + "/" + songName)
         filenamesMEtwo.append(saveDirectoryME + "/" + songName)
-    selectedMode = modesME.index(modesME.select())
     if selectedMode == 1:
-        batchEditMEOperation(filenamesME,filenamesMEtwo)
-    print("playlist")
-    print(playlist)
-    print("pplaylist")
-    print(pPlaylist)
-    print("\n")
-    print(filenamesME)
-    print(filenamesMEtwo)
+        batchEditMEoperation(filenamesME,filenamesMEtwo)
+    elif selectedMode == 3:
+        renameMEoperation(filenamesMEtwo)
     for indexOne,filename in enumerate(filenamesME):
         for indexTwo,pllstFile in enumerate(playlist):#playlistFile
             if filename == pllstFile:
@@ -2833,63 +2905,84 @@ def start():
     print(pPlaylist)
     updatePlaylist(0,0)
 
-def batchEditMEOperation(filenamesME,filenamesMEtwo):
-        pattern = namePattern.get()
-        print("pattern")
-        print(pattern)
-        if "%" not in pattern:
-            print("error 3")
-            return
-        pattern_data = []
-        while len(pattern) != 1:
-            pattern = pattern[1:]
-            where = pattern.find("%")
-            pattern_data.append(pattern[:where])
-            pattern = pattern[where:]
-        for song in filenamesMEtwo:
-            lastslash = song.rfind("/")
-            songName = song[lastslash + 1:]
-            fileExtension = songName.rfind('.')
-            title = ""
-            interpreter = ""
-            album = ""
-            songNameToEdit = songName[:-4]
-            for i in range(len(pattern_data)):
-                element = pattern_data[i]
-                print("element")
-                print(element)
-                print("songNameToEdit")
-                print(songNameToEdit)
-                print("title")
-                print(title)
-                print("interpreter")
-                print(interpreter)
-                if element != "t" and element != "i" and element != "a":
-                    where = songNameToEdit.find(element)
-                    songNameToEdit = songNameToEdit[where + len(element):]
+def batchEditMEoperation(filenamesME,filenamesMEtwo):
+    pattern = namePattern.get()
+    print("pattern")
+    print(pattern)
+    if "%" not in pattern:
+        print("error 3")
+        message(3,"Unvalid pattern","Your naming pattern is not valid. Press the 'What's that' button if you don't know what that is.","ok",0)
+        return
+    pattern_data = []
+    while len(pattern) != 1:
+        pattern = pattern[1:]
+        where = pattern.find("%")
+        pattern_data.append(pattern[:where])
+        pattern = pattern[where:]
+    for song in filenamesMEtwo:
+        lastslash = song.rfind("/")
+        songName = song[lastslash + 1:]
+        fileExtension = songName.rfind('.')
+        title = ""
+        interpreter = ""
+        album = ""
+        songNameToEdit = songName[:-4]
+        for i in range(len(pattern_data)):
+            element = pattern_data[i]
+            print("element")
+            print(element)
+            print("songNameToEdit")
+            print(songNameToEdit)
+            print("title")
+            print(title)
+            print("interpreter")
+            print(interpreter)
+            if element != "t" and element != "i" and element != "a":
+                where = songNameToEdit.find(element)
+                songNameToEdit = songNameToEdit[where + len(element):]
+            else:
+                if i != len(pattern_data) - 1:
+                    elementtwo = pattern_data[i + 1]
+                    wheretwo = songNameToEdit.find(elementtwo)
+                    if element == "t":
+                        title = songNameToEdit[:wheretwo]
+                    elif element == "i":
+                        interpreter = songNameToEdit[:wheretwo]
+                    elif element == "a":
+                        album = songNameToEdit[:wheretwo]
                 else:
-                    if i != len(pattern_data) - 1:
-                        elementtwo = pattern_data[i + 1]
-                        wheretwo = songNameToEdit.find(elementtwo)
-                        if element == "t":
-                            title = songNameToEdit[:wheretwo]
-                        elif element == "i":
-                            interpreter = songNameToEdit[:wheretwo]
-                        elif element == "a":
-                            album = songNameToEdit[:wheretwo]
-                    else:
-                        if element == "t":
-                            title = songNameToEdit
-                        elif element == "i":
-                            interpreter = songNameToEdit
-                        elif element == "a":
-                            album = songNameToEdit
+                    if element == "t":
+                        title = songNameToEdit
+                    elif element == "i":
+                        interpreter = songNameToEdit
+                    elif element == "a":
+                        album = songNameToEdit
 
-            print("song " + song)
-            print("title " + title)
-            print("interpreter " + interpreter)
-            print("album " + album)
-            if title != "":
+        print("song " + song)
+        print("title " + title)
+        print("interpreter " + interpreter)
+        print("album " + album)
+        if title != "":
+            if resetTitleVar.get() == True:
+                title = ""
+            if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                audioToEdit = MP3(song)
+                try:
+                    audioToEdit.add_tags()
+                except:
+                    pass
+                audioToEdit.save()
+                audioToEdit = ID3(song)
+                audioToEdit["TIT2"] = TIT2(encoding=3, text=title)
+                audioToEdit.save()
+            elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                audioToEdit = MP4(song)
+                if audioToEdit.tags == None:
+                    audioToEdit.tags = MP4Tags()
+                audioToEdit["\xa9nam"] = title
+                audioToEdit.save()
+        else:
+            if resetTitleVar.get() == True:
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
                     audioToEdit = MP3(song)
                     try:
@@ -2898,15 +2991,34 @@ def batchEditMEOperation(filenamesME,filenamesMEtwo):
                         pass
                     audioToEdit.save()
                     audioToEdit = ID3(song)
-                    audioToEdit["TIT2"] = TIT2(encoding=3, text=title)
+                    audioToEdit["TIT2"] = TIT2(encoding=3, text="")
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
                     if audioToEdit.tags == None:
                         audioToEdit.tags = MP4Tags()
-                    audioToEdit["\xa9nam"] = title
+                    audioToEdit["\xa9nam"] = ""
                     audioToEdit.save()
-            if interpreter != "":
+        if interpreter != "":
+            if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                audioToEdit = MP3(song)
+                try:
+                    audioToEdit.add_tags()
+                except:
+                    pass
+                audioToEdit.save()
+                audioToEdit = ID3(song)
+                audioToEdit["TPE1"] = TPE1(encoding=3, text=interpreter)
+                audioToEdit.save()
+            elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                audioToEdit = MP4(song)
+                if audioToEdit.tags == None:
+                    print("tags leer 2")
+                    audioToEdit.tags = MP4Tags()
+                audioToEdit["\xa9ART"] = interpreter
+                audioToEdit.save()
+        else:
+            if resetInterpreterVar.get() == True:
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
                     audioToEdit = MP3(song)
                     try:
@@ -2915,16 +3027,34 @@ def batchEditMEOperation(filenamesME,filenamesMEtwo):
                         pass
                     audioToEdit.save()
                     audioToEdit = ID3(song)
-                    audioToEdit["TPE1"] = TPE1(encoding=3, text=interpreter)
+                    audioToEdit["TPE1"] = TPE1(encoding=3, text="")
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
                     if audioToEdit.tags == None:
                         print("tags leer 2")
                         audioToEdit.tags = MP4Tags()
-                    audioToEdit["\xa9ART"] = interpreter
+                    audioToEdit["\xa9ART"] = ""
                     audioToEdit.save()
-            if album != "":
+        if album != "":
+            if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                audioToEdit = MP3(song)
+                try:
+                    audioToEdit.add_tags()
+                except:
+                    pass
+                audioToEdit.save()
+                audioToEdit = ID3(song)
+                audioToEdit["TALB"] = TALB(encoding=3, text=album)
+                audioToEdit.save()
+            elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                audioToEdit = MP4(song)
+                if audioToEdit.tags == None:
+                    audioToEdit.tags = MP4Tags()
+                audioToEdit["\xa9alb"] = album
+                audioToEdit.save()
+        else:
+            if resetInterpreterVar.get() == True:
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
                     audioToEdit = MP3(song)
                     try:
@@ -2933,14 +3063,74 @@ def batchEditMEOperation(filenamesME,filenamesMEtwo):
                         pass
                     audioToEdit.save()
                     audioToEdit = ID3(song)
-                    audioToEdit["TALB"] = TALB(encoding=3, text=album)
+                    audioToEdit["TALB"] = TALB(encoding=3, text="")
                     audioToEdit.save()
                 elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
                     audioToEdit = MP4(song)
                     if audioToEdit.tags == None:
                         audioToEdit.tags = MP4Tags()
-                    audioToEdit["\xa9alb"] = album
+                    audioToEdit["\xa9alb"] = ""
                     audioToEdit.save()
+
+def singleEditMEoperation():
+    global saveDirectoryME
+    global filenameME
+    global newCoverMEfilepath
+    global currentImageME
+    if copyFileVarME.get() == True:
+        if saveDirectoryME == "":
+            print("error")
+            message(2,"No save directory selected","You need to select a save directory","ok",5000)
+            return
+        if filenameME == "":
+            print("error")
+            message(2,"No file(s) selected","You need to select at least one file to edit","ok",5000)
+            return
+        lastSlash = filenameME.rfind("/")
+        filenameMEname = filenameME[lastSlash + 1:]
+        shutil.copy(filenameME,saveDirectoryME + "/" + filenameMEname)
+        filenameME = saveDirectoryME + "/" + filenameMEname
+    newFilenameME = list(fileInfoTreeSEME.item("filename","values"))[1]
+    title = list(fileInfoTreeSEME.item("title","values"))[1]
+    interpreter = list(fileInfoTreeSEME.item("interpret","values"))[1]
+    album = list(fileInfoTreeSEME.item("album","values"))[1]
+    if title == "None":
+        title = ""
+    if interpreter == None:
+        interpreter = ""
+    if album == None:
+        album = "None"
+    if filenameME.endswith(".mp3") or filename.endswith(".MP3"):
+        audioToEdit = MP3(filenameME)
+        try:
+            audioToEdit.add_tags()
+        except:
+            pass
+        audioToEdit.save()
+        audioToEdit = ID3(filenameME)
+        audioToEdit["TIT2"] = TIT2(encoding=3,text = title)
+        audioToEdit["TPE1"] = TPE1(encoding=3,text = interpreter)
+        audioToEdit["TALB"] = TALB(encoding=3,text = album)
+        if currentImageME != "default":
+            with open(newCOverMEfilepath,"rb") as img_file:
+                cover_image_data = img_file.read()
+            audioToEdit.add(APIC(encoding = 3,mime = "image/png",type = 3,desc = "Cover",data = cover_image_data))
+        audioToEdit.save()
+    elif filenameME.endswith(".m4a") or filenameME.endswith(".M4A"):
+        audioToEdit = MP4(filenameME)
+        if audioToEdit.tags == None:
+            audioToEdit.tags = MP4Tags()
+        audioToEdit["\xa9nam"] = title
+        audioToEdit["\xa9ART"] = interpreter
+        audioToEdit["\xa9alb"] = album
+        if currentImageME != "default":
+            with open(newCoverMEfilepath,"rb") as img_file:
+                cover_image_data = img_file.read()
+            audioToEdit["covr"] = [cover_image_data]
+        audioToEdit.save()
+    os.rename(filenameME,saveDirectoryME + "/" + newFilenameME)
+
+def renameMEoperation(filenamesME):
 
 def startEvent(event):
     start()
@@ -2962,6 +3152,13 @@ def whereSave():
         whereSaveButtonME.config(text = saveDirectoryME)
 
     #gui
+def openFileDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    options |= QFileDialog.ReadOnly
+    singlefile,_ = QFileDialog.getOpenFileName(None,"Select Audio File","","All Files (*)",options = options)
+    return singlefile
+
 def openFilesDialog():
     app = QApplication(sys.argv)
     options = QFileDialog.Options()
