@@ -2704,7 +2704,7 @@ def loadLanguage(language,languageList):
         if languageListList[0] == language:
             languagePath = languageListList[1]
             break
-    with open(languagePath,'r') as languageFile:
+    with open(languagePath,'r',encoding = 'utf-8') as languageFile:
         oldLines = languageFile.readlines()
     lines = []
     for line in oldLines:
