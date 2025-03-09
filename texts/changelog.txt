@@ -1,0 +1,51 @@
+11th beta release #i don't know how to write eighth
+-------------------
++The playlist now shows which song out of how many songs is selected, the length of the entire playlist and the length of the remaining playlist (including the currently played song [might get changed later, so that it shows the length of the playlist excluding the parts of the current song, that already played).
+
++Now (if you turn the setting on in the settings), you can loop the playlist (after the last song comes the first song, before the first song comes the last song)
+
++I also added a loading Window (maybe, probs aber)(noch nicht fertig)
+
++I added a Message-Log. Now you can see every message you ever got in the Message-Log (Settings -> Message_log)
+
++Now if a song has an artwork in the metadata it will be shown
+
++More Keybinds were added.
+
++A menu was added
+
++A right click menu in the playlist was added
+
++A mini mode was added (scrapped at least for this release)
+
++Recent files were added
+
++metadata editor was added (only in version _2)
+
++#Now the currently playing song is not automatically selected in the playlist, but instead the text of the currently playing song is green. Also when you move elements, your selected element remains selected after you moved it, so you can press the move button mutliple times without having to select the element again (this does not work for moving multiple elements yet).
+
+/Now the program works without having to install the VLC media player. Now all the necessary files for the python-vlc module are in the project files and the python-vlc module searches in there for the necessary files.
+
+/Now if you skip to the next or previous song, the full playlist won't update anymore. Instead it will only select the right song and calculate the remaining length. You will only notice this if the playlist is large (or your pc is slow)
+
+#(/)I changed the way the song length is retrieved. Previously I used only mutagen, but has an issue with some mp3 files, so when mutagen doesn't work, I use VLC now. The problem with VLC is that it's slow. That's why I first try mutagen. Also retrieving the song length for the playlist now is in another Thread so that the playlist can be build and interacted with, without the need to have the length of each song, because as I said VLC is slow, depending on the size of the playlist that can take a few seconds. So now you will see "loading" in the place where the duration should be and you can see how it changes line by line to the duration of the song.
+
+#Now you can edit the playlist without an error, if the length is not yet avaiilable for each song
+
+#I fixed the slider to fast forward/rewind the song on the info and settings windows.
+
+#I fixed the overwriting of playlists. Previously it would not erase the playlist first, so if you overwrote a long playlist with a short playlist, after all the songs of the short playlist the long playlist would continue.
+
+#Songs should now play complete, and not cut off a bit early.
+
+#If you add songs to an empty playlist and some of them are either not suppported or not found, you won't get two times the same message.
+
+#/+()Now I use PyQt5 for the file dialogs. Only linux users should notice this, because Tkinter doesn't provide a native file dialog on linux, other than on windows and mac.
+
+#I fixed various other bugs.
+-------------------
++	things added
+#	fixes
+-	things removed
+/	other changes
+(_)	invisible changes

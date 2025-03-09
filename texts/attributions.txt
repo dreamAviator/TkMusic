@@ -1,0 +1,16 @@
+I used icons from:
+
+Dirtyworks			Icon-Icons
+William Richon			Flaticon
+Pixel perfect			Flaticon
+Freepik			Flaticon
+karthiks_18			Flaticon
+Iconjam			Flaticon
+Smashicons			Flaticon/Smashicons
+JoelM			openclipart.org
+
+Tkinter feather
+
+Links to these authors are provided with the button "Links".
+
+Some icons were made using one or multiple icons and editing them.

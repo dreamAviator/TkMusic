@@ -1,0 +1,16 @@
+volume				(Integer)
+volumeSliderText	(True/False)
+loopPlaylist		(True/False)
+loopMove			(True/False)
+twoWindows			(True/False)
+filesToKeepText     (Integer)
+miniMode (noch nicht vorhanden)
+shuffleReset        (True/False)
+metadataEditorTab   (Integer)
+preferPllstData     (Boolean)
+copyFileVarME       (Boolean)
+resetTitleVar       (Boolean)
+resetInterpreterVar (Boolean)
+resetAlbumVar       (Boolean)
+
+index for settings

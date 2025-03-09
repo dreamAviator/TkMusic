@@ -1,0 +1,47 @@
+This program plays audio files. It shows some metadata and the album cover. You can create and load playlists, move and edit the elements in the playlist, and save the playlist.
+
+Playlist controls:
+With the "Add" button (the one with the plus), you can add elements to the end of the playlist.
+With the "Save" button (the one with the floppy disk), you can save a playlist.
+With the single arrows up and down, you can move elements one place up or down.
+With the double arrows up and down, you can move elements to the top or bottom of the playlist.
+With the red x you can delete elements from the playlist.
+With the sideways arrow, you can play a selected element from the playlist (you can also double click the element).
+
+Keybinds:
+when any window is focused:
+Space:			toggle pause and play
+Ctrl+O:			Add elements to the playlist
+Plus:			Volume up
+Minus:			Volume down
+I:				Open the info page/window (noch entscheiden wie du es nennst)(not working)
+S:				Open the settings (maybe page/window)(not working)
+when the main window is focused:
+Right:			Skip to the next song
+Left:			Rewind or skip to the previous song
+Shift+Right:	fast forward the song
+Shift+Left:		wind back the song
+when the playlist window is focused:
+Up:				Move selected elements up
+Down:			Move selected elements down
+Left:			Move selected elements to the top
+Right:			Move selected elements to the bottom
+
+Supported file formats:
+MP3		(MPEG-1 Audio Layer III or MPEG-2 Audio Layer III)
+m4a		(MPEG-4 Audio Layer)
+Ogg		(ogg vorbis)
+FLAC	(Free Lossless Audio Codec)
+WMA		(Windows Media Audio)
+WAV		(Waveform Audio File Format)
+WV		(WavPack Audio File)
+AIFF	(Audio Interchange File Format)
+AC3		(Adaptive Transform Coder 3 [Dolby Digital])
+Opus
+MP2		(MPEG-1 Audio Layer 2)
+
+Privacy:
+This program does not collect any personal information
+
+
+This program is released under the GNU GENERAL PUBLIC LICENSE Version 2
