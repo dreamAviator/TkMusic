@@ -2729,6 +2729,38 @@ def settings(setting):
             preferPllstDataText = "True"
         lines[9] = ""
         lines[9] = preferPllstDataText + '\n'
+    elif setting == "copyFileVarME":
+        copyFileVarMEText = copyFileVarME.get()
+        if copyFileVarMEText == False:
+            copyFileVarMEText = ""
+        else:
+            copyFileVarMEText = "True"
+        lines[10] = ""
+        lines[10] = copyFileVarMEText + '\n'
+    elif setting == "copyFileVarME":
+        resetTitleVarText = resetTitleVar.get()
+        if resetTitleVarText == False:
+            resetTitleVarText = ""
+        else:
+            resetTitleVarText = "True"
+        lines[11] = ""
+        lines[11] = resetTitleVarText + '\n'
+    elif setting == "copyFileVarME":
+        resetInterpreterVarText = resetInterpreterVar.get()
+        if resetInterpreterVarText == False:
+            resetInterpreterVarText = ""
+        else:
+            resetInterpreterVarText = "True"
+        lines[12] = ""
+        lines[12] = resetInterpreterVarText + '\n'
+    elif setting == "copyFileVarME":
+        resetAlbumVarText = resetAlbumVar.get()
+        if resetAlbumVarText == False:
+            resetAlbumVarText = ""
+        else:
+            resetAlbumVarText = "True"
+        lines[13] = ""
+        lines[13] = resetAlbumVarText + '\n'
     with open(filepath,'w') as file:
         file.writelines(lines)
 
@@ -3054,7 +3086,7 @@ def batchEditMEoperation(filenamesME,filenamesMEtwo):
                 audioToEdit["\xa9alb"] = album
                 audioToEdit.save()
         else:
-            if resetInterpreterVar.get() == True:
+            if resetAlbumVar.get() == True:
                 if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
                     audioToEdit = MP3(song)
                     try:
@@ -3131,27 +3163,164 @@ def singleEditMEoperation():
     os.rename(filenameME,saveDirectoryME + "/" + newFilenameME)
 
 def renameMEoperation(filenamesME):
+    pattern = namePattern.get()
+    newSongName = ""
+    if "%" not in pattern:
+        print("error")
+        message(3,"Unvalid pattern","Your naming pattern is not valid. Press the 'What's that' button if you don't know what that is.","ok",0)
+        return
+    pattern_data = []
+    while len(pattern) != 1:
+        pattern = pattern[1:]
+        where = pattern.find("%")
+        pattern_data.append(pattern[:where])
+        pattern = pattern[where:]
+    for filename in filenamesME:
+        lastSlash = filename.rfind("/")
+        songName = filename[lastSlash + 1:]
+        fileExtension = songName.rfind('.')
+        title,interpreter,album,extension,_ = getMetadataME(filename)
+        titleString,interpreterString,albumString = makeMetadataToStringME(title,interpreter,album)
+        for element in pattern_data:
+            if element == "t":
+                element = titleString
+            elif element == "i":
+                element = interpreterString
+            elif element == "a":
+                element = albumString
+            newSongName = newSongName + ''.join(element)
+        newSongName = newSongNam + extension
+        newfilepath = filename[:lastSlash + 1] + newSongNamee
+        os.rename(filename,newfilepath)
 
 def startEvent(event):
     start()
+
+def getMetadata(filename):
+    if filename.endswith(".mp3") or filename.endswith(".MP3"):
+        audioForInfo = MP3(filename,ID3 = ID3)
+        titleObject = audioForInfo.tags.get("TIT2",None)
+        interpreterObject = audioForInfo.tags.get("TPE1",None)
+        albumObject = audioForInfo.tags.get("TALB",None)
+        if titleObject == None:
+            title = None
+        else:
+            title = titleObject.text
+        if interpreterObject == None:
+            interpreter = None
+        else:
+            interpreter = interpreterObject.text
+        if albumObject == None:
+            album = None
+        else:
+            album = albumObject.text
+        extension = ".mp3"
+    elif filename.endswith(".m4a") or filename.endswith(".M4A"):
+        audioForInfo = MP4(filename)
+        title = audioForInfo.tags.get("\xa9nam",[None])
+        interpreter = audioForInfo.tags.get("\xa9ART",[None])
+        album = audioForInfo.tags.get("\xa9alb",[None])
+        extension = ".m4a"
+    audioToEdit = File(filename)
+    if 'covr' in audioToEdit:
+        #mp3, flac, and some other formats (m4a)
+        cover = audioToEdit['covr'][0]
+    elif 'APIC:Cover' in audioToEdit:
+        #ID3v2 (commonly used in mp3)
+        cover = audioToEdit['APIC:Cover'].data
+    else:
+        cover = None
+    if cover != None:
+        with open(os.path.join(dirname,"images/song_cover.jpg"),'wb') as f:
+            f.write(cover)
+        cover = "song_cover.jpg"
+    return title,interpreter,album,extension,cover
+
+def makeMetadataToStringME(title,interpreter,album):
+    titleString = ""
+    interpreterString = ""
+    albumString = ""
+    if title != [None]:
+        if type(title) is not str:
+            titleString = titleString + title[0]
+            del title[0]
+            for element in title:
+                titleString = titleString + ", "
+                titleString = titleString + element
+        else:
+            titleString = title
+    else:
+        titleString = None
+    if interpreter != [None]:
+        if type(interpreter) is not str:
+            interpreterString = interpreterString + interpreter[0]
+            del interpreter[0]
+            for element in interpreter:
+                interpreterString = interpreterString + ", "
+                interpreterString = interpreterString + element
+        else:
+            interpreterString = interpreter
+    else:
+        interpreterString = None
+    if album != [None]:
+        if type(album) is not str:
+            albumString = albumString + album[0]
+            del album[0]
+            for element in album:
+                albumString = albumString + ", "
+                albumString = albumString + element
+        else:
+            albumString = album
+    else:
+        albumString = None
+    return titleString,interpreterString,albumString
 
 def namePatternChange(event):
     namePattern.set(namePatternEntryME.get())
 
 def namePatternHelp():#einf eine help message sache machen.
-    print("name pattern")
-    print(namePattern.get())
-    print(namePatternEntryME.get())
+    message(1,"Name pattern help","The name pattern tells the program the connection between the metadata inside of the file and the filename.\nLet's say you have two files:\n\n1: Abandoned, Mendum - Voyage [NCS Release].mp3\n2: Mendum - Red Hands [NCS Release].mp3\n\nThen the naming scheme would be:\nInterpreter - Title [NCS Release]\nIn the name pattern entry field you would write:\n%i% - %t% [NCS Release]%\n\nthen the program would put these metadata into the files:\n1:\nTitle: Voyage\nInterpreter: Abandoned, Mendum\n2:\nTitle: Red Hands\nInterpreter: Mendum\n\nInbetween every different part of the naming scheme has to be a %\nEvery selected song has to follow the same naming pattern\ni - interpreter\nt - title\na - album","ok",0)
 
     #system
 def whereSave():
     global saveDirectoryME
     saveDirectoryME = openDirectoryDialog()
     selectedMode = modesME.index(modesME.select())
-    if selectedMode == 1:
-        whereSaveButtonME.config(text = saveDirectoryME)
+    whereSaveButtonBEME.config(text = saveDirectoryME)
+    whereSaveButtonREME.config(text = saveDirectoryME)
+    whereSaveButtonSEME.config(text = saveDirectoryME)
 
     #gui
+def doubleClickSEME(event):
+    global current_itemSEME,current_col_indexSEME
+    current_itemSEME = fileInfoTreeSEME.identify_row(event.y)
+    columnSEME = fileInfoTreeSEME.identify_row(event.x)
+    current_col_indexSEME = int(columnSEME[1:]) - 1
+    if current_col_indexSEME == 1:
+        x,y,width,height = fileInfoTreeSEME.bbox(current_itemSEME,columnSEME)
+        value = fileInfoTreeSEME.item(current_itemSEME,"values")[current_col_indexSEME]
+        entry_varSEME.set(value)
+        entrySEME.place(x = x + fileInfoTreeSEME.winfo_x(),y = y + fileInfoTreeSEME.winfo_y(),width = width,height = height)
+        entrySEME.focus()
+        entrySEME.bind("<Return>",lambda e: update_valueSEME())
+        rentrySEME.bind("<FocusOut>",lambda e: update_valueSEME())
+
+def update_valueSEME():
+    if current_itemSEME and current_col_indexSEME is not None:
+        new_value = entry_varSEME.get()
+        values = lst(fileInfoTreeSEME.item(current_itemSEME,"values"))
+        values[current_col_indexSEME] = new_value
+        fileInfoTreeSEME.item(current_itemSEME,values = values)
+    entrySEME.place_forget()
+
+def copyFileCheck():
+    trueorfalse = copyFileVarME.get()
+    if trueorfalse == True:
+        whereSaveButtonSEME.state(['!disabled'])
+    else:
+        whereSaveButtonSEME.state(['diasbled'])
+    settings(copyFileCheck)
+
 def openFileDialog():
     app = QApplication(sys.argv)
     options = QFileDialog.Options()
@@ -3175,17 +3344,26 @@ def openDirectoryDialog():
 
 def notebookTabMEChange(event):#klappt noch nicht ganz
     global notebookTabME
-    print("event notebook lol")
-    print(notebookTabME)
-    notebookTabME = modesME.index(modesME.select())
-    print(notebookTabME)
-    if notebookTabME == 0:
-        modesME.select(1)#hier halt den vorher ausgewählten
+    selectedTabME = modesME.index(modesME.select())
+    if selectedTabME == 0:
+        modesME.select(notebookTabME)
         start()
-    elif notebookTabME == 5:
-        modesME.select(notebookTabME)#hier halt den vorher ausgewählten
+    elif selectedTabME == 1:
+        notebookTabME = 1
+        metadataWindow.title("TkMetaEditor | Batch edit")
+    elif selectedTabME == 2:
+        notebookTabME = 2
+        metadataWindow.title("TkMetaEditor | Single edit")
+    elif selectedTabME == 3:
+        notebookTabME = 3
+        metadataWindow.title("TkMetaEditor | Rename")
+    elif selectedTabME == 4:
+        notebookTabME = 4
+        metadataWindow.title("TkMetaEditor | Info")
+    elif selectedTabME == 5:
+        metadataWindow.title("TkMetaEditor | Quitting...")
         metadataEditorStart()
-    else:#write in settingsME yk
+    if selectedTabME != 5:
         settings("notebookTabMEChange")
 
 #general
@@ -3332,8 +3510,17 @@ shuffleReset = tk.BooleanVar()
 preferPllstData = tk.BooleanVar()
 #metadata_editor
 filenamesME = []
+notebookTabME = 1
 namePattern = tk.StringVar()
 saveDirectoryME = ""
+entry_varSEME = tk.StringVar()
+current_itemSEME = None
+current_col_indexSEME = None
+copyFileVarME = tk.BooleanVar()
+resetTitleVar = tk.BooleanVar()
+resetInterpreterVar = tk.BooleanVar()
+resetAlbumVar = tk.BooleanVar()
+currentImageME = "default"
 #variables from settings
     #settings.txt
 filepath_settings = os.path.join(dirname,"texts/settings.txt")
@@ -3365,6 +3552,18 @@ notebookTabME = int(metadataTabText)
 preferPllstDataString = lines[9]
 preferPllstDataText = preferPllstDataString[:-1]
 preferPllstData.set(bool(preferPllstDataText))
+copyFileVarMEString = lines[10]
+copyFileVarMEText = copyFileVarMEString[:-1]
+copyFileVarME.set(bool(copyFileVarMEText))
+resetTitleVarString = lines[11]
+resetTitleVarText = resetTitleVarString[:-1]
+resetTitleVar.set(bool(resetTitleVarText))
+resetInterpreterVarString = lines[12]
+resetInterpreterVarText = resetInterpreterVarString[:-1]
+resetInterpreterVar.set(bool(resetInterpreterVarText))
+resetAlbumVarString = lines[13]
+resetAlbumVarText = resetAlbumVarString[:-1]
+resetAlbumVar.set(bool(resetAlbumVarText))
     #recent_files.txt
 filepath_recent_files = os.path.join(dirname,"texts/recent_files.txt")
 with open(filepath_recent_files,'r') as file:
@@ -3421,6 +3620,7 @@ if platform.system() == "Windows":
     #loading_icon_1 = os.path.join(dirname,'icons/loading_1.ico')
     #loading_icon_2 = os.path.join(dirname,'icons/loading_2.ico')
     #loading_icon_3 = os.path.join(dirname,'icons/loading_3.ico')
+    metadata_icon = os.path.join(dirname,'icons/metadata_icon.ico')
 elif platform.system() == "Linux":
     default_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon.png'))
     playlist_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/playlist_icon.png'))
@@ -3429,6 +3629,7 @@ elif platform.system() == "Linux":
     warning_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/warning_icon.png'))
     error_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/error_icon.png'))
     message_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/message_icon.png'))
+    metadata_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/metadata_icon.png'))
 app_logo_image = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_smol.png'))
 app_logo_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_vewy_smol.png'))
 exit_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/quit_smol.png'))
@@ -3478,9 +3679,11 @@ main_window.resizable(False,False)
 if platform.system() == "Windows":
     main_window.iconbitmap(default_icon)
     plW.iconbitmap(playlist_icon)
+    metadataWindow.iconbitmap(metadata_icon)
 elif platform.system() == "Linux":
     main_window.iconphoto(False,default_icon)
     plW.iconphoto(False,playlist_icon)
+    metadataWindow.iconphoto(False,metadata_icon)
 
 #frames
     #main_window
@@ -3698,25 +3901,24 @@ modesME.add(startTabME,text = "Start")
 modesME.add(batchEditME,text = "Batch edit")
 modesME.add(singleEditME,text = "Single edit")
 modesME.add(renameME,text = "Rename")
-modesME.add(settingsME,text = "Settings")
+modesME.add(settingsME,text = "Info")
 modesME.add(quitTabME,text = "Quit")
 modesME.select(notebookTabME)
 modesME.bind('<<NotebookTabChanged>>',notebookTabMEChange)
 
 columnsME = ('File')
+columnsSEME = ('Tag','Data')
 
-progressbarBEME = ttk.Progressbar(metadataWindow,orient = 'horizontal',mode = 'determinate',length = 500)
-progressbarBEME.pack(side = tk.BOTTOM)
-separatorBE1ME = ttk.Separator(metadataWindow,orient = 'horizontal')
-separatorBE1ME.pack(side = tk.BOTTOM,fill = tk.X,pady = 10)
+progressbarSTME = ttk.Progressbar(startTabME,orient = 'horizontal',mode = 'determinate',length = 500)
+progressbarSTME.pack(side = tk.BOTTOM)
 
 #batchEditME - be
 selectFilesFrameBEME = ttk.Frame(batchEditME)
 selectFilesFrameBEME.pack(side = tk.TOP,fill = tk.X)
 selectFilesFrameInnerBEME = ttk.Frame(selectFilesFrameBEME)
 selectFilesFrameInnerBEME.pack(side = tk.LEFT)
-namePatternFrameME = ttk.Frame(batchEditME)
-namePatternFrameME.pack(side = tk.TOP,fill = tk.X)
+namePatternFrameBEME = ttk.Frame(batchEditME)
+namePatternFrameBEME.pack(side = tk.TOP,fill = tk.X)
 
 fileCountTextBEME = ttk.Label(selectFilesFrameInnerBEME,text = "0 File/s")
 fileCountTextBEME.pack(side = tk.BOTTOM)
@@ -3730,37 +3932,59 @@ scrollbarBEME.configure(command = selectedFilesTreeBEME.yview)
 scrollbarBEME.pack(side = tk.RIGHT,fill = tk.Y)
 selectedFilesTreeBEME.pack(side = tk.LEFT,fill = tk.X,expand = True)
 
-namePatternTextME = ttk.Label(namePatternFrameME,text = "Naming pattern")
+namePatternTextME = ttk.Label(namePatternFrameBEME,text = "Naming pattern")
 namePatternTextME.pack(side = tk.TOP,anchor = tk.NW)
-namePatternHelpButtonME = ttk.Button(namePatternFrameME,text = "What's that?",command = namePatternHelp)
+namePatternHelpButtonME = ttk.Button(namePatternFrameBEME,text = "What's that?",command = namePatternHelp)
 namePatternHelpButtonME.pack(side = tk.RIGHT)
-namePatternEntryME = ttk.Entry(namePatternFrameME,textvariable = namePattern)
+namePatternEntryME = ttk.Entry(namePatternFrameBEME,textvariable = namePattern)
 namePatternEntryME.pack(side = tk.LEFT,fill = tk.X,expand = True)
 namePatternEntryME.bind('<KeyRelease>',namePatternChange)
+resetTitleCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear title metadata",variable = resetTitleVar,onvalue = True,offvalue = False,command = saveSettings)
+resetTitleCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+resetInterpreterCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear interpreter metadata",variable = resetInterpreterVar,onvalue = True,offvalue = False,command = saveSettings)
+resetInterpreterCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+resetAlbumCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear album metadata",variable = resetAlbumVar,onvalue = True,offvalue = False,command = saveSettings)
+resetAlbumCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
 
-whereSaveTextME = ttk.Label(batchEditME,text = "Save location")
-whereSaveTextME.pack(side = tk.TOP,anchor = tk.NW)
-whereSaveButtonME = ttk.Button(batchEditME,text = "Select folder",command = whereSave)
-whereSaveButtonME.pack(side = tk.TOP,anchor = tk.NW)
+whereSaveButtonBEME = ttk.Button(batchEditME,text = "Select folder",command = whereSave)
+whereSaveButtonBEME.pack(side = tk.BOTTOM,anchor = tk.NW)
+whereSaveTextBEME = ttk.Label(batchEditMe,text = "Save location")
+whereSaveTextBEME.pack(side = tk.BOTTOM,anchor = tk.NW)
+
+separatorBEoneME = ttk.Separator(batchEditME,orient = 'horizontal')
+separatorBEoneME.pack(side = tk.BOTTOM,fill = tk.X)
 
 
 #singleEditME - se
-selectFilesFrameSEME = ttk.Frame(singleEditME)
-selectFilesFrameSEME.pack(side = tk.TOP,fill = tk.X)
-selectFilesFrameInnerSEME = ttk.Frame(selectFilesFrameSEME)
-selectFilesFrameInnerSEME.pack(side = tk.LEFT)
+startToSaveLabelME = ttk.Label(singleEditME,text = "Press start to save the changes")
+startToSaveLabelME.pack()
+selectFileButtonSEME = ttk.Button(singleEditME,text = "Select file",command = loadFile)
+selectFileButtonSEME.pack(side = tk.TOP,fill = tk.X)
 
-fileCountTextSEME = ttk.Label(selectFilesFrameInnerSEME,text = "0 File/s")
-fileCountTextSEME.pack(side = tk.BOTTOM)
-deleteFilesButtonSEME = ttk.Button(selectFilesFrameInnerSEME,text = "Delete Files",command = deleteFiles)
-deleteFilesButtonSEME.pack(side = tk.BOTTOM)
-selectFilesButtonSEME = ttk.Button(selectFilesFrameSEME,text = "Select Files",command = loadFilesP1)
-selectFilesButtonSEME.pack(side = tk.LEFT,anchor = tk.W)
-scrollbarSEME = ttk.Scrollbar(selectFilesFrameSEME)
-selectedFilesTreeSEME = ttk.Treeview(selectFilesFrameSEME,yscrollcommand = scrollbarSEME.set,columns = columnsME,show = "tree",height = 4)#find mal heraus wieso das hier nicht funktioniert
-scrollbarSEME.configure(command = selectedFilesTreeSEME.yview)
-scrollbarSEME.pack(side = tk.RIGHT,fill = tk.Y)
-selectedFilesTreeSEME.pack(side = tk.RIGHT,fill = tk.X,expand = True)
+fileInfoTreeSEMEME = ttk.Treeview(singleEditME,columns = columnsSEME,show = "headings",height = 4)
+fileInfoTreeSEME.heading('Tag',text = 'Tag')
+fileInfoTreeSEMEME.heading('Data',text = 'Data')
+fileInfoTreeSEMEME.column('Tag',width = 25)
+fileInfoTreeSEMEME.column('Data')
+fileInfoTreeSEME.pack(side = tk.TOP,fill = tk.BOTH,expand = True)
+fileInfoTreeSEME.insert('',tk.END,iid = "filename",values = ("Filename"))
+fileInfoTreeSEME.insert('',tk.END,iid = "title",values = ("Title"))
+fileInfoTreeSEME.insert('',tk.END,iid = "interpret",values = ("Interpret"))
+fileInfoTreeSEME.insert('',tk.END,iid = "album",values = ("Album"))
+fileInfoTreeSEME.bind("<Double-1>",doubleClickSEME)
+
+entrySEME = ttk.Entry(singleEditME,textvariable = entry_varSEME)
+
+songCoverButtonME = ttk.Buttoon(singleEditME,image = songCoverImageME,command = loadImage)#songCoverImagME durch song_cover_image ersetzen
+songCoverButtonME.pack(side = tk.TOP)
+
+whereSaveButtonSEME = ttk.Button(singleEditME,text = "Select folder",command = whereSave)
+whereSaveButtonSEME.pack(side = tk.BOTTOM)
+copyFileCheckbuttonME = ttk.Checkbutton(singleEditME,text = "Copy file",command = copyFileCheck,variable = copyFileVarME,onvalue = True,offvalue = False)
+copyFileCheckbuttonME.pack(side = tk.BOTTOM)
+separatorSEME = ttk.Separator(singleEdit,orient = "horizontal")
+separatorSEME.pack(side = tk.BOTTOM)
+copyFileCheck()
 
 
 #renameME - RE
@@ -3768,6 +3992,8 @@ selectFilesFrameREME = ttk.Frame(renameME)
 selectFilesFrameREME.pack(side = tk.TOP,fill = tk.X)
 selectFilesFrameInnerREME = ttk.Frame(selectFilesFrameREME)
 selectFilesFrameInnerREME.pack(side = tk.LEFT)
+namePatternFrameREME = ttk.Frame(rename)
+namePatternFrameREME.pack(side =tk.TOP,fill = tk.X)
 
 fileCountTextREME = ttk.Label(selectFilesFrameInnerREME,text = "0 File/s")
 fileCountTextREME.pack(side = tk.BOTTOM)
@@ -3780,6 +4006,29 @@ selectedFilesTreeREME = ttk.Treeview(selectFilesFrameREME,yscrollcommand = scrol
 scrollbarREME.configure(command = selectedFilesTreeREME.yview)
 scrollbarREME.pack(side = tk.RIGHT,fill = tk.Y)
 selectedFilesTreeREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+
+namePatternTextReME = ttk.Label(namePatternFrameRE,text = "Naming pattern")
+namePatternTextREMe.pack(side = tk.TOP,anchor = tk.NW)
+namePatternHelpButtonREME = ttk.Button(namePatternFrameRE,text = "What's that?",command = namePatternHelp)
+namePatternHelpButtonREME.pack(side = tk.RIGHT)
+namePatternEntryREME = ttk.Entry(namePatternFrameRE,textvariable = namePattern)
+namePatternEntryREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+
+whereSaveTextREME = ttk.Label(rename,text = "Save location")
+whereSaveTextREME.pack(side = tk.TOP,anchor = tk.NW)
+whereSaveButtonREME = ttk.Button(rename,text = "Select folder",command = whereSave)
+whereSaveButtonREME.pack(side = tk.TOP,anchor = tk.NW)
+
+#settings
+with open(os.path.join(dirname,"texts/license.txt"),'r') as licenseTextFileME:
+    licenseTextListME = licenseTextFileME.readlines()
+licenseTextME = ""
+for lineME in licenseTextListME:
+    licenseTextME = licenseTextME + lineME
+licenseTextLabelME = ScrolledText(settingsME,wrap = "word")
+licenseTextLabelME.pack(side = tk.TOP,fill = tk.BOTH)
+licenseTextLabelME.insert(tk.INSERT,licenseText)
+licenseTextLabelME.config(state = 'disabled',font = 'Helvetica 9')
 
 #end
 metadataEditorStart()
