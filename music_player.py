@@ -2765,7 +2765,7 @@ def settings(setting):
         file.writelines(lines)
 
 #metadata editor
-def editMetadataOfSelected():
+def editMetadataOfSelected():#hier noch machen, dass wenn nur eine datei ausgewählt ist, diese in single edit eingeladen wird
     toEdit = []
     global miniModeActive
     if miniModeActive.get() == False:
@@ -2867,20 +2867,20 @@ def loadFileSEME():
     if cover != None:
         jpg_image = pilImage.open(cover)
         new_size = (100,100)
-        jpg_image_resized = jpg_image_resize(new_size)
+        jpg_image_resized = jpg_image.resize(new_size)
         jpg_image_resized.save(os.path.join(dirname,'icons/song_cover_me.png'),format = 'PNG')
         songCoverImageMEnew = tk.PhotoImage(file = os.path.join(dirname,'icons/song_cover_me.png'))
         songCoverButtonME.image = songCoverImageMEnew
         songCoverButtonME.config(image = songCoverImageMEnew)
     else:
-        songCoverButtonME.image(songCoverImageME)
+        songCoverButtonME.image = songCoverImageME
         songCoverButtonME.config(image = songCoverImageME)
 
 def loadImageME():
     global newCoverMEfilepath
     global currentImageME
     filenameMEtemp = openFileDialog()
-    if filenametemp == "":
+    if filenameMEtemp == "":
         return
     currentImageME = "custom"
     newCoverMEfilepath = filenameMEtemp
@@ -3144,7 +3144,7 @@ def singleEditMEoperation():
         audioToEdit["TPE1"] = TPE1(encoding=3,text = interpreter)
         audioToEdit["TALB"] = TALB(encoding=3,text = album)
         if currentImageME != "default":
-            with open(newCOverMEfilepath,"rb") as img_file:
+            with open(newCoverMEfilepath,"rb") as img_file:
                 cover_image_data = img_file.read()
             audioToEdit.add(APIC(encoding = 3,mime = "image/png",type = 3,desc = "Cover",data = cover_image_data))
         audioToEdit.save()
@@ -3196,7 +3196,7 @@ def renameMEoperation(filenamesME):
 def startEvent(event):
     start()
 
-def getMetadata(filename):
+def getMetadataME(filename):
     if filename.endswith(".mp3") or filename.endswith(".MP3"):
         audioForInfo = MP3(filename,ID3 = ID3)
         titleObject = audioForInfo.tags.get("TIT2",None)
@@ -3231,7 +3231,7 @@ def getMetadata(filename):
     else:
         cover = None
     if cover != None:
-        with open(os.path.join(dirname,"images/song_cover.jpg"),'wb') as f:
+        with open(os.path.join(dirname,"icons/song_cover.jpg"),'wb') as f:
             f.write(cover)
         cover = "song_cover.jpg"
     return title,interpreter,album,extension,cover
@@ -3362,6 +3362,7 @@ def notebookTabMEChange(event):#klappt noch nicht ganz
         metadataWindow.title("TkMetaEditor | Info")
     elif selectedTabME == 5:
         metadataWindow.title("TkMetaEditor | Quitting...")
+        modesME.select(notebookTabME)
         metadataEditorStart()
     if selectedTabME != 5:
         settings("notebookTabMEChange")
@@ -3490,7 +3491,7 @@ menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
 
 #metadata editor window
 #tkinter
-metadataWindow = tk.Tk()
+metadataWindow = tk.Toplevel()
 metadataWindow.title("TkMetaEditor")
 metadataWindow.geometry('500x360+100+100')
 metadataWindow.resizable(False,False)
@@ -3672,6 +3673,7 @@ left_image = tk.PhotoImage(file = os.path.join(dirname,'icons/left_smol.png'))
 loading_image_1 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_1_smol.png'))
 loading_image_2 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_2_smol.png'))
 loading_image_3 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_3_smol.png'))
+songCoverImageME = tk.PhotoImage(file = os.path.join(dirname,'icons/songCoverImage_ME.png'))
 
 #window_icons
 #nachricht löschen (text auf default icon größer machen)
@@ -3939,16 +3941,16 @@ namePatternHelpButtonME.pack(side = tk.RIGHT)
 namePatternEntryME = ttk.Entry(namePatternFrameBEME,textvariable = namePattern)
 namePatternEntryME.pack(side = tk.LEFT,fill = tk.X,expand = True)
 namePatternEntryME.bind('<KeyRelease>',namePatternChange)
-resetTitleCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear title metadata",variable = resetTitleVar,onvalue = True,offvalue = False,command = saveSettings)
+resetTitleCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear title metadata",variable = resetTitleVar,onvalue = True,offvalue = False,command = lambda: (settings("resetTitleVar")))
 resetTitleCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
-resetInterpreterCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear interpreter metadata",variable = resetInterpreterVar,onvalue = True,offvalue = False,command = saveSettings)
+resetInterpreterCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear interpreter metadata",variable = resetInterpreterVar,onvalue = True,offvalue = False,command = lambda: (settings("resetInterpreterVar")))
 resetInterpreterCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
-resetAlbumCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear album metadata",variable = resetAlbumVar,onvalue = True,offvalue = False,command = saveSettings)
+resetAlbumCheckbutton = ttk.Checkbutton(batchEditME,text = "Clear album metadata",variable = resetAlbumVar,onvalue = True,offvalue = False,command = lambda: (settings("resetAlbumVar")))
 resetAlbumCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
 
 whereSaveButtonBEME = ttk.Button(batchEditME,text = "Select folder",command = whereSave)
 whereSaveButtonBEME.pack(side = tk.BOTTOM,anchor = tk.NW)
-whereSaveTextBEME = ttk.Label(batchEditMe,text = "Save location")
+whereSaveTextBEME = ttk.Label(batchEditME,text = "Save location")
 whereSaveTextBEME.pack(side = tk.BOTTOM,anchor = tk.NW)
 
 separatorBEoneME = ttk.Separator(batchEditME,orient = 'horizontal')
@@ -3958,14 +3960,14 @@ separatorBEoneME.pack(side = tk.BOTTOM,fill = tk.X)
 #singleEditME - se
 startToSaveLabelME = ttk.Label(singleEditME,text = "Press start to save the changes")
 startToSaveLabelME.pack()
-selectFileButtonSEME = ttk.Button(singleEditME,text = "Select file",command = loadFile)
+selectFileButtonSEME = ttk.Button(singleEditME,text = "Select file",command = loadFileSEME)
 selectFileButtonSEME.pack(side = tk.TOP,fill = tk.X)
 
-fileInfoTreeSEMEME = ttk.Treeview(singleEditME,columns = columnsSEME,show = "headings",height = 4)
+fileInfoTreeSEME = ttk.Treeview(singleEditME,columns = columnsSEME,show = "headings",height = 4)
 fileInfoTreeSEME.heading('Tag',text = 'Tag')
-fileInfoTreeSEMEME.heading('Data',text = 'Data')
-fileInfoTreeSEMEME.column('Tag',width = 25)
-fileInfoTreeSEMEME.column('Data')
+fileInfoTreeSEME.heading('Data',text = 'Data')
+fileInfoTreeSEME.column('Tag',width = 25)
+fileInfoTreeSEME.column('Data')
 fileInfoTreeSEME.pack(side = tk.TOP,fill = tk.BOTH,expand = True)
 fileInfoTreeSEME.insert('',tk.END,iid = "filename",values = ("Filename"))
 fileInfoTreeSEME.insert('',tk.END,iid = "title",values = ("Title"))
@@ -3975,14 +3977,14 @@ fileInfoTreeSEME.bind("<Double-1>",doubleClickSEME)
 
 entrySEME = ttk.Entry(singleEditME,textvariable = entry_varSEME)
 
-songCoverButtonME = ttk.Buttoon(singleEditME,image = songCoverImageME,command = loadImage)#songCoverImagME durch song_cover_image ersetzen
+songCoverButtonME = ttk.Button(singleEditME,image = songCoverImageME,command = loadImageME)#songCoverImagME durch song_cover_image ersetzen
 songCoverButtonME.pack(side = tk.TOP)
 
 whereSaveButtonSEME = ttk.Button(singleEditME,text = "Select folder",command = whereSave)
 whereSaveButtonSEME.pack(side = tk.BOTTOM)
 copyFileCheckbuttonME = ttk.Checkbutton(singleEditME,text = "Copy file",command = copyFileCheck,variable = copyFileVarME,onvalue = True,offvalue = False)
 copyFileCheckbuttonME.pack(side = tk.BOTTOM)
-separatorSEME = ttk.Separator(singleEdit,orient = "horizontal")
+separatorSEME = ttk.Separator(singleEditME,orient = "horizontal")
 separatorSEME.pack(side = tk.BOTTOM)
 copyFileCheck()
 
@@ -3992,7 +3994,7 @@ selectFilesFrameREME = ttk.Frame(renameME)
 selectFilesFrameREME.pack(side = tk.TOP,fill = tk.X)
 selectFilesFrameInnerREME = ttk.Frame(selectFilesFrameREME)
 selectFilesFrameInnerREME.pack(side = tk.LEFT)
-namePatternFrameREME = ttk.Frame(rename)
+namePatternFrameREME = ttk.Frame(renameME)
 namePatternFrameREME.pack(side =tk.TOP,fill = tk.X)
 
 fileCountTextREME = ttk.Label(selectFilesFrameInnerREME,text = "0 File/s")
@@ -4007,16 +4009,16 @@ scrollbarREME.configure(command = selectedFilesTreeREME.yview)
 scrollbarREME.pack(side = tk.RIGHT,fill = tk.Y)
 selectedFilesTreeREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
 
-namePatternTextReME = ttk.Label(namePatternFrameRE,text = "Naming pattern")
-namePatternTextREMe.pack(side = tk.TOP,anchor = tk.NW)
-namePatternHelpButtonREME = ttk.Button(namePatternFrameRE,text = "What's that?",command = namePatternHelp)
+namePatternTextREME = ttk.Label(namePatternFrameREME,text = "Naming pattern")
+namePatternTextREME.pack(side = tk.TOP,anchor = tk.NW)
+namePatternHelpButtonREME = ttk.Button(namePatternFrameREME,text = "What's that?",command = namePatternHelp)
 namePatternHelpButtonREME.pack(side = tk.RIGHT)
-namePatternEntryREME = ttk.Entry(namePatternFrameRE,textvariable = namePattern)
+namePatternEntryREME = ttk.Entry(namePatternFrameREME,textvariable = namePattern)
 namePatternEntryREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
 
-whereSaveTextREME = ttk.Label(rename,text = "Save location")
+whereSaveTextREME = ttk.Label(renameME,text = "Save location")
 whereSaveTextREME.pack(side = tk.TOP,anchor = tk.NW)
-whereSaveButtonREME = ttk.Button(rename,text = "Select folder",command = whereSave)
+whereSaveButtonREME = ttk.Button(renameME,text = "Select folder",command = whereSave)
 whereSaveButtonREME.pack(side = tk.TOP,anchor = tk.NW)
 
 #settings
@@ -4027,7 +4029,7 @@ for lineME in licenseTextListME:
     licenseTextME = licenseTextME + lineME
 licenseTextLabelME = ScrolledText(settingsME,wrap = "word")
 licenseTextLabelME.pack(side = tk.TOP,fill = tk.BOTH)
-licenseTextLabelME.insert(tk.INSERT,licenseText)
+licenseTextLabelME.insert(tk.INSERT,licenseTextME)
 licenseTextLabelME.config(state = 'disabled',font = 'Helvetica 9')
 
 #end
