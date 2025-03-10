@@ -49,6 +49,8 @@ Delete
 playing song
 duration
 remaining
+Error
+There was an error reading the song cover\n
 No next song
 There is no next song, you cant skip to the next song.\n + If you want the first song of the playlist to play, turn the feature on in the settings.
 Error
@@ -131,6 +133,7 @@ Links
 Attributions
 Changelog and feedback
 Info & help
+Info & help
 Loading...
 Not yet supported
 This does not work yet.\nRight now you can only have the playlist in an extra Window
@@ -152,6 +155,8 @@ Time:\n
 Preview message
 Close
 empty file\n
+Open Songs or Playlists
+All Files (*)
 Save Playlist
 m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)
 Quitting...
