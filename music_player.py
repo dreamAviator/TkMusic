@@ -378,7 +378,7 @@ def getSongArt(filepath):
             f.write(album_art_data)
         return "song_cover.jpg"
     except Exception as e:
-        message(3,"Error","There was an error reading the song cover\n" + str(e))
+        message(3,"Error","There was an error reading the song cover\n" + str(e))#hier fehlt noch die übersetzung
         return "nothing"
 
 def songPos():
@@ -1854,7 +1854,7 @@ def windowExtra(extraType):
     help_menu3.add_separator()
     help_menu3.add_command(label = windowExtra_help_menu3_command4_label_langtext,command = lambda:(windowExtra("settings")))
     help_menu3.add_command(label = windowExtra_help_menu3_command5_label_langtext,command = lambda:(windowExtra("messageLogs")))
-    menubar3.add_cascade(label = "Help",menu = help_menu3,underline = 0)
+    menubar3.add_cascade(label = "Help",menu = help_menu3,underline = 0)#hier fehtl noch was
     #
     refreshRecentFiles()
     #frames
@@ -1974,7 +1974,7 @@ def windowExtra(extraType):
         changelogWE()
     elif extraType == "License":
         headline.config(text = "GNU GENERAL PUBLIC LICENSE Version 2")
-        backButton = ttk.Button(extraWindow,text = "Info & help",command = lambda: (windowExtra("info")))
+        backButton = ttk.Button(extraWindow,text = "Info & help",command = lambda: (windowExtra("info")))#hier fehlt noch die übersetzung
         backButton.pack(side = tk.TOP,fill = tk.X)
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
@@ -2665,7 +2665,7 @@ def openFilesDialog():
     app = QApplication(sys.argv)
     options = QFileDialog.Options()
     options |= QFileDialog.ReadOnly
-    files, _ = QFileDialog.getOpenFileNames(None, "Open Songs or Playlists", "", "All Files (*)",options = options)
+    files, _ = QFileDialog.getOpenFileNames(None, "Open Songs or Playlists", "", "All Files (*)",options = options)#noch keine übersetzung
     return files
 
 def saveFileDialog():
@@ -2944,7 +2944,7 @@ help_menu1.add_command(label = help_menu1_command3_label_langtext,command = lamb
 help_menu1.add_separator()
 help_menu1.add_command(label = help_menu1_command4_label_langtext,command = lambda:(windowExtra("settings")))
 help_menu1.add_command(label = help_menu1_command5_label_langtext,command = lambda:(windowExtra("messageLogs")))
-menubar1.add_cascade(label = "Help",menu = help_menu1,underline = 0)
+menubar1.add_cascade(label = "Help",menu = help_menu1,underline = 0)#noch keine übersetzung
 
 #playlist window
 global plW #playlistWindow
@@ -2952,7 +2952,7 @@ global playlistWidth
 playlistWidth = 430
 playlistWidthStr = str(playlistWidth)
 plW = tk.Toplevel()
-plW.title("Playlist")
+plW.title("Playlist")#noch keine übersetzung
 plW.geometry(playlistWidthStr + 'x360+600+100')
 plW.resizable(False,False)
     #menus
