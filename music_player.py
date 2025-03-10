@@ -1681,6 +1681,8 @@ def settingsWE():
     shufflePositionResetCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     preferPllstDataCheckbutton = ttk.Checkbutton(extraWindow,text = "Prefer data from m3u8 files over metadata from audio files (not doing anything yet)",command = lambda: (settings("preferPllstData")),variable = preferPllstData,onvalue = True,offvalue = False)
     preferPllstDataCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+    languageSelectOptionMenu = ttk.OptionMenu(extraWindow,languageStringVar,None,*languageListOptionMenu,direction = 'above',command = languageChange)#container,variable,default,values
+    languageSelectOptionMenu.pack(side = tk.TOP,anchor = tk.NW)
     messageLogsButton = ttk.Button(extraWindow,text = settingsWE_messageLogsButton_text_langtext,command = lambda: (windowExtra("messageLogs")))
     messageLogsButton.pack(side = tk.BOTTOM,anchor = tk.W)
 
@@ -1907,12 +1909,12 @@ def windowExtra(extraType):
     menubar3.add_cascade(label = windowExtra_menubar3_cascade2_label_langtext,menu = view_menu3,underline = 0)
             #help_menu
     help_menu3 = tk.Menu(menubar3,tearoff = False)
-    help_menu3.add_command(label = 'About & help',command = lambda:(windowExtra("info")))
-    help_menu3.add_command(label = 'Changelog',command = lambda:(windowExtra("Changelog")))
-    help_menu3.add_command(label = 'License',command = lambda:(windowExtra("License")))
+    help_menu3.add_command(label = windowExtra_help_menu3_command1_label_langtext,command = lambda:(windowExtra("info")))
+    help_menu3.add_command(label = windowExtra_help_menu3_command2_label_langtext,command = lambda:(windowExtra("Changelog")))
+    help_menu3.add_command(label = windowExtra_help_menu3_command3_label_langtext,command = lambda:(windowExtra("License")))
     help_menu3.add_separator()
-    help_menu3.add_command(label = 'Options',command = lambda:(windowExtra("settings")))
-    help_menu3.add_command(label = 'Message logs',command = lambda:(windowExtra("messageLogs")))
+    help_menu3.add_command(label = windowExtra_help_menu3_command4_label_langtext,command = lambda:(windowExtra("settings")))
+    help_menu3.add_command(label = windowExtra_help_menu3_command5_label_langtext,command = lambda:(windowExtra("messageLogs")))
     menubar3.add_cascade(label = "Help",menu = help_menu3,underline = 0)
     #
     refreshRecentFiles()
@@ -2000,33 +2002,33 @@ def windowExtra(extraType):
     headlineSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
     headlineSeparator.pack(side = tk.TOP,fill = tk.X)
     if extraType == "info":
-        headline.config(text = "Info & help")
+        headline.config(text = windowExtra_extraType_info_headline_text_langtext)
         infoWE()
     elif extraType == "settings":
-        headline.config(text = "Settings")
+        headline.config(text = windowExtra_extraType_settings_headline_text_langtext)
         settingsWE()
     elif extraType == "messageLogs":
-        headline.config(text = "Message Logs")
-        backButton = ttk.Button(extraWindow,text = "Settings",command = lambda: (windowExtra("settings")))
+        headline.config(text = windowExtra_extraType_messageLogs_headline_text_langtext)
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_messageLogs_backButton_text_langtext,command = lambda: (windowExtra("settings")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         messageLogsWE()
     elif extraType == "attributions":
-        headline.config(text = "Attributions")
-        backButton = ttk.Button(extraWindow,text = "Info & help",command = lambda: (windowExtra("info")))
+        headline.config(text = windowExtra_extraType_attributions_headline_text_langtext)
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_attributions_backButton_text_langtext,command = lambda: (windowExtra("info")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
         attributionsWE()
     elif extraType == "attributionButtons":
-        headline.config(text = "Links")
-        backButton = ttk.Button(extraWindow,text = "Attributions",command = lambda: (windowExtra("attributions")))
+        headline.config(text = windowExtra_extraType_attributionButtons_headline_text_langtext)
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_attributionButtons_backbutton_text_langtext,command = lambda: (windowExtra("attributions")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
         attributionButtonsWE()
     elif extraType == "Changelog":
-        headline.config(text = "Changelog and feedback")
-        backButton = ttk.Button(extraWindow,text = "Info & help",command = lambda: (windowExtra("info")))
+        headline.config(text = windowExtra_extraType_Changelog_headline_text_langtext)
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_Changelog_backButton_text_langtext,command = lambda: (windowExtra("info")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
@@ -2324,7 +2326,7 @@ def buildMiniMode_plW(event):
         buildMiniMode()
 
 def buildMiniMode():
-    message(1,"Not yet supported","This does not work yet.","ok",5000)
+    message(1,buildMiniMode_message1_title_langtext,buildMiniMode_message1_text_langtext,"ok",5000)
     return
     global main_window
     global plW
@@ -2464,9 +2466,9 @@ def buildMiniMode():
     #playlist
     columns = ('Title','Artist','length','count')
     treeMiniMode = ttk.Treeview(plWminiMode,columns = columns,show = 'headings')
-    treeMiniMode.heading('Title',text = 'Title')
-    treeMiniMode.heading('Artist',text = 'Artist')
-    treeMiniMode.heading('length',text = 'Length')
+    treeMiniMode.heading('Title',text = buildMiniMode_treeMiniMode_heading1_text_langtext)
+    treeMiniMode.heading('Artist',text = buildMiniMode_treeMiniMode_heading2_text_langtext)
+    treeMiniMode.heading('length',text = buildMiniMode_treeMiniMode_heading3_text_langtext)
     treeMiniMode.column('Title',width = 217)
     treeMiniMode.column('Artist',width = 217)
     treeMiniMode.column('length',width = 50)
@@ -2528,12 +2530,12 @@ def messageLogClicked(event):
         time = values[3]
         count = values[4]
         if time == "0ms":
-            timeText = "Doesn't close automatically"
+            timeText = messageLogClicked_time0_timeText_langtext
         else:
             timeText = time
         time = int(time[:-2])
         messageInfo = tk.Toplevel()
-        messageInfo.title("Message Details | " + messageType + " " + str(count))
+        messageInfo.title(messageLogClicked_messageInfo_title_langtext + messageType + " " + str(count))
         messageInfo.resizable(False,False)#message_icon
         if platform.system() == "Windows":
             messageInfo.iconbitmap(message_icon)
@@ -2542,27 +2544,27 @@ def messageLogClicked(event):
         messageInfo.focus()
         buttonFrame = ttk.Frame(messageInfo)
         buttonFrame.pack(side = tk.BOTTOM,fill = tk.X)
-        messageDetails = ttk.Label(messageInfo,text = "Message Details")
+        messageDetails = ttk.Label(messageInfo,text = messageLogClicked_messageDetails_text_langtext)
         messageDetails.pack(side = tk.TOP,anchor = tk.NW)
         separator1 = ttk.Separator(messageInfo,orient = 'horizontal')
         separator1.pack(side = tk.TOP,fill = tk.X)
-        messageImageText = ttk.Label(messageInfo,text = "Icon:\n" + icon)
+        messageImageText = ttk.Label(messageInfo,text = messageLogClicked_messageImageText_text_langtext + icon)
         messageImageText.pack(side = tk.TOP,anchor = tk.NW)#maybe das wieder messageimage nennen, wenn du dich entscheiden hast, kein bild anzuezeigen
         #messageImage = ttk.Label(messageInfo,image = icon)
         #messageImage.pack(side = tk.TOP,anchor = tk.NW)
-        messageTitle = ttk.Label(messageInfo,text = "Title:\n" + title)
+        messageTitle = ttk.Label(messageInfo,text = messageLogClicked_messageTitle_text_langtext + title)
         messageTitle.pack(side = tk.TOP,anchor = tk.NW)
-        messageMessage = ttk.Label(messageInfo,text = "Message:\n" + messageText)
+        messageMessage = ttk.Label(messageInfo,text = messageLogClicked_messageMessage_text_langtext + messageText)
         messageMessage.pack(side = tk.TOP,anchor = tk.NW)
-        messageButtons = ttk.Label(messageInfo,text = "Buttons:\n" + buttons)
+        messageButtons = ttk.Label(messageInfo,text = messageLogClicked_messageButtons_text_langtext + buttons)
         messageButtons.pack(side = tk.TOP,anchor = tk.NW)
-        messageTime = ttk.Label(messageInfo,text = "Time:\n" + timeText)
+        messageTime = ttk.Label(messageInfo,text = messageLogClicked_messageTime_text_langtext + timeText)
         messageTime.pack(side = tk.TOP,anchor = tk.NW)
         separator2 = ttk.Separator(messageInfo,orient = 'horizontal')
         separator2.pack(side = tk.TOP,fill = tk.X)
-        previewButton = ttk.Button(buttonFrame,text = "Preview message",command = lambda: (message(iconNR,title,messageText,buttons,time)))
+        previewButton = ttk.Button(buttonFrame,text = messageLogClicked_previewButton_text_langtext,command = lambda: (message(iconNR,title,messageText,buttons,time)))
         previewButton.pack(side = tk.RIGHT,anchor = tk.NW)#vielleicht als text nur Preview und nd preview message
-        closeButton = ttk.Button(buttonFrame,text = "Close",command = messageInfo.destroy)
+        closeButton = ttk.Button(buttonFrame,text = messageLogClicked_closeButton_text_langtext,command = messageInfo.destroy)
         closeButton.pack(side = tk.LEFT,anchor = tk.NW)
 
 def notebookTabChange(event):
@@ -3378,8 +3380,208 @@ def openFilesDialog():
 def saveFileDialog():
     app = QApplication(sys.argv)
     options = QFileDialog.Options()
-    fileName,selectedFilter = QFileDialog.getSaveFileName(None,"Save Playlist","","m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)",options = options)
+    fileName,selectedFilter = QFileDialog.getSaveFileName(None,saveFileDialog_QFileDialog_SaveFilterName1_langtext,"",saveFileDialog_QFileDialog_SaveFilterName2_langtext,options = options)
     return fileName,selectedFilter
+
+def loadLanguages():
+    languageList = []
+    languageListOptionMenu = []
+    for filename in os.listdir(os.path.join(dirname,'texts/language')):
+        if filename.startswith("language_"):
+            filepath = os.path.join(os.path.join(dirname,'texts/language'),filename)
+            underscore = filename.find("_")
+            languageList.append([filename[underscore + 1:-4],filepath])
+            languageListOptionMenu.append(filename[underscore + 1:-4])
+    print(languageList)
+    return languageList,languageListOptionMenu
+
+def languageChange(event):
+    language = languageStringVar.get()
+    loadLanguage(language,languageList)
+    with open(os.path.join(dirname,'texts/language/selection.txt'),'w') as languageFile:
+        languageFile.writelines([language + "\n"])
+    message(1,languageChange_message1_title_langtext,languageChange_message1_text_langtext,"ok",0)
+
+def loadLanguage(language,languageList):
+    global main_window_title_langtext, file_menu1_command1_label_langtext, file_menu1_cascade1_label_langtext, file_menu1_command2_label_langtext, file_menu1_command3_label_langtext, file_menu1_command4_label_langtext, file_menu1_command5_label_langtext, menubar1_cascade1_label_langtext, view_menu1_command1_label_langtext, view_menu1_command2_label_langtext, view_menu1_command3_label_langtext, menubar1_cascade2_label_langtext, help_menu1_command1_label_langtext, help_menu1_command2_label_langtext, help_menu1_command3_label_langtext, help_menu1_command4_label_langtext, help_menu1_command5_label_langtext, menubar1_cascade3_label_langtext, plW_title_langtext, file_menu2_command1_label_langtext, file_menu2_cascade1_label_langtext, file_menu2_cascade2_label_langtext, file_menu2_command2_label_langtext, file_menu2_command3_label_langtext, file_menu2_command4_label_langtext, file_menu2_command5_label_langtext, file_menu2_cascade3_label_langtext, edit_menu2_command1_label_langtext, edit_menu2_command2_label_langtext, edit_menu2_command3_label_langtext, edit_menu2_command4_label_langtext, edit_menu2_command5_label_langtext, edit_menu2_command6_label_langtext, edit_menu2_command7_label_langtext, menubar2_cascade1_label_langtext, songName_variable_langtext, songArtist_variable_langtext, songFilename_variable_langtext, tree_heading1_text_langtext, tree_heading2_text_langtext, tree_heading3_text_langtext, rcmenu1_command1_label_langtext, rcmenu1_command2_label_langtext, rcmenu2_command1_label_langtext, rcmenu2_command2_label_langtext, rcmenu2_command3_label_langtext, rcmenu2_command4_label_langtext, rcmenu2_command5_label_langtext, playlistSelectedLabel_text_langtext, playlistDurationLabel_text_langtext, remainingPlaylistDurationLabel_text_langtext, fastForward_message1_title_langtext, fastForward_message1_text_langtext, fastForward_message2_title_langtext, fastForward_message2_text_langtext, rewindSong_message1_title_langtext, rewindSong_message1_text_langtext, rewindSong_message2_title_langtext, rewindSong_message2_text_langtext, addToPlaylist_message1_title_langtext, addToPlaylist_message1_text_langtext, updatePlaylist_plW_title_langtext, updatePlaylist_plWminiMode_title_langtext, updatePlaylist_playlistLengthLabel_text_langtext, updatePlaylist_remainingPlaylistLengthLabel_text_langtext, tree_loading_text_langtext, updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext, treeMiniMode_loading_text_langtext, length_for_playlist_plW_title_langtext, length_for_playlist_plWminiMode_title_langtext, length_for_playlist_message1_title_langtext, length_for_playlist_message1_text_langtext, length_for_playlist_message2_title_langtext, length_for_playlist_message2_text_langtext, savePlaylist_message1_title_langtext, savePlaylist_message1_text1_langtext, savePlaylist_message1_text2_langtext, upInPlaylist_message1_title_langtext, upInPlaylist_message1_text_langtext, downInPlaylist_message1_title_langtext, downInPlaylist_message1_text_langtext, infoWE_extraWindow_title_langtext, infoWE_changelogButton_text_langtext, infoWE_attributions_text_langtext, infoWE_licenseButton_text_langtext, settingsWE_extraWindow_title_langtext, settingsWE_twoWindowsCheckbutton_text_langtext, settingsWE_showVolumeInfoCheckbutton_text_langtext, settingsWE_loopPlaylistCheckbutton_text_langtext, settingsWE_loopMoveCheckbutton_text_langtext, settingsWE_shufflePositionResetCheckbutton_text_langtext, settingsWE_messageLogsButton_text_langtext, messageLogsWE_extraWindow_title_langtext, messageLogsWE_logs_add1_text_langtext, messageLogsWE_logs_add2_text_langtext, messageLogsWE_logs_add3_text_langtext, messageLogsWE_tree1_2_3_heading1_text_langtext, messageLogsWE_tree1_2_3_heading2_text_langtext, messageLogsWE_tree1_2_3_heading3_text_langtext, messageLogsWE_tree1_2_3_heading4_text_langtext, messageLogsWE_tree1_2_3_heading5_text_langtext, attributionsWE_extraWindow_title_langtext, attributionsWE_attributionLinksButton_text_langtext, attributionButtonsWE_extraWindow_title_langtext, changelogWE_extraWindow_title_langtext, licenseWE_extraWindow_title_langtext, windowExtra_file_menu3_command1_label_langtext, windowExtra_file_menu3_cascade1_label_langtext, windowExtra_file_menu3_command2_label_langtext, windowExtra_file_menu3_command3_label_langtext, windowExtra_file_menu3_command4_label_langtext, windowExtra_file_menu3_command5_label_langtext, windowExtra_menubar3_cascade1_label_langtext, windowExtra_view_menu3_command1_label_langtext, windowExtra_view_menu3_command2_label_langtext, windowExtra_view_menu3_command3_label_langtext, windowExtra_menubar3_cascade2_label_langtext, windowExtra_help_menu3_command1_label_langtext, windowExtra_help_menu3_command2_label_langtext, windowExtra_help_menu3_command3_label_langtext, windowExtra_help_menu3_command4_label_langtext, windowExtra_help_menu3_command5_label_langtext, windowExtra_menubar3_cascade3_label_langtext, windowExtra_extraType_info_headline_text_langtext, windowExtra_extraType_settings_headline_text_langtext, windowExtra_extraType_messageLogs_headline_text_langtext, windowExtra_extraType_messageLogs_backButton_text_langtext, windowExtra_extraType_attributions_headline_text_langtext, windowExtra_extraType_attributions_backButton_text_langtext, windowExtra_extraType_attributionButtons_headline_text_langtext, windowExtra_extraType_attributionButtons_backbutton_text_langtext, windowExtra_extraType_Changelog_headline_text_langtext, windowExtra_extraType_Changelog_backButton_text_langtext, progress_progressWindow_title_langtext, buildTwoWindows_message1_title_langtext, buildTwoWindows_message1_text_langtext, buildMiniMode_message1_title_langtext, buildMiniMode_message1_text_langtext, buildMiniMode_miniModeWindow_title_langtext, buildMiniMode_plWminiMode_title_langtext, buildMiniMode_treeMiniMode_heading1_text_langtext, buildMiniMode_treeMiniMode_heading2_text_langtext, buildMiniMode_treeMiniMode_heading3_text_langtext, messageLogClicked_time0_timeText_langtext, messageLogClicked_messageInfo_title_langtext, messageLogClicked_messageDetails_text_langtext, messageLogClicked_messageImageText_text_langtext, messageLogClicked_messageTitle_text_langtext, messageLogClicked_messageMessage_text_langtext, messageLogClicked_messageButtons_text_langtext, messageLogClicked_messageTime_text_langtext, messageLogClicked_previewButton_text_langtext, messageLogClicked_closeButton_text_langtext, empty_file_text_list, saveFileDialog_QFileDialog_SaveFilterName1_langtext, saveFileDialog_QFileDialog_SaveFilterName2_langtext, exitProgram_message1_title_langtext, exitProgram_message1_text_langtext, exitProgram_main_window_title_langtext, exitProgram_plW_title_langtext, languageChange_message1_title_langtext, languageChange_message1_text_langtext
+    #ohjemine
+    for languageListList in languageList:
+        print(languageListList[0])
+        print(language)
+        print(type(languageListList[0]))
+        print(type(language))
+        if languageListList[0] == language:
+            languagePath = languageListList[1]
+            break
+    with open(languagePath,'r',encoding = 'utf-8') as languageFile:
+        oldLines = languageFile.readlines()
+    lines = []
+    for line in oldLines:
+        line = line[:-1]
+        lines.append(line)
+    main_window_title_langtext = lines[0]
+    file_menu1_command1_label_langtext = lines[1]
+    file_menu1_cascade1_label_langtext = lines[2]
+    file_menu1_command2_label_langtext = lines[3]
+    file_menu1_command3_label_langtext = lines[4]
+    file_menu1_command4_label_langtext = lines[5]
+    file_menu1_command5_label_langtext = lines[6]
+    menubar1_cascade1_label_langtext = lines[7]
+    view_menu1_command1_label_langtext = lines[8]
+    view_menu1_command2_label_langtext = lines[9]
+    view_menu1_command3_label_langtext = lines[10]
+    menubar1_cascade2_label_langtext = lines[11]
+    help_menu1_command1_label_langtext = lines[12]
+    help_menu1_command2_label_langtext = lines[13]
+    help_menu1_command3_label_langtext = lines[14]
+    help_menu1_command4_label_langtext = lines[15]
+    help_menu1_command5_label_langtext = lines[16]
+    menubar1_cascade3_label_langtext = lines[17]
+    plW_title_langtext = lines[18]
+    file_menu2_command1_label_langtext = lines[19]
+    file_menu2_cascade1_label_langtext = lines[20]
+    file_menu2_cascade2_label_langtext = lines[21]
+    file_menu2_command2_label_langtext = lines[22]
+    file_menu2_command3_label_langtext = lines[23]
+    file_menu2_command4_label_langtext = lines[24]
+    file_menu2_command5_label_langtext = lines[25]
+    file_menu2_cascade3_label_langtext = lines[26]
+    edit_menu2_command1_label_langtext = lines[27]
+    edit_menu2_command2_label_langtext = lines[28]
+    edit_menu2_command3_label_langtext = lines[29]
+    edit_menu2_command4_label_langtext = lines[30]
+    edit_menu2_command5_label_langtext = lines[31]
+    edit_menu2_command6_label_langtext = lines[32]
+    edit_menu2_command7_label_langtext = lines[33]
+    menubar2_cascade1_label_langtext = lines[34]
+    songName_variable_langtext = lines[35]
+    songArtist_variable_langtext = lines[36]
+    songFilename_variable_langtext = lines[37]
+    tree_heading1_text_langtext = lines[38]
+    tree_heading2_text_langtext = lines[39]
+    tree_heading3_text_langtext = lines[40]
+    rcmenu1_command1_label_langtext = lines[41]
+    rcmenu1_command2_label_langtext = lines[42]
+    rcmenu2_command1_label_langtext = lines[43]
+    rcmenu2_command2_label_langtext = lines[44]
+    rcmenu2_command3_label_langtext = lines[45]
+    rcmenu2_command4_label_langtext = lines[46]
+    rcmenu2_command5_label_langtext = lines[47]
+    playlistSelectedLabel_text_langtext = lines[48]
+    playlistDurationLabel_text_langtext = lines[49]
+    remainingPlaylistDurationLabel_text_langtext = lines[50]
+    fastForward_message1_title_langtext = lines[51]
+    fastForward_message1_text_langtext = lines[52]
+    fastForward_message2_title_langtext = lines[53]
+    fastForward_message2_text_langtext = lines[54]
+    rewindSong_message1_title_langtext = lines[55]
+    rewindSong_message1_text_langtext = lines[56]
+    rewindSong_message2_title_langtext = lines[57]
+    rewindSong_message2_text_langtext = lines[58]
+    addToPlaylist_message1_title_langtext = lines[59]
+    addToPlaylist_message1_text_langtext = lines[60]
+    updatePlaylist_plW_title_langtext = lines[61]
+    updatePlaylist_plWminiMode_title_langtext = lines[62]
+    updatePlaylist_playlistLengthLabel_text_langtext = lines[63]
+    updatePlaylist_remainingPlaylistLengthLabel_text_langtext = lines[64]
+    tree_loading_text_langtext = lines[65]
+    updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext = lines[66]
+    treeMiniMode_loading_text_langtext = lines[67]
+    length_for_playlist_plW_title_langtext = lines[68]
+    length_for_playlist_plWminiMode_title_langtext = lines[69]
+    length_for_playlist_message1_title_langtext = lines[70]
+    length_for_playlist_message1_text_langtext = lines[71]
+    length_for_playlist_message2_title_langtext = lines[72]
+    length_for_playlist_message2_text_langtext = lines[73]
+    savePlaylist_message1_title_langtext = lines[74]
+    savePlaylist_message1_text1_langtext = lines[75]
+    savePlaylist_message1_text2_langtext = lines[76]
+    upInPlaylist_message1_title_langtext = lines[77]
+    upInPlaylist_message1_text_langtext = lines[78]
+    downInPlaylist_message1_title_langtext = lines[79]
+    downInPlaylist_message1_text_langtext = lines[80]
+    infoWE_extraWindow_title_langtext = lines[81]
+    infoWE_changelogButton_text_langtext = lines[82]
+    infoWE_attributions_text_langtext = lines[83]
+    infoWE_licenseButton_text_langtext = lines[84]
+    settingsWE_extraWindow_title_langtext = lines[85]
+    settingsWE_twoWindowsCheckbutton_text_langtext = lines[86]
+    settingsWE_showVolumeInfoCheckbutton_text_langtext = lines[87]
+    settingsWE_loopPlaylistCheckbutton_text_langtext = lines[88]
+    settingsWE_loopMoveCheckbutton_text_langtext = lines[89]
+    settingsWE_shufflePositionResetCheckbutton_text_langtext = lines[90]
+    settingsWE_messageLogsButton_text_langtext = lines[91]
+    messageLogsWE_extraWindow_title_langtext = lines[92]
+    messageLogsWE_logs_add1_text_langtext = lines[93]
+    messageLogsWE_logs_add2_text_langtext = lines[94]
+    messageLogsWE_logs_add3_text_langtext = lines[95]
+    messageLogsWE_tree1_2_3_heading1_text_langtext = lines[96]
+    messageLogsWE_tree1_2_3_heading2_text_langtext = lines[97]
+    messageLogsWE_tree1_2_3_heading3_text_langtext = lines[98]
+    messageLogsWE_tree1_2_3_heading4_text_langtext = lines[99]
+    messageLogsWE_tree1_2_3_heading5_text_langtext = lines[100]
+    attributionsWE_extraWindow_title_langtext = lines[101]
+    attributionsWE_attributionLinksButton_text_langtext = lines[102]
+    attributionButtonsWE_extraWindow_title_langtext = lines[103]
+    changelogWE_extraWindow_title_langtext = lines[104]
+    licenseWE_extraWindow_title_langtext = lines[105]
+    windowExtra_file_menu3_command1_label_langtext = lines[106]
+    windowExtra_file_menu3_cascade1_label_langtext = lines[107]
+    windowExtra_file_menu3_command2_label_langtext = lines[108]
+    windowExtra_file_menu3_command3_label_langtext = lines[109]
+    windowExtra_file_menu3_command4_label_langtext = lines[110]
+    windowExtra_file_menu3_command5_label_langtext = lines[111]
+    windowExtra_menubar3_cascade1_label_langtext = lines[112]
+    windowExtra_view_menu3_command1_label_langtext = lines[113]
+    windowExtra_view_menu3_command2_label_langtext = lines[114]
+    windowExtra_view_menu3_command3_label_langtext = lines[115]
+    windowExtra_menubar3_cascade2_label_langtext = lines[116]
+    windowExtra_help_menu3_command1_label_langtext = lines[117]
+    windowExtra_help_menu3_command2_label_langtext = lines[118]
+    windowExtra_help_menu3_command3_label_langtext = lines[119]
+    windowExtra_help_menu3_command4_label_langtext = lines[120]
+    windowExtra_help_menu3_command5_label_langtext = lines[121]
+    windowExtra_menubar3_cascade3_label_langtext = lines[122]
+    windowExtra_extraType_info_headline_text_langtext = lines[123]
+    windowExtra_extraType_settings_headline_text_langtext = lines[124]
+    windowExtra_extraType_messageLogs_headline_text_langtext = lines[125]
+    windowExtra_extraType_messageLogs_backButton_text_langtext = lines[126]
+    windowExtra_extraType_attributions_headline_text_langtext = lines[127]
+    windowExtra_extraType_attributions_backButton_text_langtext = lines[128]
+    windowExtra_extraType_attributionButtons_headline_text_langtext = lines[129]
+    windowExtra_extraType_attributionButtons_backbutton_text_langtext = lines[130]
+    windowExtra_extraType_Changelog_headline_text_langtext = lines[131]
+    windowExtra_extraType_Changelog_backButton_text_langtext = lines[132]
+    progress_progressWindow_title_langtext = lines[133]
+    buildTwoWindows_message1_title_langtext = lines[134]
+    buildTwoWindows_message1_text_langtext = lines[135]
+    buildMiniMode_message1_title_langtext = lines[136]
+    buildMiniMode_message1_text_langtext = lines[137]
+    buildMiniMode_miniModeWindow_title_langtext = lines[138]
+    buildMiniMode_plWminiMode_title_langtext = lines[139]
+    buildMiniMode_treeMiniMode_heading1_text_langtext = lines[140]
+    buildMiniMode_treeMiniMode_heading2_text_langtext = lines[141]
+    buildMiniMode_treeMiniMode_heading3_text_langtext = lines[142]
+    messageLogClicked_time0_timeText_langtext = lines[143]
+    messageLogClicked_messageInfo_title_langtext = lines[144]
+    messageLogClicked_messageDetails_text_langtext = lines[145]
+    messageLogClicked_messageImageText_text_langtext = lines[146]
+    messageLogClicked_messageTitle_text_langtext = lines[147]
+    messageLogClicked_messageMessage_text_langtext = lines[148]
+    messageLogClicked_messageButtons_text_langtext = lines[149]
+    messageLogClicked_messageTime_text_langtext = lines[150]
+    messageLogClicked_previewButton_text_langtext = lines[151]
+    messageLogClicked_closeButton_text_langtext = lines[152]
+    empty_file_text_list = lines[153]
+    saveFileDialog_QFileDialog_SaveFilterName1_langtext = lines[154]
+    saveFileDialog_QFileDialog_SaveFilterName2_langtext = lines[155]
+    exitProgram_message1_title_langtext = lines[156]
+    exitProgram_message1_text_langtext = lines[157]
+    exitProgram_main_window_title_langtext = lines[158]
+    exitProgram_plW_title_langtext = lines[159]
+    languageChange_message1_title_langtext = lines[160]
+    languageChange_message1_text_langtext = lines[161]
+    return
 
 def exitProgram():
     global exiting
@@ -3387,9 +3589,9 @@ def exitProgram():
     global plW
     global main_window
     loading_stop()
-    message(1,"Quitting...","This might take a some time","ok",0)
-    main_window.title("Quitting...")
-    plW.title("Quitting...")
+    message(1,exitProgram_message1_title_langtext,exitProgram_message1_text_langtext,"ok",0)
+    main_window.title(exitProgram_main_window_title_langtext)
+    plW.title(exitProgram_plW_title_langtext)
     exiting = True
     #time.sleep(2)
     sys.exit()
@@ -3398,6 +3600,12 @@ def exitProgram():
 #bindings
 def hideInBackground(event):#auch playlistWindow in hintergrund bringen
     pass
+
+with open(os.path.join(dirname,'texts/language/selection.txt'),'r') as languageFile:
+    language = languageFile.readlines()[0]
+language = language[:-1]
+languageList,languageListOptionMenu = loadLanguages()
+loadLanguage(language,languageList)
 
 #root_window
 root = tk.Tk()
@@ -3409,7 +3617,7 @@ global main_windowWidth
 main_windowWidth = 500
 main_windowWidthStr = str(main_windowWidth)
 main_window = tk.Toplevel()
-main_window.title("Music Player")
+main_window.title(main_window_title_langtext)
 main_window.geometry(main_windowWidthStr + 'x360+100+100')
 main_window.bind('<Escape>',hideInBackground)
     #menus
@@ -3417,36 +3625,36 @@ menubar1 = tk.Menu(main_window)
 main_window.config(menu = menubar1)
         #file_menu
 file_menu1 = tk.Menu(menubar1,tearoff = False)
-file_menu1.add_command(label = 'Open',command = lambda: (addToPlaylist("no")))
+file_menu1.add_command(label = file_menu1_command1_label_langtext,command = lambda: (addToPlaylist("no")))
 sub_menu1 = tk.Menu(file_menu1,tearoff = False)
-file_menu1.add_cascade(label = "Recent files",menu = sub_menu1)
-file_menu1.add_command(label = 'Save as...',command = savePlaylist)
-file_menu1.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu1.add_cascade(label = file_menu1_cascade1_label_langtext,menu = sub_menu1)
+file_menu1.add_command(label = file_menu1_command2_label_langtext,command = savePlaylist)
+file_menu1.add_command(label = file_menu1_command3_label_langtext,command = deleteAllSongs)
 file_menu1.add_separator()
 file_menu1.add_command(label = "Metadata editor",command = metadataEditorStart)
 file_menu1.add_separator()
-file_menu1.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
+file_menu1.add_command(label = file_menu1_command4_label_langtext,command = lambda: (windowExtra("settings")))
 file_menu1.add_separator()
-file_menu1.add_command(label='Exit',command=exitProgram)
-menubar1.add_cascade(label="File",menu=file_menu1,underline=0)
+file_menu1.add_command(label=file_menu1_command5_label_langtext,command=exitProgram)
+menubar1.add_cascade(label=menubar1_cascade1_label_langtext,menu=file_menu1,underline=0)
         #view_menu
 view_menu1 = tk.Menu(menubar1,tearoff = False)
-view_menu1.add_command(label = 'Show the value of the volume slider',command = lambda: (settingsFmenu("volumeSliderText")))
-view_menu1.add_command(label = 'Two windows',command = lambda: (settingsFmenu("twoWindows")))
-view_menu1.add_command(label = 'Mini mode',command = lambda: (settingsFmenu("miniMode")))
-menubar1.add_cascade(label = "View",menu = view_menu1,underline = 0)
+view_menu1.add_command(label = view_menu1_command1_label_langtext,command = lambda: (settingsFmenu("volumeSliderText")))
+view_menu1.add_command(label = view_menu1_command2_label_langtext,command = lambda: (settingsFmenu("twoWindows")))
+view_menu1.add_command(label = view_menu1_command3_label_langtext,command = lambda: (settingsFmenu("miniMode")))
+menubar1.add_cascade(label = menubar1_cascade2_label_langtext,menu = view_menu1,underline = 0)
         #help_menu
 #keyboard shortcuts
 #license
 #changelog
 #halt alle sachen die im help menu standardmäßig sind und/oder die im info window sind
 help_menu1 = tk.Menu(menubar1,tearoff = False)
-help_menu1.add_command(label = 'About & help',command = lambda:(windowExtra("info")))
-help_menu1.add_command(label = 'Changelog',command = lambda:(windowExtra("Changelog")))
-help_menu1.add_command(label = 'License',command = lambda:(windowExtra("License")))
+help_menu1.add_command(label = help_menu1_command1_label_langtext,command = lambda:(windowExtra("info")))
+help_menu1.add_command(label = help_menu1_command2_label_langtext,command = lambda:(windowExtra("Changelog")))
+help_menu1.add_command(label = help_menu1_command3_label_langtext,command = lambda:(windowExtra("License")))
 help_menu1.add_separator()
-help_menu1.add_command(label = 'Options',command = lambda:(windowExtra("settings")))
-help_menu1.add_command(label = 'Message logs',command = lambda:(windowExtra("messageLogs")))
+help_menu1.add_command(label = help_menu1_command4_label_langtext,command = lambda:(windowExtra("settings")))
+help_menu1.add_command(label = help_menu1_command5_label_langtext,command = lambda:(windowExtra("messageLogs")))
 menubar1.add_cascade(label = "Help",menu = help_menu1,underline = 0)
 
 #playlist window
@@ -3463,31 +3671,31 @@ menubar2 = tk.Menu(plW)
 plW.config(menu = menubar2)
         #file_menu
 file_menu2 = tk.Menu(menubar2,tearoff = False)
-file_menu2.add_command(label = 'Add',command = lambda: (addToPlaylist("no")))
+file_menu2.add_command(label = file_menu2_command1_label_langtext,command = lambda: (addToPlaylist("no")))
 sub_menu21 = tk.Menu(file_menu2,tearoff = False)
-file_menu2.add_cascade(label = "Recent songs",menu = sub_menu21)
+file_menu2.add_cascade(label = file_menu2_cascade1_label_langtext,menu = sub_menu21)
 sub_menu22 = tk.Menu(file_menu2,tearoff = False)
 # sub_menu3.add_command(label = 'Recent playlist 1')
-file_menu2.add_cascade(label = "Recent playlists",menu = sub_menu22)
-file_menu2.add_command(label = 'Save as...',command = savePlaylist)
-file_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
+file_menu2.add_cascade(label = file_menu2_cascade2_label_langtext,menu = sub_menu22)
+file_menu2.add_command(label = file_menu2_command2_label_langtext,command = savePlaylist)
+file_menu2.add_command(label = file_menu2_command3_label_langtext,command = deleteAllSongs)
 file_menu2.add_separator()
 file_menu2.add_command(label = "Metadata editor",command = metadataEditorStart)
 file_menu2.add_separator()
-file_menu2.add_command(label = 'Options',command = lambda: (windowExtra("settings")))
+file_menu2.add_command(label = file_menu2_command4_label_langtext,command = lambda: (windowExtra("settings")))
 file_menu2.add_separator()
-file_menu2.add_command(label='Exit',command=exitProgram)
-menubar2.add_cascade(label="File",menu=file_menu2,underline=0)
+file_menu2.add_command(label=file_menu2_command5_label_langtext,command=exitProgram)
+menubar2.add_cascade(label=file_menu2_cascade3_label_langtext,menu=file_menu2,underline=0)
         #edit_menu
 edit_menu2 = tk.Menu(menubar2,tearoff = False)#das erste edit menu, aber ist in menubar 2, der übersicht halber ist das nummer 2
-edit_menu2.add_command(label = 'Move to the top',command = topInPlaylist)
-edit_menu2.add_command(label = 'Move up',command = upInPlaylist)
-edit_menu2.add_command(label = 'Move down',command = downInPlaylist)
-edit_menu2.add_command(label = 'Move to the bottom',command = bottomInPlaylist)
-edit_menu2.add_command(label = 'Delete',command = delFrompllst)
-edit_menu2.add_command(label = 'Delete duplicates',command = delDuplicates)
-edit_menu2.add_command(label = 'Delete all',command = deleteAllSongs)
-menubar2.add_cascade(label = "Edit",menu = edit_menu2,underline = 0)
+edit_menu2.add_command(label = edit_menu2_command1_label_langtext,command = topInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command2_label_langtext,command = upInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command3_label_langtext,command = downInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command4_label_langtext,command = bottomInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command5_label_langtext,command = delFrompllst)
+edit_menu2.add_command(label = edit_menu2_command6_label_langtext,command = delDuplicates)
+edit_menu2.add_command(label = edit_menu2_command7_label_langtext,command = deleteAllSongs)
+menubar2.add_cascade(label = menubar2_cascade1_label_langtext,menu = edit_menu2,underline = 0)
 
 #metadata editor window
 #tkinter
@@ -3509,6 +3717,8 @@ twoWindows = tk.BooleanVar()
 miniModeActive = tk.BooleanVar()
 shuffleReset = tk.BooleanVar()
 preferPllstData = tk.BooleanVar()
+languageStringVar = tk.StringVar()
+languageStringVar.set(language)
 #metadata_editor
 filenamesME = []
 notebookTabME = 1
@@ -3596,9 +3806,9 @@ songLength = "00:00"
 playlistLength = "00:00:00"
 remainingPlaylistLength = "00:00:00"
 plstSelection = "0/0"
-songName = "Title"
-songArtist = "Artist"
-songFilename = "Filename"
+songName = songName_variable_langtext
+songArtist = songArtist_variable_langtext
+songFilename = songFilename_variable_langtext
 cursor_state = "normal"
 sliderPressed = False
 volumePressed = False
@@ -3791,9 +4001,9 @@ columns = ('Title','Artist','length','count')
 
 tree = ttk.Treeview(playlistFrame,columns = columns,show = 'headings')
 
-tree.heading('Title',text = 'Title')
-tree.heading('Artist',text = 'Artist')
-tree.heading('length',text = 'Length')
+tree.heading('Title',text = tree_heading1_text_langtext)
+tree.heading('Artist',text = tree_heading2_text_langtext)
+tree.heading('length',text = tree_heading3_text_langtext)
 tree.column('Title',width = 150)
 tree.column('Artist',width = 150)
 tree.column('length',width = 50)
@@ -3809,16 +4019,16 @@ tree.bind('<Double-1>',playFromPlaylistEvent)
 
 #right click menu
 rcmenu1 = tk.Menu(tree,tearoff = 0)#right click menu
-rcmenu1.add_command(label = "Delete all",command = deleteAllSongs)
+rcmenu1.add_command(label = rcmenu1_command1_label_langtext,command = deleteAllSongs)
 rcmenu1.add_command(label = "Metadata editor",command = metadataEditorStart)
-rcmenu1.add_command(label = "Delete duplicates",command = delDuplicates)
+rcmenu1.add_command(label = rcmenu1_command2_label_langtext,command = delDuplicates)
 
 rcmenu2 = tk.Menu(tree,tearoff = 0)
-rcmenu2.add_command(label = "Move to the top",command = topInPlaylist)
-rcmenu2.add_command(label = "Move up",command = upInPlaylist)
-rcmenu2.add_command(label = "Move down",command = downInPlaylist)
-rcmenu2.add_command(label = "Move to the bottom",command = bottomInPlaylist)
-rcmenu2.add_command(label = "Delete",command = delFrompllst)
+rcmenu2.add_command(label = rcmenu2_command1_label_langtext,command = topInPlaylist)
+rcmenu2.add_command(label = rcmenu2_command2_label_langtext,command = upInPlaylist)
+rcmenu2.add_command(label = rcmenu2_command3_label_langtext,command = downInPlaylist)
+rcmenu2.add_command(label = rcmenu2_command4_label_langtext,command = bottomInPlaylist)
+rcmenu2.add_command(label = rcmenu2_command5_label_langtext,command = delFrompllst)
 rcmenu2.add_separator()
 rcmenu2.add_command(label = "Edit metadata",command = editMetadataOfSelected)
 tree.bind("<Button-3>",rcmenuCheck)# event:rcmenu1.post(event.x_root,event.y_root))
@@ -3835,19 +4045,19 @@ remainingLengthFrame = ttk.Frame(btmBtnsFFrame)
 remainingLengthFrame.pack(side = tk.TOP,fill = tk.X)
 
     #selectedSongFrame
-playlistSelectedLabel = ttk.Label(selectedSongFrame,text = "playing song")#vlt hier überall das "label" wegnehmen
+playlistSelectedLabel = ttk.Label(selectedSongFrame,text = playlistSelectedLabel_text_langtext)#vlt hier überall das "label" wegnehmen
 playlistSelectedLabel.pack(side = tk.LEFT)
 plstSelectionLabel = ttk.Label(selectedSongFrame,text = plstSelection)
 plstSelectionLabel.pack(side = tk.RIGHT)
 
     #lengthFrame
-playlistDurationLabel = ttk.Label(lengthFrame,text = "duration")
+playlistDurationLabel = ttk.Label(lengthFrame,text = playlistDurationLabel_text_langtext)
 playlistDurationLabel.pack(side = tk.LEFT)
 playlistLengthLabel = ttk.Label(lengthFrame,text = playlistLength)
 playlistLengthLabel.pack(side = tk.RIGHT)
 
     #remainingLengthFrame
-remainingPlaylistDurationLabel = ttk.Label(remainingLengthFrame,text = "remaining")
+remainingPlaylistDurationLabel = ttk.Label(remainingLengthFrame,text = remainingPlaylistDurationLabel_text_langtext)
 remainingPlaylistDurationLabel.pack(side = tk.LEFT)
 remainingPlaylistLengthLabel = ttk.Label(remainingLengthFrame,text = remainingPlaylistLength)
 remainingPlaylistLengthLabel.pack(side = tk.RIGHT)
