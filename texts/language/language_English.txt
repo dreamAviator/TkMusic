@@ -1,4 +1,4 @@
-Music Player
+Music Player#ich beginne hier ab dem punkt, bei dem das fenster erstellt wird
 Open
 Recent files
 Save as...
@@ -48,13 +48,15 @@ Move to the bottom
 Delete
 playing song
 duration
-remaining
+remaining#ab hier beginne ich von vorne im code
+Error
+There was an error reading the song cover\n
 No next song
-There is no next song, you cant skip to the next song.\n + If you want the first song of the playlist to play, turn the feature on in the settings.
+There is no next song, you can't skip to the next song.\n + If you want the first song of the playlist to play, turn the feature on in the settings.
 Error
 There was an error while trying to skip to the next song\n\n
 No previous song
-There is no previous song, you cant rewind.\n + If you want the first song of the playlist to play, turn the feature on in the settings.
+There is no previous song, you can't rewind.\n + If you want the last song of the playlist to play, turn the feature on in the settings.
 Error
 There was an error while trying to skip to the previous song.\n\n
 Unsupported Files
@@ -69,19 +71,19 @@ loading
 Playlist duration loading...
 Playlist duration loading...
 File(s) not found
-These files couldnt be found and were removed from the playlist:\n
+These files couldn't be found and were removed from the playlist:\n
 File(s) not found
-These files couldnt be found and were removed from the playlist:\n
-Saved successfully!
+These files couldn't be found and were removed from the playlist:\n
+Saved successfully
 Saved playlist
  successfully
 No previous song
-Do you want to move an element to the bottom of the list when its at the top of the list and you try to move it up?
+Do you want to move an element to the bottom of the list when it's at the top of the list and you try to move it up?
 No next song
-Do you want to move an element to the top of the list when its at the bottom of the list and you try to move it down?
+Do you want to move an element to the top of the list when it's at the bottom of the list and you try to move it down?
 Info & help
 Changelog
-Attributions
+Attributions#ist ein button
 License
 Settings
 Display the playlist in an extra window
@@ -131,6 +133,7 @@ Links
 Attributions
 Changelog and feedback
 Info & help
+Info & help
 Loading...
 Not yet supported
 This does not work yet.\nRight now you can only have the playlist in an extra Window
@@ -141,7 +144,7 @@ Playlist
 Title
 Artist
 Length
-Doesnt close automatically
+Doesn't close automatically
 Message Details |
 Message Details
 Icon:\n
@@ -152,6 +155,8 @@ Time:\n
 Preview message
 Close
 empty file\n
+Open Songs or Playlists
+All Files (*)
 Save Playlist
 m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)
 Quitting...
@@ -159,4 +164,71 @@ This might take a some time
 Quitting...
 Quitting...
 Restart needed
-You need to restart the prorgam for the changes to take full effect.
+You need to restart the prorgam for the changes to take full effect#ab hier metadata editor
+Metadata editor
+ File/s
+ File/s
+Filename
+Title
+Interpreter
+Album
+No save directory selected
+You need to select a save directory
+No file(s) selected
+You need to select at least one file to edit
+Unvalid pattern
+Your naming pattern is not valid. Press the 'What's that' button if you don't know what that is.
+No file selected
+You need to select a file to edit
+No save directory selected
+You need to select a save directory or edit the file without copying it
+Unvalid pattern
+Your naming pattern is not valid. Press the 'What's that' button if you don't know what that is.
+Name pattern help
+The name pattern tells the program the connection between the metadata inside of the file and the filename.\nLet's say you have two files:\n\n1: Abandoned, Mendum - Voyage [NCS Release].mp3\n2: Mendum - Red Hands [NCS Release].mp3\n\nThen the naming scheme would be:\nInterpreter - Title [NCS Release]\nIn the name pattern entry field you would write:\n%i% - %t% [NCS Release]%\n\nthen the program would put these metadata into the files:\n1:\nTitle: Voyage\nInterpreter: Abandoned, Mendum\n2:\nTitle: Red Hands\nInterpreter: Mendum\n\nInbetween every different part of the naming scheme has to be a %\nEvery selected song has to follow the same naming pattern\ni - interpreter\nt - title\na - album
+Select Audio File
+All Files (*)
+Select Audio Files
+All Files (*)
+Select Directory
+TkMetaEditor | Batch edit
+TkMetaEditor | Single edit
+TkMetaEditor | Rename
+TkMetaEditor | Info
+TkMetaEditor | Quitting...
+Metadata editor
+Metadata editor
+TkMetaEditor
+Start
+Batch edit
+Single edit
+Rename
+Info
+Quit
+0 File/s
+Delete Files
+Select Files
+Naming pattern
+What's that?
+Clear title metadata
+Clear interpreter metadata
+Clear album metadata
+Select folder
+Save Location
+Press start to save the changes
+Select file
+Tag
+Data
+Filename
+Title
+Interpret
+Album
+Select folder
+Copy file
+0 File/s
+Delete Files
+Select Files
+Naming pattern
+What's that?
+Save Location
+Select folder

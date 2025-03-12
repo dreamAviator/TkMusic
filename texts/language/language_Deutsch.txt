@@ -49,6 +49,8 @@ Löschen
 spielender Song
 Dauer
 verbleibend
+Fehler
+Es gab einen Fehler beim Lesen des Song Covers\n
 Kein nächster Song
 Es gibt keinen nächsten Song, du kannst nicht zum nächsten Song vorspulen.\” + Wenn du den ersten Song der Wiedergabeliste abspielen willst, kannst du dies in den Einstellungen anschalten.
 Fehler
@@ -131,6 +133,7 @@ Links
 Attributionen
 Changelog und Feedback
 Info & Hilfe
+Info & Hilfe
 Lädt...
 Noch nicht unterstützt
 Das funktioniert noch nicht.\nAktuell kannst du die Wiedergabeliste nur in einem extra Fenster anzeigen lassen
@@ -152,6 +155,8 @@ Dauer:\n
 Vorschau
 Schließen
 leere Datei\n
+Songs oder Wiedergabelisten öffnen
+Alle Dateien (*)
 Wiedergabeliste speichern
 m3u8 Wiedergabeliste Dateien (neuer Standard) (*.m3u8);m3u Wiedergabeliste Dateien (alter Standard) (*m3u),Text Dateien (*.txt);;Alle Dateien (*)
 Beenden...
@@ -160,3 +165,20 @@ Beenden...
 Beenden...
 Neustart erforderlich
 Das Programm muss neugestartet werden um die Einstellungen vollständig anzuwenden.
+Metadaten Editor
+ Datei/en
+ Datei/en
+Dateiname
+Titel
+Interpreten
+Album
+Keinen Ziel-Ordner ausgewählt
+Du musst einen Ziel-Ordner auswählen
+Kein/e Datei/en ausgewählt
+Du musst mindestens eine Datei zum Bearbeiten auswählen
+Nicht zulässiges Muster
+Dein Benennungsmuster ist ungültig. Klicke auf den 'Was ist das?' Knopf, wenn du nicht weißt was das ist.
+Keine Datei ausgewählt
+Du musst eine Datei zum Bearbeiten auswählen
+Kein Ziel-Ordner ausgewählt
+Du musst einen Ziel-Ordner auswählen
