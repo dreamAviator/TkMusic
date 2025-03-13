@@ -1,7 +1,7 @@
 This program plays audio files. It shows some metadata and the album cover. You can create and load playlists, move and edit the elements in the playlist, and save the playlist.
 
 Playlist controls:
-With the "Add" button (the one with the plus), you can add elements to the end of the playlist.
+With the "Add" button (the one with the +), you can add elements (also playlists) to the end of the playlist.
 With the "Save" button (the one with the floppy disk), you can save a playlist.
 With the single arrows up and down, you can move elements one place up or down.
 With the double arrows up and down, you can move elements to the top or bottom of the playlist.
@@ -45,3 +45,4 @@ This program does not collect any personal information
 
 
 This program is released under the GNU GENERAL PUBLIC LICENSE Version 2
+(Info -> License)

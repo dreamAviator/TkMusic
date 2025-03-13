@@ -7,5 +7,10 @@ filesToKeepText     (Integer)
 miniMode (noch nicht vorhanden)
 shuffleReset        (True/False)
 metadataEditorTab   (Integer)
+preferPllstData     (Boolean)
+copyFileVarME       (Boolean)
+resetTitleVar       (Boolean)
+resetInterpreterVar (Boolean)
+resetAlbumVar       (Boolean)
 
 index for settings

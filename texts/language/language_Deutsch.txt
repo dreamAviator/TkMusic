@@ -1,0 +1,184 @@
+Musik Spieler
+Öffnen
+Letzte Dateien
+Speichern als...
+Alle löschen
+Optionen
+Beenden
+Datei
+Wert des Lautstärkereglers zeigen
+Zwei Fenster
+Mini Modus
+Ansicht
+Über & Hilfe
+Changelog
+Lizenz
+Optionen
+Nachrichten-Logs
+Hilfe
+Wiedergabeliste
+Hinzufügen
+Letzte Songs
+Letzte Wiedergabelisten
+Speichern als...
+Alle löschen
+Optionen
+Beenden
+Datei
+Ganz nach oben
+Nach oben
+Nach unten
+Ganz nach unten
+Löschen
+Duplikate löschen
+Alle löschen
+Bearbeiten
+Titel
+Künstler
+Dateiname
+Titel
+Künstler
+Dauer
+Alle löschen
+Duplikate löschen
+Ganz nach oben
+Nach oben
+Nach unten
+Ganz nach unten
+Löschen
+spielender Song
+Dauer
+verbleibend
+Fehler
+Es gab einen Fehler beim Lesen des Song Covers\n
+Kein nächster Song
+Es gibt keinen nächsten Song, du kannst nicht zum nächsten Song vorspulen.\” + Wenn du den ersten Song der Wiedergabeliste abspielen willst, kannst du dies in den Einstellungen anschalten.
+Fehler
+Es gab einen Fehler beim Vorspulen zum nächsten Song\n\n
+Kein vorheriger Song
+Es gibt keinen vorherigen Song, du kannst nicht zum vorherigen Song zurückspulen.\n + Wenn du den ersten Song der Wiedergabeliste abspielen willst, kannst du dies in den Einstellungen anschalten.
+Fehler
+Es gab einen Fehler beim Zurückspulen zum vorherigen Song\n\n
+Nicht unterstütze Dateien
+Diese Dateien werden nicht unterstützt:\n
+Wiedergabeliste lädt...
+Wiedergabeliste lädt...
+laden...
+laden...
+lädt
+laden...
+lädt
+Wiedergabelistendauer lädt...
+Wiedergabelistendauer lädt...
+Datei(en) nicht gefunden
+Diese Dateien wurden nicht gefunden und wurden aus der Wiedergabeliste entfernt:\n
+Datei(en) nicht gefunden
+Diese Dateien wurden nicht gefunden und wurden aus der Wiedergabelsite entfernt:\n
+Gespeichert!
+Wiedergabeliste
+ erfolgreich gespeichert!
+Kein vorheriger Song
+Willst du Songs ganz nach unten verschieben wenn sie ganz oben in der Liste sind und du versuchst sie nach oben zu verschieben?
+Kein nächster Song
+Willst du Songs ganz nach oben verschieben wenn sie ganz unten in der Liste sind und die versuchst sie nach unten zu verschieben?
+Info & Hilfe
+Changelog
+Attributionen
+Lizenz
+Einstellungen
+Wiedergabeliste in einem extra Fenster anzeigen
+Wert des Lautstärkereglers anzeigen
+Wiedergabeliste beim Spulen wiederholen (letzter Song -> erster Song; erster Song <- letzter Song)
+Wiedergabeliste beim verschieben von Elementen wiederholen (erster Song ^ letzter Song; letzter Song ▿ erster Song)
+Den aktuellen Song beim Mischen ganz nach oben verschieben
+Nachrichten-Logs
+Nachrichten-Logs (werden nur beim öffnen aktualisiert)
+Infos
+Warnungen
+Fehler
+Titel
+Nachrichten
+Knöpfe
+Dauer
+Nr
+Attributionen
+Links
+Attributionen
+Changelog
+Lizenz
+Öffnen
+Letzte Dateien
+Speichern als...
+Alle löschen
+Optionen
+Beenden
+Datei
+Wert des Lautstärkereglers anzeigen
+Zwei Fenster
+Mini Modus
+Ansicht
+Über & Hilfe
+Changelog
+Lizenz
+Optionen
+Nachrichten-Logs
+Hilfe
+Info & Hilfe
+Einstellungen
+Nachrichten-Logs
+Einstellungen
+Attributionen
+Info & Hilfe
+Links
+Attributionen
+Changelog und Feedback
+Info & Hilfe
+Info & Hilfe
+Lädt...
+Noch nicht unterstützt
+Das funktioniert noch nicht.\nAktuell kannst du die Wiedergabeliste nur in einem extra Fenster anzeigen lassen
+Noch nicht unterstützt
+Das funktioniert noch nicht.
+Song Name | TkMusic
+Wiedergabeliste
+Titel
+Künstler
+Dauer
+Schließt sich nicht automatisch
+Nachrichten Details |
+Nachrichten Details
+Symbol:\n
+Titel:\n
+Nachricht:\n
+Knöpfe:\n
+Dauer:\n
+Vorschau
+Schließen
+leere Datei\n
+Songs oder Wiedergabelisten öffnen
+Alle Dateien (*)
+Wiedergabeliste speichern
+m3u8 Wiedergabeliste Dateien (neuer Standard) (*.m3u8);m3u Wiedergabeliste Dateien (alter Standard) (*m3u),Text Dateien (*.txt);;Alle Dateien (*)
+Beenden...
+Das könnte eine Weile dauern
+Beenden...
+Beenden...
+Neustart erforderlich
+Das Programm muss neugestartet werden um die Einstellungen vollständig anzuwenden.
+Metadaten Editor
+ Datei/en
+ Datei/en
+Dateiname
+Titel
+Interpreten
+Album
+Keinen Ziel-Ordner ausgewählt
+Du musst einen Ziel-Ordner auswählen
+Kein/e Datei/en ausgewählt
+Du musst mindestens eine Datei zum Bearbeiten auswählen
+Nicht zulässiges Muster
+Dein Benennungsmuster ist ungültig. Klicke auf den 'Was ist das?' Knopf, wenn du nicht weißt was das ist.
+Keine Datei ausgewählt
+Du musst eine Datei zum Bearbeiten auswählen
+Kein Ziel-Ordner ausgewählt
+Du musst einen Ziel-Ordner auswählen

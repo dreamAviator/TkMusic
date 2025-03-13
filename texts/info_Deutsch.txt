@@ -1,0 +1,48 @@
+Dieses Programm kann Audio Dateien abspielen. Es zeigt einige Metadaten und das Album Cover an. Man kann Wiedergabelisten erstellen, bearbeiten, laden und speichern.
+
+Wiedergabelisten:
+Mit dem "Hinzufügen" Knopf (der mit dem +), kann man Elemente (auch Wiedergabelisten) an das Ende der Playlist hinzufügen.
+Mit dem "Speichern" Knopf (der mit der Diskette [dem Sandard Speicher Symbol) kann die Wiedergabeliste gespeichert werden.
+Mit den einzelnen Pfeilen hoch und runter, kann man Elemente um einen Platz nach oben oder unten verschieben.
+Mit den Doppelpfeilen kann man Elemente ganz nach oben oder ganz nach unten verschieben.
+Mit dem roten X kann man Elemente löschen.
+Mit dem "Abspielen" Knopf (seitlicher Pfeil) kann man ein Element abspielen (Doppelklick geht auch).
+
+Tastatur-Zuweisungen:
+Wenn irgendein Fenster fokussiert ist:
+Leertaste:		Play/Pause
+Strg+O:			Elemente zur Wiedergabeliste hinzufügen
+Plus:			Lauter
+Minus:			Leiser
+I:				Öffnen der Info-Seite (noch entscheiden wie du es nennst)(not working)
+S:				Einstellungen öffnen (maybe page/window)(not working)
+when the main window is focused:
+Right:			Zum nächsten Song wechseln
+Left:			Song zurückspulen oder zum vorherigen Song wechseln
+Shift+Right:	Song vorspulen
+Shift+Left:		Song zurückspulen
+Wenn das Wiedergabelisten-Fenster fokussiert ist
+Pfeil hoch:		Ausgewählte Elemente nach oben bewegen
+Pfeil runter:	Ausgewählte Elemente nach unten bewegen
+Pfeil rechts:	Ausgewählte Elemente ganz nach oben bewegen
+Pfeil links:	Ausgewählte Elemente ganz nach unten bewegen
+
+Unterstütze Dateiformate:
+MP3		(MPEG-1 Audio Layer III or MPEG-2 Audio Layer III)
+m4a		(MPEG-4 Audio Layer)
+Ogg		(ogg vorbis)
+FLAC	(Free Lossless Audio Codec)
+WMA		(Windows Media Audio)
+WAV		(Waveform Audio File Format)
+WV		(WavPack Audio File)
+AIFF	(Audio Interchange File Format)
+AC3		(Adaptive Transform Coder 3 [Dolby Digital])
+Opus
+MP2		(MPEG-1 Audio Layer 2)
+
+Datenschutz:
+Dieses Programm sammelt keine persönlichen Daten.
+
+
+Dieses Programm steht unter der Lizenz: GNU GENERAL PUBLIC LICENSE Version 2
+(Info -> Lizenz)

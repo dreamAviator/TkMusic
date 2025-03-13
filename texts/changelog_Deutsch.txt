@@ -1,0 +1,51 @@
+13. Beta Version
+-------------------
++Die Wiedergabeliste zeigt nun, welcher aus wie vielen Songs abgespielt wird, die Dauer der ganzen Wiedergabeliste und die noch verbleibende Dauer (eingeschlossen des aktuell spielenden Songs [wird eventuell später verändert, sodass es die Dauer der verbleibenden Wiedergabeliste, ohne die Teile des aktuellen Songs, die schon abgespielt wurden, zeigt]).
+
++Man kann jetzt die Playlist "loopen" (muss in den Einstellungen angeschaltet werden), beim Spulen und Abspielen.
+
++Es gibt einen Ladebildschirm (noch nicht fertig)
+
++Es gibt Nachrichten-Logs. Jetzt kann man jede Nachricht die das Programm in der aktuellen Sitzung ausgegeben hat sehen (Einstellungen -> Nachrichten-Logs) (eventuell kommt später eine Funktion mit Datum hinzu, sodass die Nachrichten gespeichert werden)
+
++Songcover werden nun angezeigt
+
++Mehr Tastatur Shortcuts wurden hinzugefügt.
+
++Ein Menü wurde hinzugefügt.
+
++Ein Rechtsklick-Menü in der Playlist wurde hinzugefügt.
+
++Ein Mini Modus wurde hinzugefügt (für dieses Release verworfen)
+
++Zuletzte geöffnete Dateien wurden hinzugefügt.
+
++Metadaten Editor wurde hinzugefügt (nur Versionen _2 des Programms)
+
++#Nun ist der aktuell spielende Song nicht automatisch ausgewählt, sondern der Text dieses Songs ist grün. Wenn man jetzt ein Element bewegt, bleibt dieses Element nach dem Verschieben ausgewählt (funktioniert noch nicht für mehrere Elemente)
+
+/Das Programm funktioniert jetzt auch wenn der VLC media player nicht installiert ist. Alle nötigen Dateien für das python-vlc Modul sind im Programm mitgeliefert.
+
+/Wenn man jetzt zum nächsten oder vorherigen Element spult, wird nicht mehr die ganze Wiedergabeliste aktualisiert. Es wird nur den richtigen Song auswählen und die verbleibende Dauer ausrechnen (dies wird man nur merken, wenn die Wiedergabeliste lang, oder der Rechner langsam ist).
+
+#(/)Die Art wie die Dauer des Songs eholt wird, wurde geändert. Vorher wurde nur mutagen verwendet, dabei gab es aber Probleme mit einigen mp3 Dateien. Wenn dies auftritt, wird nun VLC verwendet, das Problem dabei ist, dass es langsam ist. VLC wird also nur verwendet, wenn mutagen nicht funktioniert. Zusätzlich ist die Wiedergabelistendauer nun ein eigener Thread, sodass man die Playlist verändern kann, währen die Dauer noch geladen wird. Es wird also "loading" angezeigt, wenn die Dauer noch nicht bekannt ist.
+
+#Man kann die Wiedergabeliste nun bearbeiten, während die Dauer noch geladen wird.
+
+#Der Slider für das Vor- und Zurückspulen in Info- und Einstellungsfenstern wurde korrigiert.
+
+#Das überschreiben von Wiedergabelisten funktioniert nun. Vorher wurde nicht die ganze Wiedergabeliste überschreiben. Wenn eine lange Wiedergabeliste also mit einer kurzen überschrieben wurde, waren die restlichen Elemente also noch hinten an der kurzen dran.
+
+#Lieder sollten nun vollständig abgespielt werden.
+
+#Wenn man nun Elemente in eine leere Wiedergabeliste hinzufügt und einige Elemente nicht gefunden wurden oder nicht unterstützt werden, bekommt man keine zwei Nachrichten mehr.
+
+#/+()Jetzt wird PyQt5 für die Datei Dialoge verwendet. Das sollten nur Linux Nutzer bemerken, da die Tkinter Datei Dialoge auf Linux sehr sehr alt aussehen.
+
+#Verschieden Bugs wurden behoben.
+-------------------
++	Dinge hinzugefügt
+#	Fehlerbehebungen
+-	Dinge entfernt
+/	andere Änderungen
+(_)	unsichtbare Änderungen

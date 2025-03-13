@@ -1,0 +1,234 @@
+Music Player#ich beginne hier ab dem punkt, bei dem das fenster erstellt wird
+Open
+Recent files
+Save as...
+Delete all
+Options
+Exit
+File
+Show the value of the volume slider
+Two windows
+Mini mode
+View
+About & help
+Changelog
+License
+Options
+Message logs
+Help
+Playlist
+Add
+Recent songs
+Recent playlists
+Save as...
+Delete all
+Options
+Exit
+File
+Move to the top
+Move up
+Move down
+Move to the bottom
+Delete
+Delete duplicates
+Delete all
+Edit
+Title
+Artist
+Filename
+Title
+Artist
+Length
+Delete all
+Delete duplicates
+Move to the top
+Move up
+Move down
+Move to the bottom
+Delete
+playing song
+duration
+remaining#ab hier beginne ich von vorne im code
+Error
+There was an error reading the song cover\n
+No next song
+There is no next song, you can't skip to the next song.\n + If you want the first song of the playlist to play, turn the feature on in the settings.
+Error
+There was an error while trying to skip to the next song\n\n
+No previous song
+There is no previous song, you can't rewind.\n + If you want the last song of the playlist to play, turn the feature on in the settings.
+Error
+There was an error while trying to skip to the previous song.\n\n
+Unsupported Files
+These files are not supported:\n
+Playlist loading...
+Playlist loading...
+loading...
+loading...
+loading
+loading...
+loading
+Playlist duration loading...
+Playlist duration loading...
+File(s) not found
+These files couldn't be found and were removed from the playlist:\n
+File(s) not found
+These files couldn't be found and were removed from the playlist:\n
+Saved successfully
+Saved playlist
+ successfully
+No previous song
+Do you want to move an element to the bottom of the list when it's at the top of the list and you try to move it up?
+No next song
+Do you want to move an element to the top of the list when it's at the bottom of the list and you try to move it down?
+Info & help
+Changelog
+Attributions#ist ein button
+License
+Settings
+Display the playlist in an extra window
+Show the value of the volume slider
+Loop the playlist when skipping (last song -> first song; first song <- last song)
+Loop the playlist when moving elements (first song ^ last song; last song ▿ first song)
+Put the current song first when shuffling the playlist.
+Message Logs
+Message Logs (only updates on opening)
+Infos
+Warnings
+Errors
+Title
+Message
+Buttons
+Times
+Nr
+Attributions
+Links
+Attributions
+Changelog
+License
+Open
+Recent files
+Save as...
+Delete all
+Options
+Exit
+File
+Show the value of the volume slider
+Two windows
+Mini mode
+View
+About & help
+Changelog
+License
+Options
+Message logs
+Help
+Info & help
+Settings
+Message Logs
+Settings
+Attributions
+Info & help
+Links
+Attributions
+Changelog and feedback
+Info & help
+Info & help
+Loading...
+Not yet supported
+This does not work yet.\nRight now you can only have the playlist in an extra Window
+Not yet supported
+This does not work yet.
+Song Name | TkMusic
+Playlist
+Title
+Artist
+Length
+Doesn't close automatically
+Message Details |
+Message Details
+Icon:\n
+Title:\n
+Message:\n
+Buttons:\n
+Time:\n
+Preview message
+Close
+empty file\n
+Open Songs or Playlists
+All Files (*)
+Save Playlist
+m3u8 Playlist Files (newer standard) (*.m3u8);;m3u Playlist Files (older standard) (*.m3u);;Text Files (*.txt);;All Files (*)
+Quitting...
+This might take a some time
+Quitting...
+Quitting...
+Restart needed
+You need to restart the prorgam for the changes to take full effect#ab hier metadata editor
+Metadata editor
+ File/s
+ File/s
+Filename
+Title
+Interpreter
+Album
+No save directory selected
+You need to select a save directory
+No file(s) selected
+You need to select at least one file to edit
+Unvalid pattern
+Your naming pattern is not valid. Press the 'What's that' button if you don't know what that is.
+No file selected
+You need to select a file to edit
+No save directory selected
+You need to select a save directory or edit the file without copying it
+Unvalid pattern
+Your naming pattern is not valid. Press the 'What's that' button if you don't know what that is.
+Name pattern help
+The name pattern tells the program the connection between the metadata inside of the file and the filename.\nLet's say you have two files:\n\n1: Abandoned, Mendum - Voyage [NCS Release].mp3\n2: Mendum - Red Hands [NCS Release].mp3\n\nThen the naming scheme would be:\nInterpreter - Title [NCS Release]\nIn the name pattern entry field you would write:\n%i% - %t% [NCS Release]%\n\nthen the program would put these metadata into the files:\n1:\nTitle: Voyage\nInterpreter: Abandoned, Mendum\n2:\nTitle: Red Hands\nInterpreter: Mendum\n\nInbetween every different part of the naming scheme has to be a %\nEvery selected song has to follow the same naming pattern\ni - interpreter\nt - title\na - album
+Select Audio File
+All Files (*)
+Select Audio Files
+All Files (*)
+Select Directory
+TkMetaEditor | Batch edit
+TkMetaEditor | Single edit
+TkMetaEditor | Rename
+TkMetaEditor | Info
+TkMetaEditor | Quitting...
+Metadata editor
+Metadata editor
+TkMetaEditor
+Start
+Batch edit
+Single edit
+Rename
+Info
+Quit
+0 File/s
+Delete Files
+Select Files
+Naming pattern
+What's that?
+Clear title metadata
+Clear interpreter metadata
+Clear album metadata
+Select folder
+Save Location
+Press start to save the changes
+Select file
+Tag
+Data
+Filename
+Title
+Interpret
+Album
+Select folder
+Copy file
+0 File/s
+Delete Files
+Select Files
+Naming pattern
+What's that?
+Save Location
+Select folder
