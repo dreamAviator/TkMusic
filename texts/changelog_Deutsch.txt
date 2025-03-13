@@ -1,5 +1,7 @@
 14. Beta Version
 -------------------
++Es gibt nun eine einfache Methode mehr Sprachen hinzuzufügen. Aktuell sind Englisch und Deutsch unterstützt.
+
 +Die Wiedergabeliste zeigt nun, welcher aus wie vielen Songs abgespielt wird, die Dauer der ganzen Wiedergabeliste und die noch verbleibende Dauer (eingeschlossen des aktuell spielenden Songs [wird eventuell später verändert, sodass es die Dauer der verbleibenden Wiedergabeliste, ohne die Teile des aktuellen Songs, die schon abgespielt wurden, zeigt]).
 
 +Man kann jetzt die Playlist "loopen" (muss in den Einstellungen angeschaltet werden), beim Spulen und Abspielen.

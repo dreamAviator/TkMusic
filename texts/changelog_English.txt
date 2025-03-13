@@ -1,5 +1,7 @@
 14th beta release #i don't know how to write eighth
 -------------------
++Now there's an easy way to add other languages. Currently supported are English and German.
+
 +The playlist now shows which song out of how many songs is played, the length of the entire playlist and the length of the remaining playlist (including the currently played song [might get changed later, so that it shows the length of the playlist excluding the parts of the current song, that already played]).
 
 +Now (if you turn the setting on in the settings), you can loop the playlist (after the last song comes the first song, before the first song comes the last song)
