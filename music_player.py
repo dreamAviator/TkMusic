@@ -1644,7 +1644,7 @@ def infoWE():
     licenseAttributionFrame.pack(side = tk.TOP,fill = tk.X)
     changelogButton = ttk.Button(versionFrame,text = infoWE_changelogButton_text_langtext,command = lambda: (windowExtra("Changelog")))
     changelogButton.pack(side = tk.RIGHT)
-    version = ttk.Label(versionFrame,text = "Version 1.0_2 BETA 13_2")
+    version = ttk.Label(versionFrame,text = "Version 1.0_2 BETA 14_2")
     version.pack(fill = tk.X)
     attributions = ttk.Button(licenseAttributionFrame,text = infoWE_attributions_text_langtext,command = lambda: (windowExtra("attributions")))
     attributions.pack(side = tk.RIGHT)
@@ -1797,22 +1797,36 @@ def attributionsWE():
     attributionsText.insert(tk.INSERT,text)
     attributionsText.config(state = 'disabled',font = 'Helvetica 9')
 
-def attributionButtonsWE():#irgendwie mehrere seiten oder so machen (7 links passen auf eine seite)
+def attributionButtonsWE():
+    global buttons
+    global buttonsTree#irgendwie mehrere seiten oder so machen (7 links passen auf eine seite)
     extraWindow.title(attributionButtonsWE_extraWindow_title_langtext)
     pageFrame = ttk.Frame(extraWindow)
     pageFrame.pack(side = tk.BOTTOM,fill = tk.X)
-    buttonFrame = ttk.Frame(extraWindow)
-    buttonFrame.pack(fill = tk.BOTH)
-    buttons = ["https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam","https://openclipart.org/artist/JoelM","JoelM","https://www.flaticon.com/authors/smashicons","Smashicons on FLaticon","https://www.videolan.org/","VideoLAN","https://github.com/dreamAviator","Me (dreamAviator) on GitHub"]
-    bCount = len(buttons) // 2#buttons count
-    while bCount > 0:
-        bText = buttons[-1]
-        del buttons[-1]
-        url = buttons[-1]#button text
-        del buttons[-1]
-        bCount = bCount - 1
-        attributionsButton = ttk.Button(buttonFrame,text = bText,command = functools.partial(openurl,url))
-        attributionsButton.pack(side = tk.BOTTOM,fill = tk.X)
+    buttonColumns = ('Text','count','url')
+    buttonsTree = ttk.Treeview(pageFrame,columns = buttonColumns,show = 'headings')
+    buttonsTree.column('Text',stretch = True)
+    buttonsTree.column('count',width = 0,stretch = False)
+    buttonsTree.column('url',width = 0,stretch = False)
+    buttonsTree.pack(side = tk.LEFT,fill = tk.BOTH,expand = True)
+    buttonsTree.bind('<Double-1>',attributionButtonClicked)
+    buttonsScrollbar = ttk.Scrollbar(pageFrame,orient = tk.VERTICAL,command = buttonsTree.yview)
+    buttonsTree.configure(yscroll = buttonsScrollbar.set)
+    buttonsScrollbar.pack(side = tk.RIGHT,fill = tk.Y)
+    count = 0
+    counttwo = 0
+    urls = []
+    buttons = ["https://github.com/dreamAviator","Me (dreamAviator) on GitHub","https://www.videolan.org/","VideoLAN","https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam on Flaticon","https://openclipart.org/artist/JoelM","JoelM","https://www.flaticon.com/authors/smashicons","Smashicons on FLaticon"]
+    for item in buttons[1::2]:
+        print((item,count,buttons[counttwo]))
+        buttonsTree.insert('',tk.END,values = (item,count,buttons[counttwo]))
+        counttwo = counttwo + 2
+
+def attributionButtonClicked(event):
+    selectedItems = buttonsTree.selection()
+    row = buttonsTree.item(selectedItems)
+    values = row['values']
+    webbrowser.open(values[2])
 
 def changelogWE():
     extraWindow.title(changelogWE_extraWindow_title_langtext)
