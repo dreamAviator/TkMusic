@@ -11,6 +11,8 @@ JoelM			openclipart.org
 
 Tkinter Feder
 
-Links zu diesen Leuten sind über den Button "Links" zu erreichen.
+Ich habe Dateien des VLC-Media Players verwendet
+
+Links zu den Erstellern der Icons, zu meiner GitHub Seite und zu VideoLAN sind über den Knopf "Links" zu finden
 
 Einige icons wurden von mir erstellt, indem ein oder mehrere Icons bearbeitet wurden.

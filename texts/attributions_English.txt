@@ -1,4 +1,4 @@
-I used icons from:
+I used icons by:
 
 Dirtyworks			Icon-Icons
 William Richon			Flaticon
@@ -11,6 +11,10 @@ JoelM			openclipart.org
 
 Tkinter feather
 
-Links to these authors are provided with the button "Links".
+I used files from the VLC-Media Player
+
+I used various other Python modules and Libraries
+
+Links to the creators of the icons, my GitHub page and VideoLAN can be found through the button "Links"
 
 Some icons were made using one or multiple icons and editing them.

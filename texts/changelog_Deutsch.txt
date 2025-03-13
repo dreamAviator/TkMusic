@@ -1,4 +1,4 @@
-11. Beta Version
+14. Beta Version
 -------------------
 +Die Wiedergabeliste zeigt nun, welcher aus wie vielen Songs abgespielt wird, die Dauer der ganzen Wiedergabeliste und die noch verbleibende Dauer (eingeschlossen des aktuell spielenden Songs [wird eventuell später verändert, sodass es die Dauer der verbleibenden Wiedergabeliste, ohne die Teile des aktuellen Songs, die schon abgespielt wurden, zeigt]).
 
@@ -39,6 +39,8 @@
 #Lieder sollten nun vollständig abgespielt werden.
 
 #Wenn man nun Elemente in eine leere Wiedergabeliste hinzufügt und einige Elemente nicht gefunden wurden oder nicht unterstützt werden, bekommt man keine zwei Nachrichten mehr.
+
+#Die Links Seite funktioniert nun korrekt.
 
 #/+()Jetzt wird PyQt5 für die Datei Dialoge verwendet. Das sollten nur Linux Nutzer bemerken, da die Tkinter Datei Dialoge auf Linux sehr sehr alt aussehen.
 
