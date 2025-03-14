@@ -1594,7 +1594,7 @@ def changeVolume(event):
         except:
             pass
 
-def changeVolumeUpKey(event):
+def changeVolumeUp():
     volumeText = volume.get()
     if volumeText > 0:
         volume.set(volumeText - 1)
@@ -1603,7 +1603,7 @@ def changeVolumeUpKey(event):
         #volumeSlider.set(volumeText)#geht automatisch
         volumeInfo.config(text = volumeText + 1)
 
-def changeVolumeDownKey(event):
+def changeVolumeDown():
     volumeText = volume.get()
     if volumeText < 100:
         volume.set(volumeText + 1)
@@ -1611,6 +1611,12 @@ def changeVolumeDownKey(event):
         player.audio_set_volume(volumeText - 1)
         #volumeSlider.set(volumeText)#geht automatisch
         volumeInfo.config(text = volumeText - 1)
+
+def changeVolumeUpKey(event):
+    changeVolumeUp()
+
+def changeVolumeDownKey(event):
+    changeVolumeDown()
 
 def volumePressedTrue(event):
     global volumePressed
@@ -3437,6 +3443,8 @@ main_window.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
 #end
+changeVolumeUp()
+changeVolumeDown()
 refreshRecentFiles()
 plW.mainloop()
 main_window.mainloop()
