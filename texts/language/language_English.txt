@@ -1,4 +1,4 @@
-Music Player#ich beginne hier ab dem punkt, bei dem das fenster erstellt wird
+Music Player
 Open
 Recent files
 Save as...
@@ -83,7 +83,7 @@ No next song
 Do you want to move an element to the top of the list when it's at the bottom of the list and you try to move it down?
 Info & help
 Changelog
-Attributions#ist ein button
+Attributions
 License
 Settings
 Display the playlist in an extra window
