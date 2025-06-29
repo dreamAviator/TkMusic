@@ -1650,7 +1650,7 @@ def infoWE():
     licenseAttributionFrame.pack(side = tk.TOP,fill = tk.X)
     changelogButton = ttk.Button(versionFrame,text = infoWE_changelogButton_text_langtext,command = lambda: (windowExtra("Changelog")))
     changelogButton.pack(side = tk.RIGHT)
-    version = ttk.Label(versionFrame,text = "Version 1.0_2 BETA 14_2")
+    version = ttk.Label(versionFrame,text = "Version 1.0_2")
     version.pack(fill = tk.X)
     attributions = ttk.Button(licenseAttributionFrame,text = infoWE_attributions_text_langtext,command = lambda: (windowExtra("attributions")))
     attributions.pack(side = tk.RIGHT)
@@ -1684,8 +1684,12 @@ def settingsWE():
     loopPlaylistCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     loopMoveCheckbutton = ttk.Checkbutton(extraWindow,text = settingsWE_loopMoveCheckbutton_text_langtext,command = lambda: (settings("loopMove")),variable = loopMove,onvalue = True,offvalue = False)
     loopMoveCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
-    filesToKeepSpinbox = ttk.Spinbox(extraWindow,from_ = 0, to = 20,textvariable = filesToKeep,command = filesToKeepChanged)
-    filesToKeepSpinbox.pack(side = tk.TOP,anchor = tk.NW)
+    filesToKeepFrame = ttk.Frame(extraWindow)
+    filesToKeepFrame.pack(side = tk.TOP,anchor = tk.NW)
+    filesToKeepLabel = ttk.Label(filesToKeepFrame,text = settingsWE_filesToKeepLabel_text_langtext)
+    filesToKeepLabel.pack(side = tk.LEFT,anchor = tk.NW)
+    filesToKeepSpinbox = ttk.Spinbox(filesToKeepFrame,from_ = 0, to = 20,textvariable = filesToKeep,command = filesToKeepChanged)
+    filesToKeepSpinbox.pack(side = tk.LEFT,anchor = tk.NW)
     shufflePositionResetCheckbutton = ttk.Checkbutton(extraWindow,text = settingsWE_shufflePositionResetCheckbutton_text_langtext,command = lambda: (settings("shuffleReset")),variable = shuffleReset,onvalue = True,offvalue = False)
     shufflePositionResetCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     preferPllstDataCheckbutton = ttk.Checkbutton(extraWindow,text = "Prefer data from m3u8 files over metadata from audio files (not doing anything yet)",command = lambda: (settings("preferPllstData")),variable = preferPllstData,onvalue = True,offvalue = False)
@@ -1883,6 +1887,7 @@ def windowExtra(extraType):
     global volumeSliderExtra
     global musicSliderExtra
     global songArtImageSmol
+    global sub_menu3
     #window
     try:
         song = playlist[0]
@@ -1897,6 +1902,7 @@ def windowExtra(extraType):
         pass
     main_window.attributes('-alpha',0)
     extraWindow = tk.Toplevel()
+    extraWindow.resizable(False,False)
     if extraType == "info" or extraType == "attributions" or extraType == "attributionButtons" or extraType == "Changelog" or extraType == "License":
         icon = info_icon
     elif extraType == "settings":
@@ -2324,6 +2330,8 @@ def buildVolumeSliderText(ToF):
             volumeInfoExtra.pack(side = tk.TOP)
         except:
             pass
+    else:
+        volumeSliderText = "False"
     volumeSlider = ttk.Scale(toolbarFrame,variable = volume,from_ = 0,to = 100,orient = 'vertical')
     volumeSlider.bind("<Motion>",changeVolume)
     volumeSlider.bind("<ButtonRelease-1>",volumePressedFalse)
@@ -3432,7 +3440,7 @@ def languageChange(event):
     message(1,languageChange_message1_title_langtext,languageChange_message1_text_langtext,"ok",0)
 
 def loadLanguage(language,languageList):
-    global main_window_title_langtext, file_menu1_command1_label_langtext, file_menu1_cascade1_label_langtext, file_menu1_command2_label_langtext, file_menu1_command3_label_langtext, file_menu1_command4_label_langtext, file_menu1_command5_label_langtext, menubar1_cascade1_label_langtext, view_menu1_command1_label_langtext, view_menu1_command2_label_langtext, view_menu1_command3_label_langtext, menubar1_cascade2_label_langtext, help_menu1_command1_label_langtext, help_menu1_command2_label_langtext, help_menu1_command3_label_langtext, help_menu1_command4_label_langtext, help_menu1_command5_label_langtext, menubar1_cascade3_label_langtext, plW_title_langtext, file_menu2_command1_label_langtext, file_menu2_cascade1_label_langtext, file_menu2_cascade2_label_langtext, file_menu2_command2_label_langtext, file_menu2_command3_label_langtext, file_menu2_command4_label_langtext, file_menu2_command5_label_langtext, file_menu2_cascade3_label_langtext, edit_menu2_command1_label_langtext, edit_menu2_command2_label_langtext, edit_menu2_command3_label_langtext, edit_menu2_command4_label_langtext, edit_menu2_command5_label_langtext, edit_menu2_command6_label_langtext, edit_menu2_command7_label_langtext, menubar2_cascade1_label_langtext, songName_variable_langtext, songArtist_variable_langtext, songFilename_variable_langtext, tree_heading1_text_langtext, tree_heading2_text_langtext, tree_heading3_text_langtext, rcmenu1_command1_label_langtext, rcmenu1_command2_label_langtext, rcmenu2_command1_label_langtext, rcmenu2_command2_label_langtext, rcmenu2_command3_label_langtext, rcmenu2_command4_label_langtext, rcmenu2_command5_label_langtext, playlistSelectedLabel_text_langtext, playlistDurationLabel_text_langtext, remainingPlaylistDurationLabel_text_langtext, getSongArt_message1_title_langtext, getSongArt_message1_text_langtext, fastForward_message1_title_langtext, fastForward_message1_text_langtext, fastForward_message2_title_langtext, fastForward_message2_text_langtext, rewindSong_message1_title_langtext, rewindSong_message1_text_langtext, rewindSong_message2_title_langtext, rewindSong_message2_text_langtext, addToPlaylist_message1_title_langtext, addToPlaylist_message1_text_langtext, updatePlaylist_plW_title_langtext, updatePlaylist_plWminiMode_title_langtext, updatePlaylist_playlistLengthLabel_text_langtext, updatePlaylist_remainingPlaylistLengthLabel_text_langtext, tree_loading_text_langtext, updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext, treeMiniMode_loading_text_langtext, length_for_playlist_plW_title_langtext, length_for_playlist_plWminiMode_title_langtext, length_for_playlist_message1_title_langtext, length_for_playlist_message1_text_langtext, length_for_playlist_message2_title_langtext, length_for_playlist_message2_text_langtext, savePlaylist_message1_title_langtext, savePlaylist_message1_text1_langtext, savePlaylist_message1_text2_langtext, upInPlaylist_message1_title_langtext, upInPlaylist_message1_text_langtext, downInPlaylist_message1_title_langtext, downInPlaylist_message1_text_langtext, infoWE_extraWindow_title_langtext, infoWE_changelogButton_text_langtext, infoWE_attributions_text_langtext, infoWE_licenseButton_text_langtext, settingsWE_extraWindow_title_langtext, settingsWE_twoWindowsCheckbutton_text_langtext, settingsWE_showVolumeInfoCheckbutton_text_langtext, settingsWE_loopPlaylistCheckbutton_text_langtext, settingsWE_loopMoveCheckbutton_text_langtext, settingsWE_shufflePositionResetCheckbutton_text_langtext, settingsWE_messageLogsButton_text_langtext, messageLogsWE_extraWindow_title_langtext, messageLogsWE_logs_add1_text_langtext, messageLogsWE_logs_add2_text_langtext, messageLogsWE_logs_add3_text_langtext, messageLogsWE_tree1_2_3_heading1_text_langtext, messageLogsWE_tree1_2_3_heading2_text_langtext, messageLogsWE_tree1_2_3_heading3_text_langtext, messageLogsWE_tree1_2_3_heading4_text_langtext, messageLogsWE_tree1_2_3_heading5_text_langtext, attributionsWE_extraWindow_title_langtext, attributionsWE_attributionLinksButton_text_langtext, attributionButtonsWE_extraWindow_title_langtext, changelogWE_extraWindow_title_langtext, licenseWE_extraWindow_title_langtext, windowExtra_file_menu3_command1_label_langtext, windowExtra_file_menu3_cascade1_label_langtext, windowExtra_file_menu3_command2_label_langtext, windowExtra_file_menu3_command3_label_langtext, windowExtra_file_menu3_command4_label_langtext, windowExtra_file_menu3_command5_label_langtext, windowExtra_menubar3_cascade1_label_langtext, windowExtra_view_menu3_command1_label_langtext, windowExtra_view_menu3_command2_label_langtext, windowExtra_view_menu3_command3_label_langtext, windowExtra_menubar3_cascade2_label_langtext, windowExtra_help_menu3_command1_label_langtext, windowExtra_help_menu3_command2_label_langtext, windowExtra_help_menu3_command3_label_langtext, windowExtra_help_menu3_command4_label_langtext, windowExtra_help_menu3_command5_label_langtext, windowExtra_menubar3_cascade3_label_langtext, windowExtra_extraType_info_headline_text_langtext, windowExtra_extraType_settings_headline_text_langtext, windowExtra_extraType_messageLogs_headline_text_langtext, windowExtra_extraType_messageLogs_backButton_text_langtext, windowExtra_extraType_attributions_headline_text_langtext, windowExtra_extraType_attributions_backButton_text_langtext, windowExtra_extraType_attributionButtons_headline_text_langtext, windowExtra_extraType_attributionButtons_backbutton_text_langtext, windowExtra_extraType_Changelog_headline_text_langtext, windowExtra_extraType_Changelog_backButton_text_langtext, windowExtra_extraType_License_backButton_text_langtext, progress_progressWindow_title_langtext, buildTwoWindows_message1_title_langtext, buildTwoWindows_message1_text_langtext, buildMiniMode_message1_title_langtext, buildMiniMode_message1_text_langtext, buildMiniMode_miniModeWindow_title_langtext, buildMiniMode_plWminiMode_title_langtext, buildMiniMode_treeMiniMode_heading1_text_langtext, buildMiniMode_treeMiniMode_heading2_text_langtext, buildMiniMode_treeMiniMode_heading3_text_langtext, messageLogClicked_time0_timeText_langtext, messageLogClicked_messageInfo_title_langtext, messageLogClicked_messageDetails_text_langtext, messageLogClicked_messageImageText_text_langtext, messageLogClicked_messageTitle_text_langtext, messageLogClicked_messageMessage_text_langtext, messageLogClicked_messageButtons_text_langtext, messageLogClicked_messageTime_text_langtext, messageLogClicked_previewButton_text_langtext, messageLogClicked_closeButton_text_langtext, empty_file_text_list, openFilesDialog_QFileDialog_getOpenFileNames1_langtext, openFilesDialog_QFileDialog_getOpenFileNames2_langtext, saveFileDialog_QFileDialog_SaveFilterName1_langtext, saveFileDialog_QFileDialog_SaveFilterName2_langtext, exitProgram_message1_title_langtext, exitProgram_message1_text_langtext, exitProgram_main_window_title_langtext, exitProgram_plW_title_langtext, languageChange_message1_title_langtext, languageChange_message1_text_langtext, windowExtra_file_menu3_command_ME_label_langtext, updateSelectedFilesTree_fileCountTextBEME_text_langtext, updateSelectedFilesTree_fileCountTextREME_text_langtext, loadFileSEME_fileInfoTreeSEME_item1_values1_langtext, loadFileSEME_fileInfoTreeSEME_item2_values1_langtext, loadFileSEME_fileInfoTreeSEME_item3_values1_langtext, loadFileSEME_fileInfoTreeSEME_item4_values1_langtext, start_message1_title_langtext, start_message1_text_langtext, start_message2_title_langtext, start_message2_text_langtext, batchEditMEoperation_message1_title_langtext, batchEditMEoperation_message1_text_langtext, singleEditMEoperation_message1_title_langtext, singleEditMEoperation_message1_text_langtext, singleEditMEoperation_message2_title_langtext, singleEditMEoperation_message2_text_langtext, renameMEoperation_message1_title_langtext, renameMEoperation_message1_text_langtext, namePatternHelp_message1_title_langtext, namePatternHelp_message1_text_langtext, openFileDialog_QFileDialog_getOpenFileName1_langtext, openFileDialog_QFileDialog_getOpenFileName2_langtext, openFilesDialogME_QFileDialog_getOpenFileNames1_langtext, openFilesDialogME_QFileDialog_getOpenFileNames2_langtext, openDirectoryDialog_QFileDialog_getExistingDirectory_langtext, notebookTabMEChange_1_metadataWindow_title_langtext, notebookTabMEChange_2_metadataWindow_title_langtext, notebookTabMEChange_3_metadataWindow_title_langtext, notebookTabMEChange_4_metadataWindow_title_langtext, notebookTabMEChange_5_metadataWindow_title_langtext, file_menu1_command_ME_label_langtext, file_menu2_command_ME_label_langtext, metadataWindow_title_langtext, modesME_startTabME_text_langtext, modesME_batchEditME_text_langtext, modesME_singleEditME_text_langtext, modesME_renameME_text_langtext, modesME_settingsME_text_langtext, modesME_quitTabME_text_langtext, fileCountTextBEME_text_langtext, deleteFilesButtonBEME_text_langtext, selectFilesButtonBEME_text_langtext, namePatternTextBEME_text_langtext, namePatternHelpButtonBEME_text_langtext, resetTitleCheckbutton_text_langtext, resetInterpreterCheckbutton_text_langtext, resetAlbumCheckbutton_text_langtext, whereSaveButtonBEME_text_langtext, whereSaveTextBEME_text_langtext, startToSaveLabelME_text_langtext, selectFileButtonSEME_text_langtext, fileInfoTreeSEME_heading1_text_langtext, fileInfoTreeSEME_heading2_text_langtext, fileInfoTreeSEME_insert_iid_filename_values_langtext, fileInfoTreeSEME_insert_iid_title_values_langtext, fileInfoTreeSEME_insert_iid_interpret_values_langtext, fileInfoTreeSEME_insert_iid_album_values_langtext, whereSaveButtonSEME_text_langtext, copyFileCheckbuttonME_text_langtext, fileCountTextREME_text_langtext, deleteFilesButtonREME_text_langtext, selectFilesButtonREME_text_langtext, namePatternTextREME_text_langtext, namePatternHelpButtonREME_text_langtext, whereSaveTextREME_text_langtext, whereSaveButtonREME_text_langtext
+    global main_window_title_langtext, file_menu1_command1_label_langtext, file_menu1_cascade1_label_langtext, file_menu1_command2_label_langtext, file_menu1_command3_label_langtext, file_menu1_command4_label_langtext, file_menu1_command5_label_langtext, menubar1_cascade1_label_langtext, view_menu1_command1_label_langtext, view_menu1_command2_label_langtext, view_menu1_command3_label_langtext, menubar1_cascade2_label_langtext, help_menu1_command1_label_langtext, help_menu1_command2_label_langtext, help_menu1_command3_label_langtext, help_menu1_command4_label_langtext, help_menu1_command5_label_langtext, menubar1_cascade3_label_langtext, plW_title_langtext, file_menu2_command1_label_langtext, file_menu2_cascade1_label_langtext, file_menu2_cascade2_label_langtext, file_menu2_command2_label_langtext, file_menu2_command3_label_langtext, file_menu2_command4_label_langtext, file_menu2_command5_label_langtext, file_menu2_cascade3_label_langtext, edit_menu2_command1_label_langtext, edit_menu2_command2_label_langtext, edit_menu2_command3_label_langtext, edit_menu2_command4_label_langtext, edit_menu2_command5_label_langtext, edit_menu2_command6_label_langtext, edit_menu2_command7_label_langtext, menubar2_cascade1_label_langtext, songName_variable_langtext, songArtist_variable_langtext, songFilename_variable_langtext, tree_heading1_text_langtext, tree_heading2_text_langtext, tree_heading3_text_langtext, rcmenu1_command1_label_langtext, rcmenu1_command2_label_langtext, rcmenu2_command1_label_langtext, rcmenu2_command2_label_langtext, rcmenu2_command3_label_langtext, rcmenu2_command4_label_langtext, rcmenu2_command5_label_langtext, playlistSelectedLabel_text_langtext, playlistDurationLabel_text_langtext, remainingPlaylistDurationLabel_text_langtext, getSongArt_message1_title_langtext, getSongArt_message1_text_langtext, fastForward_message1_title_langtext, fastForward_message1_text_langtext, fastForward_message2_title_langtext, fastForward_message2_text_langtext, rewindSong_message1_title_langtext, rewindSong_message1_text_langtext, rewindSong_message2_title_langtext, rewindSong_message2_text_langtext, addToPlaylist_message1_title_langtext, addToPlaylist_message1_text_langtext, updatePlaylist_plW_title_langtext, updatePlaylist_plWminiMode_title_langtext, updatePlaylist_playlistLengthLabel_text_langtext, updatePlaylist_remainingPlaylistLengthLabel_text_langtext, tree_loading_text_langtext, updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext, treeMiniMode_loading_text_langtext, length_for_playlist_plW_title_langtext, length_for_playlist_plWminiMode_title_langtext, length_for_playlist_message1_title_langtext, length_for_playlist_message1_text_langtext, length_for_playlist_message2_title_langtext, length_for_playlist_message2_text_langtext, savePlaylist_message1_title_langtext, savePlaylist_message1_text1_langtext, savePlaylist_message1_text2_langtext, upInPlaylist_message1_title_langtext, upInPlaylist_message1_text_langtext, downInPlaylist_message1_title_langtext, downInPlaylist_message1_text_langtext, infoWE_extraWindow_title_langtext, infoWE_changelogButton_text_langtext, infoWE_attributions_text_langtext, infoWE_licenseButton_text_langtext, settingsWE_extraWindow_title_langtext, settingsWE_twoWindowsCheckbutton_text_langtext, settingsWE_showVolumeInfoCheckbutton_text_langtext, settingsWE_loopPlaylistCheckbutton_text_langtext, settingsWE_loopMoveCheckbutton_text_langtext, settingsWE_filesToKeepLabel_text_langtext, settingsWE_shufflePositionResetCheckbutton_text_langtext, settingsWE_messageLogsButton_text_langtext, messageLogsWE_extraWindow_title_langtext, messageLogsWE_logs_add1_text_langtext, messageLogsWE_logs_add2_text_langtext, messageLogsWE_logs_add3_text_langtext, messageLogsWE_tree1_2_3_heading1_text_langtext, messageLogsWE_tree1_2_3_heading2_text_langtext, messageLogsWE_tree1_2_3_heading3_text_langtext, messageLogsWE_tree1_2_3_heading4_text_langtext, messageLogsWE_tree1_2_3_heading5_text_langtext, attributionsWE_extraWindow_title_langtext, attributionsWE_attributionLinksButton_text_langtext, attributionButtonsWE_extraWindow_title_langtext, changelogWE_extraWindow_title_langtext, licenseWE_extraWindow_title_langtext, windowExtra_file_menu3_command1_label_langtext, windowExtra_file_menu3_cascade1_label_langtext, windowExtra_file_menu3_command2_label_langtext, windowExtra_file_menu3_command3_label_langtext, windowExtra_file_menu3_command4_label_langtext, windowExtra_file_menu3_command5_label_langtext, windowExtra_menubar3_cascade1_label_langtext, windowExtra_view_menu3_command1_label_langtext, windowExtra_view_menu3_command2_label_langtext, windowExtra_view_menu3_command3_label_langtext, windowExtra_menubar3_cascade2_label_langtext, windowExtra_help_menu3_command1_label_langtext, windowExtra_help_menu3_command2_label_langtext, windowExtra_help_menu3_command3_label_langtext, windowExtra_help_menu3_command4_label_langtext, windowExtra_help_menu3_command5_label_langtext, windowExtra_menubar3_cascade3_label_langtext, windowExtra_extraType_info_headline_text_langtext, windowExtra_extraType_settings_headline_text_langtext, windowExtra_extraType_messageLogs_headline_text_langtext, windowExtra_extraType_messageLogs_backButton_text_langtext, windowExtra_extraType_attributions_headline_text_langtext, windowExtra_extraType_attributions_backButton_text_langtext, windowExtra_extraType_attributionButtons_headline_text_langtext, windowExtra_extraType_attributionButtons_backbutton_text_langtext, windowExtra_extraType_Changelog_headline_text_langtext, windowExtra_extraType_Changelog_backButton_text_langtext, windowExtra_extraType_License_backButton_text_langtext, progress_progressWindow_title_langtext, buildTwoWindows_message1_title_langtext, buildTwoWindows_message1_text_langtext, buildMiniMode_message1_title_langtext, buildMiniMode_message1_text_langtext, buildMiniMode_miniModeWindow_title_langtext, buildMiniMode_plWminiMode_title_langtext, buildMiniMode_treeMiniMode_heading1_text_langtext, buildMiniMode_treeMiniMode_heading2_text_langtext, buildMiniMode_treeMiniMode_heading3_text_langtext, messageLogClicked_time0_timeText_langtext, messageLogClicked_messageInfo_title_langtext, messageLogClicked_messageDetails_text_langtext, messageLogClicked_messageImageText_text_langtext, messageLogClicked_messageTitle_text_langtext, messageLogClicked_messageMessage_text_langtext, messageLogClicked_messageButtons_text_langtext, messageLogClicked_messageTime_text_langtext, messageLogClicked_previewButton_text_langtext, messageLogClicked_closeButton_text_langtext, empty_file_text_list, openFilesDialog_QFileDialog_getOpenFileNames1_langtext, openFilesDialog_QFileDialog_getOpenFileNames2_langtext, saveFileDialog_QFileDialog_SaveFilterName1_langtext, saveFileDialog_QFileDialog_SaveFilterName2_langtext, exitProgram_message1_title_langtext, exitProgram_message1_text_langtext, exitProgram_main_window_title_langtext, exitProgram_plW_title_langtext, languageChange_message1_title_langtext, languageChange_message1_text_langtext, windowExtra_file_menu3_command_ME_label_langtext, updateSelectedFilesTree_fileCountTextBEME_text_langtext, updateSelectedFilesTree_fileCountTextREME_text_langtext, loadFileSEME_fileInfoTreeSEME_item1_values1_langtext, loadFileSEME_fileInfoTreeSEME_item2_values1_langtext, loadFileSEME_fileInfoTreeSEME_item3_values1_langtext, loadFileSEME_fileInfoTreeSEME_item4_values1_langtext, start_message1_title_langtext, start_message1_text_langtext, start_message2_title_langtext, start_message2_text_langtext, batchEditMEoperation_message1_title_langtext, batchEditMEoperation_message1_text_langtext, singleEditMEoperation_message1_title_langtext, singleEditMEoperation_message1_text_langtext, singleEditMEoperation_message2_title_langtext, singleEditMEoperation_message2_text_langtext, renameMEoperation_message1_title_langtext, renameMEoperation_message1_text_langtext, namePatternHelp_message1_title_langtext, namePatternHelp_message1_text_langtext, openFileDialog_QFileDialog_getOpenFileName1_langtext, openFileDialog_QFileDialog_getOpenFileName2_langtext, openFilesDialogME_QFileDialog_getOpenFileNames1_langtext, openFilesDialogME_QFileDialog_getOpenFileNames2_langtext, openDirectoryDialog_QFileDialog_getExistingDirectory_langtext, notebookTabMEChange_1_metadataWindow_title_langtext, notebookTabMEChange_2_metadataWindow_title_langtext, notebookTabMEChange_3_metadataWindow_title_langtext, notebookTabMEChange_4_metadataWindow_title_langtext, notebookTabMEChange_5_metadataWindow_title_langtext, file_menu1_command_ME_label_langtext, file_menu2_command_ME_label_langtext, metadataWindow_title_langtext, modesME_startTabME_text_langtext, modesME_batchEditME_text_langtext, modesME_singleEditME_text_langtext, modesME_renameME_text_langtext, modesME_settingsME_text_langtext, modesME_quitTabME_text_langtext, fileCountTextBEME_text_langtext, deleteFilesButtonBEME_text_langtext, selectFilesButtonBEME_text_langtext, namePatternTextBEME_text_langtext, namePatternHelpButtonBEME_text_langtext, resetTitleCheckbutton_text_langtext, resetInterpreterCheckbutton_text_langtext, resetAlbumCheckbutton_text_langtext, whereSaveButtonBEME_text_langtext, whereSaveTextBEME_text_langtext, startToSaveLabelME_text_langtext, selectFileButtonSEME_text_langtext, fileInfoTreeSEME_heading1_text_langtext, fileInfoTreeSEME_heading2_text_langtext, fileInfoTreeSEME_insert_iid_filename_values_langtext, fileInfoTreeSEME_insert_iid_title_values_langtext, fileInfoTreeSEME_insert_iid_interpret_values_langtext, fileInfoTreeSEME_insert_iid_album_values_langtext, whereSaveButtonSEME_text_langtext, copyFileCheckbuttonME_text_langtext, fileCountTextREME_text_langtext, deleteFilesButtonREME_text_langtext, selectFilesButtonREME_text_langtext, namePatternTextREME_text_langtext, namePatternHelpButtonREME_text_langtext, whereSaveTextREME_text_langtext, whereSaveButtonREME_text_langtext
     #ohjemine
     for languageListList in languageList:
         print(languageListList[0])
@@ -3540,148 +3548,149 @@ def loadLanguage(language,languageList):
     settingsWE_showVolumeInfoCheckbutton_text_langtext = lines[89]
     settingsWE_loopPlaylistCheckbutton_text_langtext = lines[90]
     settingsWE_loopMoveCheckbutton_text_langtext = lines[91]
-    settingsWE_shufflePositionResetCheckbutton_text_langtext = lines[92]
-    settingsWE_messageLogsButton_text_langtext = lines[93]
-    messageLogsWE_extraWindow_title_langtext = lines[94]
-    messageLogsWE_logs_add1_text_langtext = lines[95]
-    messageLogsWE_logs_add2_text_langtext = lines[96]
-    messageLogsWE_logs_add3_text_langtext = lines[97]
-    messageLogsWE_tree1_2_3_heading1_text_langtext = lines[98]
-    messageLogsWE_tree1_2_3_heading2_text_langtext = lines[99]
-    messageLogsWE_tree1_2_3_heading3_text_langtext = lines[100]
-    messageLogsWE_tree1_2_3_heading4_text_langtext = lines[101]
-    messageLogsWE_tree1_2_3_heading5_text_langtext = lines[102]
-    attributionsWE_extraWindow_title_langtext = lines[103]
-    attributionsWE_attributionLinksButton_text_langtext = lines[104]
-    attributionButtonsWE_extraWindow_title_langtext = lines[105]
-    changelogWE_extraWindow_title_langtext = lines[106]
-    licenseWE_extraWindow_title_langtext = lines[107]
-    windowExtra_file_menu3_command1_label_langtext = lines[108]
-    windowExtra_file_menu3_cascade1_label_langtext = lines[109]
-    windowExtra_file_menu3_command2_label_langtext = lines[110]
-    windowExtra_file_menu3_command3_label_langtext = lines[111]
-    windowExtra_file_menu3_command4_label_langtext = lines[112]
-    windowExtra_file_menu3_command5_label_langtext = lines[113]
-    windowExtra_menubar3_cascade1_label_langtext = lines[114]
-    windowExtra_view_menu3_command1_label_langtext = lines[115]
-    windowExtra_view_menu3_command2_label_langtext = lines[116]
-    windowExtra_view_menu3_command3_label_langtext = lines[117]
-    windowExtra_menubar3_cascade2_label_langtext = lines[118]
-    windowExtra_help_menu3_command1_label_langtext = lines[119]
-    windowExtra_help_menu3_command2_label_langtext = lines[120]
-    windowExtra_help_menu3_command3_label_langtext = lines[121]
-    windowExtra_help_menu3_command4_label_langtext = lines[122]
-    windowExtra_help_menu3_command5_label_langtext = lines[123]
-    windowExtra_menubar3_cascade3_label_langtext = lines[124]
-    windowExtra_extraType_info_headline_text_langtext = lines[125]
-    windowExtra_extraType_settings_headline_text_langtext = lines[126]
-    windowExtra_extraType_messageLogs_headline_text_langtext = lines[127]
-    windowExtra_extraType_messageLogs_backButton_text_langtext = lines[128]
-    windowExtra_extraType_attributions_headline_text_langtext = lines[129]
-    windowExtra_extraType_attributions_backButton_text_langtext = lines[130]
-    windowExtra_extraType_attributionButtons_headline_text_langtext = lines[131]
-    windowExtra_extraType_attributionButtons_backbutton_text_langtext = lines[132]
-    windowExtra_extraType_Changelog_headline_text_langtext = lines[133]
-    windowExtra_extraType_Changelog_backButton_text_langtext = lines[134]
-    windowExtra_extraType_License_backButton_text_langtext = lines[135]
-    progress_progressWindow_title_langtext = lines[136]
-    buildTwoWindows_message1_title_langtext = lines[137]
-    buildTwoWindows_message1_text_langtext = lines[138]
-    buildMiniMode_message1_title_langtext = lines[139]
-    buildMiniMode_message1_text_langtext = lines[140]
-    buildMiniMode_miniModeWindow_title_langtext = lines[141]
-    buildMiniMode_plWminiMode_title_langtext = lines[142]
-    buildMiniMode_treeMiniMode_heading1_text_langtext = lines[143]
-    buildMiniMode_treeMiniMode_heading2_text_langtext = lines[144]
-    buildMiniMode_treeMiniMode_heading3_text_langtext = lines[145]
-    messageLogClicked_time0_timeText_langtext = lines[146]
-    messageLogClicked_messageInfo_title_langtext = lines[147]
-    messageLogClicked_messageDetails_text_langtext = lines[148]
-    messageLogClicked_messageImageText_text_langtext = lines[149]
-    messageLogClicked_messageTitle_text_langtext = lines[150]
-    messageLogClicked_messageMessage_text_langtext = lines[151]
-    messageLogClicked_messageButtons_text_langtext = lines[152]
-    messageLogClicked_messageTime_text_langtext = lines[153]
-    messageLogClicked_previewButton_text_langtext = lines[154]
-    messageLogClicked_closeButton_text_langtext = lines[155]
-    empty_file_text_list = lines[156]
-    openFilesDialog_QFileDialog_getOpenFileNames1_langtext = lines[157]
-    openFilesDialog_QFileDialog_getOpenFileNames2_langtext = lines[158]
-    saveFileDialog_QFileDialog_SaveFilterName1_langtext = lines[159]
-    saveFileDialog_QFileDialog_SaveFilterName2_langtext = lines[160]
-    exitProgram_message1_title_langtext = lines[161]
-    exitProgram_message1_text_langtext = lines[162]
-    exitProgram_main_window_title_langtext = lines[163]
-    exitProgram_plW_title_langtext = lines[164]
-    languageChange_message1_title_langtext = lines[165]
-    languageChange_message1_text_langtext = lines[166]
-    windowExtra_file_menu3_command_ME_label_langtext = lines[167]
-    updateSelectedFilesTree_fileCountTextBEME_text_langtext = lines[168]
-    updateSelectedFilesTree_fileCountTextREME_text_langtext = lines[169]
-    loadFileSEME_fileInfoTreeSEME_item1_values1_langtext = lines[170]
-    loadFileSEME_fileInfoTreeSEME_item2_values1_langtext = lines[171]
-    loadFileSEME_fileInfoTreeSEME_item3_values1_langtext = lines[172]
-    loadFileSEME_fileInfoTreeSEME_item4_values1_langtext = lines[173]
-    start_message1_title_langtext = lines[174]
-    start_message1_text_langtext = lines[175]
-    start_message2_title_langtext = lines[176]
-    start_message2_text_langtext = lines[177]
-    batchEditMEoperation_message1_title_langtext = lines[178]
-    batchEditMEoperation_message1_text_langtext = lines[179]
-    singleEditMEoperation_message1_title_langtext = lines[180]
-    singleEditMEoperation_message1_text_langtext = lines[181]
-    singleEditMEoperation_message2_title_langtext = lines[182]
-    singleEditMEoperation_message2_text_langtext = lines[183]
-    renameMEoperation_message1_title_langtext = lines[184]
-    renameMEoperation_message1_text_langtext = lines[185]
-    namePatternHelp_message1_title_langtext = lines[186]
-    namePatternHelp_message1_text_langtext = lines[187]
-    openFileDialog_QFileDialog_getOpenFileName1_langtext = lines[188]
-    openFileDialog_QFileDialog_getOpenFileName2_langtext = lines[189]
-    openFilesDialogME_QFileDialog_getOpenFileNames1_langtext = lines[190]
-    openFilesDialogME_QFileDialog_getOpenFileNames2_langtext = lines[191]
-    openDirectoryDialog_QFileDialog_getExistingDirectory_langtext = lines[192]
-    notebookTabMEChange_1_metadataWindow_title_langtext = lines[193]
-    notebookTabMEChange_2_metadataWindow_title_langtext = lines[194]
-    notebookTabMEChange_3_metadataWindow_title_langtext = lines[195]
-    notebookTabMEChange_4_metadataWindow_title_langtext = lines[196]
-    notebookTabMEChange_5_metadataWindow_title_langtext = lines[197]
-    file_menu1_command_ME_label_langtext = lines[198]
-    file_menu2_command_ME_label_langtext = lines[199]
-    metadataWindow_title_langtext = lines[200]
-    modesME_startTabME_text_langtext = lines[201]
-    modesME_batchEditME_text_langtext = lines[202]
-    modesME_singleEditME_text_langtext = lines[203]
-    modesME_renameME_text_langtext = lines[204]
-    modesME_settingsME_text_langtext = lines[205]
-    modesME_quitTabME_text_langtext = lines[206]
-    fileCountTextBEME_text_langtext = lines[207]
-    deleteFilesButtonBEME_text_langtext = lines[208]
-    selectFilesButtonBEME_text_langtext = lines[209]
-    namePatternTextBEME_text_langtext = lines[210]
-    namePatternHelpButtonBEME_text_langtext = lines[211]
-    resetTitleCheckbutton_text_langtext = lines[212]
-    resetInterpreterCheckbutton_text_langtext = lines[213]
-    resetAlbumCheckbutton_text_langtext = lines[214]
-    whereSaveButtonBEME_text_langtext = lines[215]
-    whereSaveTextBEME_text_langtext = lines[216]
-    startToSaveLabelME_text_langtext = lines[217]
-    selectFileButtonSEME_text_langtext = lines[218]
-    fileInfoTreeSEME_heading1_text_langtext = lines[219]
-    fileInfoTreeSEME_heading2_text_langtext = lines[220]
-    fileInfoTreeSEME_insert_iid_filename_values_langtext = lines[221]
-    fileInfoTreeSEME_insert_iid_title_values_langtext = lines[222]
-    fileInfoTreeSEME_insert_iid_interpret_values_langtext = lines[223]
-    fileInfoTreeSEME_insert_iid_album_values_langtext = lines[224]
-    whereSaveButtonSEME_text_langtext = lines[225]
-    copyFileCheckbuttonME_text_langtext = lines[226]
-    fileCountTextREME_text_langtext = lines[227]
-    deleteFilesButtonREME_text_langtext = lines[228]
-    selectFilesButtonREME_text_langtext = lines[229]
-    namePatternTextREME_text_langtext = lines[230]
-    namePatternHelpButtonREME_text_langtext = lines[231]
-    whereSaveTextREME_text_langtext = lines[232]
-    whereSaveButtonREME_text_langtext = lines[233]
+    settingsWE_filesToKeepLabel_text_langtext = lines[92]
+    settingsWE_shufflePositionResetCheckbutton_text_langtext = lines[93]
+    settingsWE_messageLogsButton_text_langtext = lines[94]
+    messageLogsWE_extraWindow_title_langtext = lines[95]
+    messageLogsWE_logs_add1_text_langtext = lines[96]
+    messageLogsWE_logs_add2_text_langtext = lines[97]
+    messageLogsWE_logs_add3_text_langtext = lines[98]
+    messageLogsWE_tree1_2_3_heading1_text_langtext = lines[99]
+    messageLogsWE_tree1_2_3_heading2_text_langtext = lines[100]
+    messageLogsWE_tree1_2_3_heading3_text_langtext = lines[101]
+    messageLogsWE_tree1_2_3_heading4_text_langtext = lines[102]
+    messageLogsWE_tree1_2_3_heading5_text_langtext = lines[103]
+    attributionsWE_extraWindow_title_langtext = lines[104]
+    attributionsWE_attributionLinksButton_text_langtext = lines[105]
+    attributionButtonsWE_extraWindow_title_langtext = lines[106]
+    changelogWE_extraWindow_title_langtext = lines[107]
+    licenseWE_extraWindow_title_langtext = lines[108]
+    windowExtra_file_menu3_command1_label_langtext = lines[109]
+    windowExtra_file_menu3_cascade1_label_langtext = lines[110]
+    windowExtra_file_menu3_command2_label_langtext = lines[111]
+    windowExtra_file_menu3_command3_label_langtext = lines[112]
+    windowExtra_file_menu3_command4_label_langtext = lines[113]
+    windowExtra_file_menu3_command5_label_langtext = lines[114]
+    windowExtra_menubar3_cascade1_label_langtext = lines[115]
+    windowExtra_view_menu3_command1_label_langtext = lines[116]
+    windowExtra_view_menu3_command2_label_langtext = lines[117]
+    windowExtra_view_menu3_command3_label_langtext = lines[118]
+    windowExtra_menubar3_cascade2_label_langtext = lines[119]
+    windowExtra_help_menu3_command1_label_langtext = lines[120]
+    windowExtra_help_menu3_command2_label_langtext = lines[121]
+    windowExtra_help_menu3_command3_label_langtext = lines[122]
+    windowExtra_help_menu3_command4_label_langtext = lines[123]
+    windowExtra_help_menu3_command5_label_langtext = lines[124]
+    windowExtra_menubar3_cascade3_label_langtext = lines[125]
+    windowExtra_extraType_info_headline_text_langtext = lines[126]
+    windowExtra_extraType_settings_headline_text_langtext = lines[127]
+    windowExtra_extraType_messageLogs_headline_text_langtext = lines[128]
+    windowExtra_extraType_messageLogs_backButton_text_langtext = lines[129]
+    windowExtra_extraType_attributions_headline_text_langtext = lines[130]
+    windowExtra_extraType_attributions_backButton_text_langtext = lines[131]
+    windowExtra_extraType_attributionButtons_headline_text_langtext = lines[132]
+    windowExtra_extraType_attributionButtons_backbutton_text_langtext = lines[133]
+    windowExtra_extraType_Changelog_headline_text_langtext = lines[134]
+    windowExtra_extraType_Changelog_backButton_text_langtext = lines[135]
+    windowExtra_extraType_License_backButton_text_langtext = lines[136]
+    progress_progressWindow_title_langtext = lines[137]
+    buildTwoWindows_message1_title_langtext = lines[138]
+    buildTwoWindows_message1_text_langtext = lines[139]
+    buildMiniMode_message1_title_langtext = lines[140]
+    buildMiniMode_message1_text_langtext = lines[141]
+    buildMiniMode_miniModeWindow_title_langtext = lines[142]
+    buildMiniMode_plWminiMode_title_langtext = lines[143]
+    buildMiniMode_treeMiniMode_heading1_text_langtext = lines[144]
+    buildMiniMode_treeMiniMode_heading2_text_langtext = lines[145]
+    buildMiniMode_treeMiniMode_heading3_text_langtext = lines[146]
+    messageLogClicked_time0_timeText_langtext = lines[147]
+    messageLogClicked_messageInfo_title_langtext = lines[148]
+    messageLogClicked_messageDetails_text_langtext = lines[149]
+    messageLogClicked_messageImageText_text_langtext = lines[150]
+    messageLogClicked_messageTitle_text_langtext = lines[151]
+    messageLogClicked_messageMessage_text_langtext = lines[152]
+    messageLogClicked_messageButtons_text_langtext = lines[153]
+    messageLogClicked_messageTime_text_langtext = lines[154]
+    messageLogClicked_previewButton_text_langtext = lines[155]
+    messageLogClicked_closeButton_text_langtext = lines[156]
+    empty_file_text_list = lines[157]
+    openFilesDialog_QFileDialog_getOpenFileNames1_langtext = lines[158]
+    openFilesDialog_QFileDialog_getOpenFileNames2_langtext = lines[159]
+    saveFileDialog_QFileDialog_SaveFilterName1_langtext = lines[160]
+    saveFileDialog_QFileDialog_SaveFilterName2_langtext = lines[161]
+    exitProgram_message1_title_langtext = lines[162]
+    exitProgram_message1_text_langtext = lines[163]
+    exitProgram_main_window_title_langtext = lines[164]
+    exitProgram_plW_title_langtext = lines[165]
+    languageChange_message1_title_langtext = lines[166]
+    languageChange_message1_text_langtext = lines[167]
+    windowExtra_file_menu3_command_ME_label_langtext = lines[168]
+    updateSelectedFilesTree_fileCountTextBEME_text_langtext = lines[169]
+    updateSelectedFilesTree_fileCountTextREME_text_langtext = lines[170]
+    loadFileSEME_fileInfoTreeSEME_item1_values1_langtext = lines[171]
+    loadFileSEME_fileInfoTreeSEME_item2_values1_langtext = lines[172]
+    loadFileSEME_fileInfoTreeSEME_item3_values1_langtext = lines[173]
+    loadFileSEME_fileInfoTreeSEME_item4_values1_langtext = lines[174]
+    start_message1_title_langtext = lines[175]
+    start_message1_text_langtext = lines[176]
+    start_message2_title_langtext = lines[177]
+    start_message2_text_langtext = lines[178]
+    batchEditMEoperation_message1_title_langtext = lines[179]
+    batchEditMEoperation_message1_text_langtext = lines[180]
+    singleEditMEoperation_message1_title_langtext = lines[181]
+    singleEditMEoperation_message1_text_langtext = lines[182]
+    singleEditMEoperation_message2_title_langtext = lines[183]
+    singleEditMEoperation_message2_text_langtext = lines[184]
+    renameMEoperation_message1_title_langtext = lines[185]
+    renameMEoperation_message1_text_langtext = lines[186]
+    namePatternHelp_message1_title_langtext = lines[187]
+    namePatternHelp_message1_text_langtext = lines[188]
+    openFileDialog_QFileDialog_getOpenFileName1_langtext = lines[189]
+    openFileDialog_QFileDialog_getOpenFileName2_langtext = lines[190]
+    openFilesDialogME_QFileDialog_getOpenFileNames1_langtext = lines[191]
+    openFilesDialogME_QFileDialog_getOpenFileNames2_langtext = lines[192]
+    openDirectoryDialog_QFileDialog_getExistingDirectory_langtext = lines[193]
+    notebookTabMEChange_1_metadataWindow_title_langtext = lines[194]
+    notebookTabMEChange_2_metadataWindow_title_langtext = lines[195]
+    notebookTabMEChange_3_metadataWindow_title_langtext = lines[196]
+    notebookTabMEChange_4_metadataWindow_title_langtext = lines[197]
+    notebookTabMEChange_5_metadataWindow_title_langtext = lines[198]
+    file_menu1_command_ME_label_langtext = lines[199]
+    file_menu2_command_ME_label_langtext = lines[200]
+    metadataWindow_title_langtext = lines[201]
+    modesME_startTabME_text_langtext = lines[202]
+    modesME_batchEditME_text_langtext = lines[203]
+    modesME_singleEditME_text_langtext = lines[204]
+    modesME_renameME_text_langtext = lines[205]
+    modesME_settingsME_text_langtext = lines[206]
+    modesME_quitTabME_text_langtext = lines[207]
+    fileCountTextBEME_text_langtext = lines[208]
+    deleteFilesButtonBEME_text_langtext = lines[209]
+    selectFilesButtonBEME_text_langtext = lines[210]
+    namePatternTextBEME_text_langtext = lines[211]
+    namePatternHelpButtonBEME_text_langtext = lines[212]
+    resetTitleCheckbutton_text_langtext = lines[213]
+    resetInterpreterCheckbutton_text_langtext = lines[214]
+    resetAlbumCheckbutton_text_langtext = lines[215]
+    whereSaveButtonBEME_text_langtext = lines[216]
+    whereSaveTextBEME_text_langtext = lines[217]
+    startToSaveLabelME_text_langtext = lines[218]
+    selectFileButtonSEME_text_langtext = lines[219]
+    fileInfoTreeSEME_heading1_text_langtext = lines[220]
+    fileInfoTreeSEME_heading2_text_langtext = lines[221]
+    fileInfoTreeSEME_insert_iid_filename_values_langtext = lines[222]
+    fileInfoTreeSEME_insert_iid_title_values_langtext = lines[223]
+    fileInfoTreeSEME_insert_iid_interpret_values_langtext = lines[224]
+    fileInfoTreeSEME_insert_iid_album_values_langtext = lines[225]
+    whereSaveButtonSEME_text_langtext = lines[226]
+    copyFileCheckbuttonME_text_langtext = lines[227]
+    fileCountTextREME_text_langtext = lines[228]
+    deleteFilesButtonREME_text_langtext = lines[229]
+    selectFilesButtonREME_text_langtext = lines[230]
+    namePatternTextREME_text_langtext = lines[231]
+    namePatternHelpButtonREME_text_langtext = lines[232]
+    whereSaveTextREME_text_langtext = lines[233]
+    whereSaveButtonREME_text_langtext = lines[234]
     return
 
 def exitProgram():
@@ -4026,9 +4035,8 @@ settingsButton = tk.Button(toolbarFrame,image = settings_button_image,command = 
 settingsButton.pack(side = tk.BOTTOM)
 infoButton = tk.Button(toolbarFrame,image = info_button_image,command = lambda: (windowExtra("info")),borderwidth = 0)
 infoButton.pack(side = tk.BOTTOM)
-if volumeSliderText == "True":
-    volumeInfo = ttk.Label(toolbarFrame,text = volumeText)
-    volumeInfo.pack(side = tk.TOP)
+volumeInfo = ttk.Label(toolbarFrame,text = volumeText)
+volumeInfo.pack(side = tk.TOP)
 volumeSlider = ttk.Scale(toolbarFrame,variable = volume,from_ = 0,to = 100,orient = 'vertical')
 volumeSlider.bind("<Motion>",changeVolume)
 volumeSlider.bind("<ButtonRelease-1>",volumePressedFalse)
@@ -4348,6 +4356,7 @@ changeVolumeUp()
 changeVolumeDown()
 metadataEditorStart()
 refreshRecentFiles()
+buildVolumeSliderText(volumeSliderText)
 plW.mainloop()
 main_window.mainloop()
 metadataWindow.mainloop()
