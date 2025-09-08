@@ -6,7 +6,11 @@ twoWindows			(True/False)
 filesToKeepText     (Integer)
 miniMode            (noch nicht vorhanden)
 shuffleReset        (True/False)
-metadataEditorTab   (Integer)#not in use in this version)
+metadataEditorTab   (Integer)#not in use in this version
 preferPllstData     (True/False)
+copyFileVarME       (Boolean)#not in use in this version
+resetTitleVar       (Boolean)#not in use in this version
+resetInterpreterVar (Boolean)#not in use in this version
+resetAlbumVar       (Boolean)#not in use in this version
 
 index for settings

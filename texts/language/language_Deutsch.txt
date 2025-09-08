@@ -7,8 +7,8 @@ Optionen
 Beenden
 Datei
 Wert des Lautstärkereglers zeigen
-Zwei Fenster
-Mini Modus
+Zwei Fenster (noch nicht implementiert)
+Mini Modus (noch nicht implementiert)
 Ansicht
 Über & Hilfe
 Changelog
@@ -86,10 +86,11 @@ Changelog
 Attributionen
 Lizenz
 Einstellungen
-Wiedergabeliste in einem extra Fenster anzeigen
+Wiedergabeliste in einem extra Fenster anzeigen (noch nicht implementiert)
 Wert des Lautstärkereglers anzeigen
-Wiedergabeliste beim Spulen wiederholen (letzter Song -> erster Song; erster Song <- letzter Song)
-Wiedergabeliste beim verschieben von Elementen wiederholen (erster Song ^ letzter Song; letzter Song ▿ erster Song)
+Wiedergabeliste beim Spulen und abspielen wiederholen
+Wiedergabeliste beim verschieben von Elementen wiederholen
+Anzahl der Dateien in den Letzte Dateien Listen
 Den aktuellen Song beim Mischen ganz nach oben verschieben
 Nachrichten-Logs
 Nachrichten-Logs (werden nur beim öffnen aktualisiert)
@@ -114,8 +115,8 @@ Optionen
 Beenden
 Datei
 Wert des Lautstärkereglers anzeigen
-Zwei Fenster
-Mini Modus
+Zwei Fenster (noch nicht implementiert)
+Mini Modus (noch nicht implementiert)
 Ansicht
 Über & Hilfe
 Changelog

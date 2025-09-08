@@ -90,6 +90,7 @@ settingsWE_twoWindowsCheckbutton_text_langtext - "Display the playlist in an ext
 settingsWE_showVolumeInfoCheckbutton_text_langtext - "Show the value of the volume slider"
 settingsWE_loopPlaylistCheckbutton_text_langtext - "Loop the playlist when skipping (last song -> first song; first song <- last song)"
 settingsWE_loopMoveCheckbutton_text_langtext - "Loop the playlist when moving elements (first song ^ last song; last song ▿ first song)"
+settingsWE_filesToKeepLabel_text_langtext - "Number of files in the recent files lists"
 settingsWE_shufflePositionResetCheckbutton_text_langtext - "Put the current song first when shuffling the playlist."
 settingsWE_messageLogsButton_text_langtext - "Message Logs"
 messageLogsWE_extraWindow_title_langtext - "Message Logs (only updates on opening)"

@@ -1,5 +1,5 @@
-Playlist 1
-Playlist 2
-Playlist 3
-Playlist 4
-Playlist 5
+/home/nathan/Musik/ncs_and_some_more.m3u
+/home/nathan/Musik/ncs_and_some_more_delete_those.m3u
+/home/nathan/Musik/ncs_and_some_more_delete_those.m3u
+/home/nathan/Musik/ncs_and_some_more.m3u
+/home/nathan/Musik/ncs_and_some_more_delete_those.m3u

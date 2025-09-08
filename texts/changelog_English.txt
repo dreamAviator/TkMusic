@@ -1,4 +1,4 @@
-14th beta release #i don't know how to write eighth
+1.0 Release (Version _1)
 -------------------
 +Now there's an easy way to add other languages. Currently supported are English and German.
 

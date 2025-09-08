@@ -1,4 +1,4 @@
-14. Beta Version
+1.0 Release (Version _1)
 -------------------
 +Es gibt nun eine einfache Methode mehr Sprachen hinzuzufügen. Aktuell sind Englisch und Deutsch unterstützt.
 
