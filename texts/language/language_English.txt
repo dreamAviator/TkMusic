@@ -48,7 +48,7 @@ Move to the bottom
 Delete
 playing song
 duration
-remaining#ab hier beginne ich von vorne im code
+remaining
 Error
 There was an error reading the song cover\n
 No next song
@@ -88,8 +88,9 @@ License
 Settings
 Display the playlist in an extra window
 Show the value of the volume slider
-Loop the playlist when skipping (last song -> first song; first song <- last song)
-Loop the playlist when moving elements (first song ^ last song; last song ▿ first song)
+Loop the playlist when skipping and playing
+Loop the playlist when moving elements
+Number of files in the recent files lists
 Put the current song first when shuffling the playlist.
 Message Logs
 Message Logs (only updates on opening)
@@ -164,7 +165,7 @@ This might take a some time
 Quitting...
 Quitting...
 Restart needed
-You need to restart the prorgam for the changes to take full effect#ab hier metadata editor
+You need to restart the prorgam for the changes to take full effect
 Metadata editor
  File/s
  File/s
@@ -183,7 +184,7 @@ You need to select a file to edit
 No save directory selected
 You need to select a save directory or edit the file without copying it
 Unvalid pattern
-Your naming pattern is not valid. Press the 'What's that' button if you don't know what that is.
+Your naming pattern is not valid. Press the 'What's that?' button if you don't know what that is.
 Name pattern help
 The name pattern tells the program the connection between the metadata inside of the file and the filename.\nLet's say you have two files:\n\n1: Abandoned, Mendum - Voyage [NCS Release].mp3\n2: Mendum - Red Hands [NCS Release].mp3\n\nThen the naming scheme would be:\nInterpreter - Title [NCS Release]\nIn the name pattern entry field you would write:\n%i% - %t% [NCS Release]%\n\nthen the program would put these metadata into the files:\n1:\nTitle: Voyage\nInterpreter: Abandoned, Mendum\n2:\nTitle: Red Hands\nInterpreter: Mendum\n\nInbetween every different part of the naming scheme has to be a %\nEvery selected song has to follow the same naming pattern\ni - interpreter\nt - title\na - album
 Select Audio File

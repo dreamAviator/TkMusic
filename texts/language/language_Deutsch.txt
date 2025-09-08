@@ -88,8 +88,9 @@ Lizenz
 Einstellungen
 Wiedergabeliste in einem extra Fenster anzeigen
 Wert des Lautstärkereglers anzeigen
-Wiedergabeliste beim Spulen wiederholen (letzter Song -> erster Song; erster Song <- letzter Song)
-Wiedergabeliste beim verschieben von Elementen wiederholen (erster Song ^ letzter Song; letzter Song ▿ erster Song)
+Wiedergabeliste beim Spulen und abspielen wiederholen
+Wiedergabeliste beim verschieben von Elementen wiederholen
+Anzahl der Dateien in den Letzte Dateien Listen
 Den aktuellen Song beim Mischen ganz nach oben verschieben
 Nachrichten-Logs
 Nachrichten-Logs (werden nur beim öffnen aktualisiert)
@@ -181,4 +182,54 @@ Dein Benennungsmuster ist ungültig. Klicke auf den 'Was ist das?' Knopf, wenn d
 Keine Datei ausgewählt
 Du musst eine Datei zum Bearbeiten auswählen
 Kein Ziel-Ordner ausgewählt
-Du musst einen Ziel-Ordner auswählen
+Du musst einen Ziel-Ordner auswählen or die Datei ohne kopieren Speichern
+Nicht zulässiges Muster
+Dein Muster ist nicht zulässig. Drücke auf den 'Was ist das?' Knopf wenn du nicht weißt was das ist.
+Muster Hilfe
+Das Muster sagt dem Programm wie die Metadaten und der Dateiname zusammenhängen.\nWenn du beispielsweise zwei Dateien hast:\n\n1: Abandoned, Mendum - Voyage [NCS Release].mp3\n2: Mendum - Red Hands [NCS Release].mp3\n\nDann wäre dein Musteer:\nInterpret - Titel [NCS Release]\nIn das Eintragsfeld schreibst du also:\n%i% - %t% [NCS Release]%\n\ndas Programm würde dann diese Daten in die Dateien schreibn:\n1:\nTitel: Voyage\nInterpret: Abandoned, Mendum\n2:\nTitel: Red Hands\nInterpret: Mendum\n\nZwischen jedem Element in dem Muster muss ein % stehen.\nJede Datei die gleichzeitig bearbitet wird muss dem gleichen Muster folgen.\ni - Interpreter\nt - Titel\na - Album
+Audio Datei auswählen
+Alle Dateien (*)
+Audio Dateien auswählen
+Alle Dateien (*)
+Verzeichnis auswählen
+TkMetaEditor | Stapel-Verarbeitung
+TkMetaEditor | Einzel-Bearbeitung
+TkMetaEditor | Umbenennen
+TkMetaEditor | Info
+TkMetaEditor | Beenden...
+Metadaten Editor
+Metadaten editor
+TkMetaEditor
+Start
+Stapel-Verarbeitung
+Einzel-Verarbeitung
+Umbenennen
+Info
+Beenden
+0 Datei/en
+Dateien löschen
+Dateien auswählen
+Muster
+Was ist das?
+Titel Metadaten löschen
+Interpret Metadaten löschen
+Album Metadaten löschen
+Verzeichnis auswählen
+Speicherort
+Drücke Start um die Änderungen zu speichern
+Datei auswählen
+Tag
+Daten
+Dateiname
+Titel
+Interpret
+Album
+Verzeichnis auswählen
+Datei kopieren
+0 Datei/en
+Dateien löschen
+Dateien auswählen
+Muster
+Was ist das?
+Speicherort
+Verzeichnis auswählen

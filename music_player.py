@@ -1678,6 +1678,7 @@ def settingsWE():
     extraWindow.title("Settings")
     twoWindowsCheckbutton = ttk.Checkbutton(extraWindow,text = settingsWE_twoWindowsCheckbutton_text_langtext,command = lambda: (settings("twoWindows")),variable = twoWindows,onvalue = True,offvalue = False)
     twoWindowsCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+    twoWindowsCheckbutton.config(state = "disabled")
     showVolumeInfoCheckbutton = ttk.Checkbutton(extraWindow,text = settingsWE_showVolumeInfoCheckbutton_text_langtext,command = lambda: (settings("volumeSliderText")),variable = volumeSliderTextOnOff,onvalue = True,offvalue = False)
     showVolumeInfoCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     loopPlaylistCheckbutton = ttk.Checkbutton(extraWindow,text= settingsWE_loopPlaylistCheckbutton_text_langtext,command = lambda: (settings("loopPlaylist")),variable = loopPlaylist,onvalue = True,offvalue = False)
@@ -1694,6 +1695,7 @@ def settingsWE():
     shufflePositionResetCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
     preferPllstDataCheckbutton = ttk.Checkbutton(extraWindow,text = "Prefer data from m3u8 files over metadata from audio files (not doing anything yet)",command = lambda: (settings("preferPllstData")),variable = preferPllstData,onvalue = True,offvalue = False)
     preferPllstDataCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+    preferPllstDataCheckbutton.config(state = "disabled")
     languageSelectOptionMenu = ttk.OptionMenu(extraWindow,languageStringVar,None,*languageListOptionMenu,direction = 'above',command = languageChange)#container,variable,default,values
     languageSelectOptionMenu.pack(side = tk.TOP,anchor = tk.NW)
     messageLogsButton = ttk.Button(extraWindow,text = settingsWE_messageLogsButton_text_langtext,command = lambda: (windowExtra("messageLogs")))
@@ -1830,7 +1832,7 @@ def attributionButtonsWE():
     for item in buttons[1::2]:
         print((item,count,buttons[counttwo]))
         buttonsTree.insert('',tk.END,values = (item,count,buttons[counttwo]))
-        counttwo = counttwo + 2
+        counttwo = counttwo + 2#hier doch knöpfe in einem scrollable canvas machen
 
 def attributionButtonClicked(event):
     selectedItems = buttonsTree.selection()
@@ -1940,7 +1942,9 @@ def windowExtra(extraType):
     view_menu3 = tk.Menu(menubar3,tearoff = False)
     view_menu3.add_command(label = windowExtra_view_menu3_command1_label_langtext,command = lambda: (settingsFmenu("volumeSliderText")))
     view_menu3.add_command(label = windowExtra_view_menu3_command2_label_langtext,command = lambda: (settingsFmenu("twoWindows")))
+    view_menu3.entryconfig(windowExtra_view_menu3_command2_label_langtext,state = "disabled")
     view_menu3.add_command(label = windowExtra_view_menu3_command3_label_langtext,command = lambda: (settingsFmenu("miniMode")))
+    view_menu3.entryconfig(windowExtra_view_menu3_command3_label_langtext,state = "disabled")
     menubar3.add_cascade(label = windowExtra_menubar3_cascade2_label_langtext,menu = view_menu3,underline = 0)
             #help_menu
     help_menu3 = tk.Menu(menubar3,tearoff = False)
@@ -3751,7 +3755,9 @@ menubar1.add_cascade(label=menubar1_cascade1_label_langtext,menu=file_menu1,unde
 view_menu1 = tk.Menu(menubar1,tearoff = False)
 view_menu1.add_command(label = view_menu1_command1_label_langtext,command = lambda: (settingsFmenu("volumeSliderText")))
 view_menu1.add_command(label = view_menu1_command2_label_langtext,command = lambda: (settingsFmenu("twoWindows")))
+view_menu1.entryconfig(view_menu1_command2_label_langtext,state = "disabled")
 view_menu1.add_command(label = view_menu1_command3_label_langtext,command = lambda: (settingsFmenu("miniMode")))
+view_menu1.entryconfig(view_menu1_command3_label_langtext,state = "disabled")
 menubar1.add_cascade(label = menubar1_cascade2_label_langtext,menu = view_menu1,underline = 0)
         #help_menu
 #keyboard shortcuts
