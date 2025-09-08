@@ -88,13 +88,6 @@ def loadSong():
     songArt = getSongArt(song)
     songLS = song.rfind("/")#song last slash
     songFilename = song[songLS + 1:]
-    print(songLength)
-    print(songLengthSec)
-    print(songName)
-    print(songArtist)
-    print(songArt)
-    print(songLS)
-    print(songFilename)
     try:
         musicSlider.config(to = songLengthSec)
         songLengthText.config(text = songLength)
@@ -349,26 +342,20 @@ def getSongArtist(filepath):
 
 def getSongArt(filepath):
     try:
-        print("i'm")
         audio = File(filepath)
         if 'covr' in audio:
-            print("genderfluid ig")
             # MP3, FLAC, and some other formats
             album_art_data = audio['covr'][0]
         elif 'APIC:Cover' in audio:
-            print("and i hate that")
             # ID3v2 (commonly used in MP3)
             album_art_data = audio['APIC:Cover'].data
         elif 'metadata_block_picture' in audio:
-            print("and it's just so hard")
             # FLAC (base64-encoded)
             album_art_data = audio['metadata_block_picture'][0].data
         elif 'covr' in audio:
-            print("and i don't know how long")
             # MP4 (M4A)
             album_art_data = audio['covr'][0]
         elif 'WM/Picture' in audio:
-            print("i can take this anymore")
             # Windows Media Audio (WMA)
             album_art_data = audio['WM/Picture'][0].data
         else:
@@ -389,11 +376,7 @@ def songPos():
     global exiting
     global ThreadStopped
     while True:
-        print("songpos working")
-        print(exiting)
         if exiting == True:
-            print("exiting")
-            print(exiting)
             return
         time.sleep(1)
         songMS = player.get_time()
@@ -499,8 +482,6 @@ def nextSong(where):
     global miniModeActive
     try:
         song = playlist[0]
-        print("printing song now")
-        print(song)
     except:
         togglePlay()
         return
@@ -731,8 +712,6 @@ def addToPlaylist(mbsong):#maybe song
     songsToAdd = []
     howmany = filesToKeep.get()
     unsupportedFiles = ""
-    print("addtofiles")
-    print(mbsong)
     if playlist == []:
         rememberme = True
     else:
@@ -740,17 +719,13 @@ def addToPlaylist(mbsong):#maybe song
     plWtitleNameTrue = False
     if mbsong == "no":
         songsToAdd = openFilesDialog()
-        print(songsToAdd)
     else:
         songsToAdd.append(mbsong)
     if songsToAdd == []:
         return
     loading_Threading()
-    print("addtoplaylist")
-    print("here loadingthreading addtoplaylist")
     for sOpllst in songsToAdd:#song or playlist
         del recentFiles[howmany - 1]
-        print(recentFiles)
         recentFiles.insert(0,sOpllst + '\n')
         if sOpllst.endswith('.m3u') or sOpllst.endswith('.txt'):
             del recentPlaylists[howmany - 1]
@@ -791,7 +766,6 @@ def addToPlaylist(mbsong):#maybe song
             del recentSongs[howmany - 1]
             recentSongs.insert(0,sOpllst + '\n')
             #del songsToAdd[0]
-    print(recentFiles)
     filepath = os.path.join(dirname,"texts/recent_files.txt")
     with open(filepath,'w') as file:
         file.writelines(recentFiles)
@@ -803,20 +777,13 @@ def addToPlaylist(mbsong):#maybe song
         file.writelines(recentPlaylists)
     refreshRecentFiles()
 
-    print("here we go again again lol")
-    print(songsToAdd)
     for element in songsToAdd:
         if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u') and not element.lower().endswith('.txt') and not element.lower().endswith('.m3u8'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
             unsupportedFiles = unsupportedFiles + '\n' + element
-            print("unsupported file format")
             continue
         if element.lower().endswith(".m3u") or element.lower().endswith(".txt") or element.lower().endswith(".m3u8"):
             continue
         playlist.append(element)
-        print("element")
-        print(element)
-        print("playlist")
-        print(playlist)
     if unsupportedFiles != "":
         message(2,"Unsupported Files","These files are not supported:\n" + unsupportedFiles,"ok",0)
     if playlist == []:
@@ -825,7 +792,6 @@ def addToPlaylist(mbsong):#maybe song
         nextSong("add")
         return
     loading_stop()
-    print("i wanna be a girl")
     updatePlaylist(-1,-1)
 
 def addToPlaylistKey(event):
@@ -842,8 +808,6 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     global plWminiMode
     global treeMiniMode
     global remainingPlaylistLengthLabelMini
-    print("update playlist")
-    print("hree loading threading updateplaylist")
     loading_Threading()
     if miniModeActive.get() == False:
         plW.title(updatePlaylist_plW_title_langtext)
@@ -851,15 +815,12 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
         plWminiMode.title(updatePlaylist_plWminiMode_title_langtext)
 #    loadingThreading()
     row_number = 1
-    print("why u not doing anything?!?")
     if miniModeActive.get() == False:
-        print("okay here u should do smth")
         for item in tree.get_children():
             tree.delete(item)
         playlistLengthLabel.config(text = updatePlaylist_playlistLengthLabel_text_langtext)
         remainingPlaylistLengthLabel.config(text = updatePlaylist_remainingPlaylistLengthLabel_text_langtext)
         for pSong in pPlaylist:#played song
-            print("here it should fill the treeee")
             Title = getSongName(pSong)
             Artist = getSongArtist(pSong)
             #length = getSongLength(pSong)
@@ -968,8 +929,6 @@ def length_for_playlist():
     global plWtitleNameTrue
     global plWtitleName
     global miniModeActive
-    print("length for playlist")
-    print("here loading thre<ding length forplaylist")
     loading_Threading()
     if miniModeActive.get() == False:
         plW.title(length_for_playlist_plW_title_langtext)
@@ -1041,7 +1000,6 @@ def length_for_playlist():
             if notFoundList1 != [] or notFoundList2 != []:
                 message(2,length_for_playlist_message1_title_langtext,length_for_playlist_message1_text_langtext + notFound,"ok",0)
                 loading_stop()
-                print("update playlust new started")
                 updatePlaylist(0,0)
         if miniModeActive.get() == True:
             items = treeMiniMode.get_children()
@@ -1104,7 +1062,6 @@ def length_for_playlist():
             if notFoundList1 != [] or notFoundList2 != []:
                 message(2,length_for_playlist_message2_title_langtext,length_for_playlist_message2_text_langtext + notFound,"ok",0)
                 loading_stop()
-                print("update playlist neuzustarten")
                 updatePlaylist(0,0)
     except Exception as e:
         loading_stop()
@@ -1122,7 +1079,6 @@ def length_for_playlist():
             loading_stop()
             return
         plWminiMode.title(plW_title_langtext)
-    print("length for playliust finished")
     loading_stop()
 
 def remainingLength(ForB):#okay hier wird das noch ein problem wenn ich nicht die gesamte länge anzeige
@@ -1144,12 +1100,8 @@ def remainingLength(ForB):#okay hier wird das noch ein problem wenn ich nicht di
         remainingPlaylistLengthLabel.config(text = remainingLength)
         return
     try:
-        print("excepting")
         whereSpace = remainingPlaylistLengthOld.find(" ")
-        print("printing days now")
-        print(whereSpace)
         days = remainingPlaylistLengthOld[:whereSpace - 1]
-        print(days)
         hours, minutes, seconds = map(int, remainingPlaylistLengthOld[-8:].split(':'))
         remainingLengthSecOld = days * 86400 + hours * 3600 + minutes * 60 + seconds
     except:
@@ -1273,10 +1225,8 @@ def delDuplicates():#noch fixen
             checkElement.append(element)
     for element in playlist:
         try:
-            print("trying")
             place = checkElement.index(element)
         except:
-            print("except")
             newP.append(element)
             checkElement.append(element)
     pPlaylist = []
@@ -1838,7 +1788,6 @@ def attributionButtonsWE():
     urls = []
     buttons = ["https://github.com/dreamAviator","Me (dreamAviator) on GitHub","https://www.videolan.org/","VideoLAN","https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam on Flaticon","https://openclipart.org/artist/JoelM","JoelM","https://www.flaticon.com/authors/smashicons","Smashicons on FLaticon"]
     for item in buttons[1::2]:
-        print((item,count,buttons[counttwo]))
         buttonsTree.insert('',tk.END,values = (item,count,buttons[counttwo]))
         counttwo = counttwo + 2
 
@@ -2128,7 +2077,6 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
         icon = error_icon
         messageType = "Error"
     else:
-        print("Yo the programmer made a mistake I'm sorry")
         if platform.system() == "Windows":
             toast.show_toast(title,message,duration = time,icon_path = icon,threaded = True)
         elif platform.system() == "Linux":
@@ -2147,7 +2095,6 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
         messageWindow.after(time,messageWindow.destroy)
     if button == "nope":
         if time == 0:
-            print("fuck a mistake")
             return
     elif button == "ok":
         buttonFrame = ttk.Frame(messageWindow)
@@ -2186,8 +2133,6 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
         elif wTd == "settings":
             button2 = ttk.Button(buttonFrame,text = title,command = lambda: (windowExtra("settings"),messageWindow.destroy()))
             button2.pack(side = tk.RIGHT)
-    else:
-        print("Yup I made a mistake")
     messageLabel = ttk.Label(messageFrame,text = message)
     messageLabel.pack()
 
@@ -2216,22 +2161,18 @@ def makeProgress():
         progressbar['value'] = progressbar['value'] + progressPercent
 
 def loading_Threading():
-    print("loading_threading started")
     loading_thread = Thread(target = loading)
     loading_thread.start()
 
 def loading():
-    print("now ir should be loading")
     global main_window
     global plW
     global cursor_state
-    print(cursor_state)
     while cursor_state == "normal" and exiting != True:
         if platform.system() == "Linux":
             main_window.config(cursor = "watch")
             main_window.update_idletasks()
             plW.config(cursor = "watch")
-            print("lets trieeeeee")
             plW.update_idletasks()
             cursor_state = "loading"
         else:
@@ -2240,20 +2181,15 @@ def loading():
             plW.config(cursor = "wait")
             plW.update_idletasks()
             cursor_state = "loading"
-    print(cursor_state)
-    print("loading start done")
 
 def loading_stop():
     global cursor_state
-    print("now it shiuold not be loading")
-    print(cursor_state)
     while cursor_state == "loading":
         main_window.config(cursor = "")
         main_window.update_idletasks()
         plW.config(cursor = "")
         plW.update_idletasks()
         cursor_state = "normal"
-    print("loading stop done")
 
 
 #def loadingThreading():
@@ -2286,26 +2222,18 @@ def refreshRecentFiles():
     except:
         pass
     count = 0
-    print("recent files")
-    print(recentFiles)
     for filename in recentFiles:
         sub_menu1.add_command(label=filename[:-1], command=lambda f=filename[:-1]: addToPlaylist(str(f)))#von duckduckgo gpt3.5
         #sub_menu1.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
         #sub_menu1.add_command(label = filename[:-1],command = addToPlaylist(str(filename)))
-        print("fuck this")
     for filename in recentSongs:
         sub_menu21.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
-        print("fuckening this")
     for filename in recentPlaylists:
         sub_menu22.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
-        print("fuckeningening this")
     try:
-        print("i'm trying now lol")
         for filename in recentFiles:
             sub_menu3.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
-            print("fuckeningeningening this")
     except:
-        print("didn't work qwq")
         pass
 
 def buildTwoWindows(ToF):
@@ -2357,7 +2285,6 @@ def buildVolumeSliderText(ToF):
 
 def buildMiniMode_main_window(event):
     global numberforminimode_main_window
-    print(numberforminimode_main_window)
     numberforminimode_main_window = numberforminimode_main_window + 1
     if numberforminimode_main_window == 21:
         numberforminimode_main_window = 1
@@ -2365,7 +2292,6 @@ def buildMiniMode_main_window(event):
 
 def buildMiniMode_plW(event):
     global numberforminimode_plW
-    print(numberforminimode_plW)
     numberforminimode_plW = numberforminimode_plW + 1
     if numberforminimode_plW == 26:
         numberforminimode_plW = 1
@@ -2407,17 +2333,14 @@ def buildMiniMode():
     miniModeActive = True
     main_window_size = main_window.geometry()
     plW_size = plW.geometry()
-    print("trying")
     main_window.destroy()
     plW.destroy()
-    print("done")
     x_pos = main_window_size.find('x')
     firstplus_pos = main_window_size.find('+')
     secondplus_pos = main_window_size.rfind('+')
     main_window_size_1 = main_window_size[:x_pos + 1]
     main_window_size_2 = main_window_size[firstplus_pos + 1:secondplus_pos]
     miniModeSize = main_window_size_1 + "82+" + main_window_size_2 + "+380"
-    print(miniModeSize)
     miniModeWindow = tk.Toplevel()
     miniModeWindow.geometry(miniModeSize)
     miniModeWindow.title(buildMiniMode_miniModeWindow_title_langtext)
@@ -2798,7 +2721,6 @@ def loadLanguages():
             underscore = filename.find("_")
             languageList.append([filename[underscore + 1:-4],filepath])
             languageListOptionMenu.append(filename[underscore + 1:-4])
-    print(languageList)
     return languageList,languageListOptionMenu
 
 def languageChange(event):
@@ -2812,10 +2734,6 @@ def loadLanguage(language,languageList):
     global main_window_title_langtext, file_menu1_command1_label_langtext, file_menu1_cascade1_label_langtext, file_menu1_command2_label_langtext, file_menu1_command3_label_langtext, file_menu1_command4_label_langtext, file_menu1_command5_label_langtext, menubar1_cascade1_label_langtext, view_menu1_command1_label_langtext, view_menu1_command2_label_langtext, view_menu1_command3_label_langtext, menubar1_cascade2_label_langtext, help_menu1_command1_label_langtext, help_menu1_command2_label_langtext, help_menu1_command3_label_langtext, help_menu1_command4_label_langtext, help_menu1_command5_label_langtext, menubar1_cascade3_label_langtext, plW_title_langtext, file_menu2_command1_label_langtext, file_menu2_cascade1_label_langtext, file_menu2_cascade2_label_langtext, file_menu2_command2_label_langtext, file_menu2_command3_label_langtext, file_menu2_command4_label_langtext, file_menu2_command5_label_langtext, file_menu2_cascade3_label_langtext, edit_menu2_command1_label_langtext, edit_menu2_command2_label_langtext, edit_menu2_command3_label_langtext, edit_menu2_command4_label_langtext, edit_menu2_command5_label_langtext, edit_menu2_command6_label_langtext, edit_menu2_command7_label_langtext, menubar2_cascade1_label_langtext, songName_variable_langtext, songArtist_variable_langtext, songFilename_variable_langtext, tree_heading1_text_langtext, tree_heading2_text_langtext, tree_heading3_text_langtext, rcmenu1_command1_label_langtext, rcmenu1_command2_label_langtext, rcmenu2_command1_label_langtext, rcmenu2_command2_label_langtext, rcmenu2_command3_label_langtext, rcmenu2_command4_label_langtext, rcmenu2_command5_label_langtext, playlistSelectedLabel_text_langtext, playlistDurationLabel_text_langtext, remainingPlaylistDurationLabel_text_langtext, getSongArt_message1_title_langtext, getSongArt_message1_text_langtext, fastForward_message1_title_langtext, fastForward_message1_text_langtext, fastForward_message2_title_langtext, fastForward_message2_text_langtext, rewindSong_message1_title_langtext, rewindSong_message1_text_langtext, rewindSong_message2_title_langtext, rewindSong_message2_text_langtext, addToPlaylist_message1_title_langtext, addToPlaylist_message1_text_langtext, updatePlaylist_plW_title_langtext, updatePlaylist_plWminiMode_title_langtext, updatePlaylist_playlistLengthLabel_text_langtext, updatePlaylist_remainingPlaylistLengthLabel_text_langtext, tree_loading_text_langtext, updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext, treeMiniMode_loading_text_langtext, length_for_playlist_plW_title_langtext, length_for_playlist_plWminiMode_title_langtext, length_for_playlist_message1_title_langtext, length_for_playlist_message1_text_langtext, length_for_playlist_message2_title_langtext, length_for_playlist_message2_text_langtext, savePlaylist_message1_title_langtext, savePlaylist_message1_text1_langtext, savePlaylist_message1_text2_langtext, upInPlaylist_message1_title_langtext, upInPlaylist_message1_text_langtext, downInPlaylist_message1_title_langtext, downInPlaylist_message1_text_langtext, infoWE_extraWindow_title_langtext, infoWE_changelogButton_text_langtext, infoWE_attributions_text_langtext, infoWE_licenseButton_text_langtext, settingsWE_extraWindow_title_langtext, settingsWE_twoWindowsCheckbutton_text_langtext, settingsWE_showVolumeInfoCheckbutton_text_langtext, settingsWE_loopPlaylistCheckbutton_text_langtext, settingsWE_loopMoveCheckbutton_text_langtext, settingsWE_filesToKeepLabel_text_langtext, settingsWE_shufflePositionResetCheckbutton_text_langtext, settingsWE_messageLogsButton_text_langtext, messageLogsWE_extraWindow_title_langtext, messageLogsWE_logs_add1_text_langtext, messageLogsWE_logs_add2_text_langtext, messageLogsWE_logs_add3_text_langtext, messageLogsWE_tree1_2_3_heading1_text_langtext, messageLogsWE_tree1_2_3_heading2_text_langtext, messageLogsWE_tree1_2_3_heading3_text_langtext, messageLogsWE_tree1_2_3_heading4_text_langtext, messageLogsWE_tree1_2_3_heading5_text_langtext, attributionsWE_extraWindow_title_langtext, attributionsWE_attributionLinksButton_text_langtext, attributionButtonsWE_extraWindow_title_langtext, changelogWE_extraWindow_title_langtext, licenseWE_extraWindow_title_langtext, windowExtra_file_menu3_command1_label_langtext, windowExtra_file_menu3_cascade1_label_langtext, windowExtra_file_menu3_command2_label_langtext, windowExtra_file_menu3_command3_label_langtext, windowExtra_file_menu3_command4_label_langtext, windowExtra_file_menu3_command5_label_langtext, windowExtra_menubar3_cascade1_label_langtext, windowExtra_view_menu3_command1_label_langtext, windowExtra_view_menu3_command2_label_langtext, windowExtra_view_menu3_command3_label_langtext, windowExtra_menubar3_cascade2_label_langtext, windowExtra_help_menu3_command1_label_langtext, windowExtra_help_menu3_command2_label_langtext, windowExtra_help_menu3_command3_label_langtext, windowExtra_help_menu3_command4_label_langtext, windowExtra_help_menu3_command5_label_langtext, windowExtra_menubar3_cascade3_label_langtext, windowExtra_extraType_info_headline_text_langtext, windowExtra_extraType_settings_headline_text_langtext, windowExtra_extraType_messageLogs_headline_text_langtext, windowExtra_extraType_messageLogs_backButton_text_langtext, windowExtra_extraType_attributions_headline_text_langtext, windowExtra_extraType_attributions_backButton_text_langtext, windowExtra_extraType_attributionButtons_headline_text_langtext, windowExtra_extraType_attributionButtons_backbutton_text_langtext, windowExtra_extraType_Changelog_headline_text_langtext, windowExtra_extraType_Changelog_backButton_text_langtext, windowExtra_extraType_License_backButton_text_langtext, progress_progressWindow_title_langtext, buildTwoWindows_message1_title_langtext, buildTwoWindows_message1_text_langtext, buildMiniMode_message1_title_langtext, buildMiniMode_message1_text_langtext, buildMiniMode_miniModeWindow_title_langtext, buildMiniMode_plWminiMode_title_langtext, buildMiniMode_treeMiniMode_heading1_text_langtext, buildMiniMode_treeMiniMode_heading2_text_langtext, buildMiniMode_treeMiniMode_heading3_text_langtext, messageLogClicked_time0_timeText_langtext, messageLogClicked_messageInfo_title_langtext, messageLogClicked_messageDetails_text_langtext, messageLogClicked_messageImageText_text_langtext, messageLogClicked_messageTitle_text_langtext, messageLogClicked_messageMessage_text_langtext, messageLogClicked_messageButtons_text_langtext, messageLogClicked_messageTime_text_langtext, messageLogClicked_previewButton_text_langtext, messageLogClicked_closeButton_text_langtext, empty_file_text_list, openFilesDialog_QFileDialog_getOpenFileNames1_langtext, openFilesDialog_QFileDialog_getOpenFileNames2_langtext, saveFileDialog_QFileDialog_SaveFilterName1_langtext, saveFileDialog_QFileDialog_SaveFilterName2_langtext, exitProgram_message1_title_langtext, exitProgram_message1_text_langtext, exitProgram_main_window_title_langtext, exitProgram_plW_title_langtext, languageChange_message1_title_langtext, languageChange_message1_text_langtext
     #ohjemine
     for languageListList in languageList:
-        print(languageListList[0])
-        print(language)
-        print(type(languageListList[0]))
-        print(type(language))
         if languageListList[0] == language:
             languagePath = languageListList[1]
             break
@@ -3165,9 +3083,6 @@ filepath_recent_playlists = os.path.join(dirname,"texts/recent_playlists.txt")
 with open(filepath_recent_playlists,'r') as file:
     lines = file.readlines()
 recentPlaylists = [] + lines
-print(recentFiles)
-print(recentPlaylists)
-print(recentSongs)
 #variables for start
 playlist = []
 pPlaylist = []#played playlist
