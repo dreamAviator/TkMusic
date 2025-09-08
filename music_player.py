@@ -2136,7 +2136,6 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
         elif wTd == "settings":
             button2 = ttk.Button(buttonFrame,text = title,command = lambda: (windowExtra("settings"),messageWindow.destroy()))
             button2.pack(side = tk.RIGHT)
-    else:
     messageLabel = ttk.Label(messageFrame,text = message)
     messageLabel.pack()
 
