@@ -1,6 +1,6 @@
     #TkMusic
     #This program can play music.
-    #Copyright (C) 2024 Lilly, dreamAviator, Nathan Baron
+    #Copyright (C) 2024 Lilly, dreamAviator
 print("loading...")
 #gui
 import tkinter as tk
