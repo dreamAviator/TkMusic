@@ -1,24 +1,25 @@
-    #This program can play music. It does not have a name yet (probably TkMusic)
-    #Copyright (C) 2023  Nathan Baron
-
+    #TkMusic
+    #This program can play music.
+    #Copyright (C) 2024 Lilly, dreamAviator
+print("loading...")
 #gui
 import tkinter as tk
 from tkinter import ttk
-from tkinter.filedialog import askopenfilename
-from tkinter.filedialog import askopenfilenames
-from tkinter.filedialog import asksaveasfilename
 from tkinter.scrolledtext import ScrolledText
+from PyQt5.QtWidgets import QApplication, QFileDialog
 #gui + music (song cover)
-from PIL import Image
+from PIL import Image as pilImage
 #music
 import mutagen
 from mutagen import File
-from mutagen.id3 import ID3, TIT2, TPE1
+from mutagen.id3 import ID3, TIT2, TPE1, TALB, APIC
 from mutagen.mp3 import MP3
 from mutagen.oggvorbis import OggVorbis
-from mutagen.mp4 import MP4
+from mutagen.mp4 import MP4, MP4Tags
+#metadata editor
+import shutil
 #other
-from threading import *
+from threading import Thread
 import webbrowser
 import functools
 import random
@@ -27,6 +28,15 @@ import time
 import platform
 import os
 import sys
+#messages
+if platform.system() == "Windows":
+    from win10toast import ToastNotifier
+    toast = ToastNotifier
+elif platform.system() == "Linux":
+    import notify2
+    notify2.init('TkMusic')
+
+    notify2.Notification("loading","loading...").show()
 #um relative pfade zu absoluten pfaden umzuwandeln
 dirname = os.path.dirname(__file__)
 #vlcdll_path = os.path.join(dirname, 'vlc\libvlc.dll')
@@ -50,6 +60,7 @@ def loadSong():
     global song
     global songCover
     global songCoverSmol
+    global songCoverMini
     global song_cover_image
     global song_cover_image_smol
     global songLength
@@ -61,6 +72,12 @@ def loadSong():
     global songLengthTextSmol
     global songNameTextSmol
     global songArtistTextSmol
+    global miniModeWindow
+    global musicSliderMini
+    global songTitleLabelMini
+    global songArtistLabelMini
+    global songLengthTextMini
+    global songArtImageSmol
     media = instance.media_new(song)
     media.get_mrl()
     player.set_media(media)
@@ -71,21 +88,25 @@ def loadSong():
     songArt = getSongArt(song)
     songLS = song.rfind("/")#song last slash
     songFilename = song[songLS + 1:]
-    print(songLength)
-    print(songLengthSec)
-    print(songName)
-    print(songArtist)
-    print(songArt)
-    print(songLS)
-    print(songFilename)
-    musicSlider.config(to = songLengthSec)
-    songLengthText.config(text = songLength)
-    songArtistText.config(text = songArtist)
-    songNameText.config(text = songName)
+    try:
+        musicSlider.config(to = songLengthSec)
+        songLengthText.config(text = songLength)
+        songArtistText.config(text = songArtist)
+        songNameText.config(text = songName)
+    except:
+        pass
+    try:
+        musicSliderExtra.config(to = songLengthSec)
+    except:
+        pass
+    try:
+        musicSliderMini.config(to = songLengthSec)
+    except:
+        pass
     #songArt_pillow1 = Image.open(songArt)
     #songArt_pillow2 = ImageTk.PhotoImage(songArt)
     if songArt != "nothing":
-        jpg_image = Image.open(songArt)
+        jpg_image = pilImage.open(songArt)
         new_size = (200,200)
         new_size_smol = (50,50)
         jpg_image_resized = jpg_image.resize(new_size)
@@ -94,18 +115,33 @@ def loadSong():
         jpg_image_resized_smol.save('song_cover_smol.png',format = 'PNG')
         songArtImage = tk.PhotoImage(file = 'song_cover.png')
         songArtImageSmol = tk.PhotoImage(file = 'song_cover_smol.png')
-        songCover.config(image = songArtImage)
-        songCover.image = songArtImage
+        try:
+            songCover.config(image = songArtImage)
+            songCover.image = songArtImage
+        except:
+            pass
         try:
             songCoverSmol.config(image = songArtImageSmol)
             songCoverSmol.image = songArtImageSmol
         except:
             pass
+        try:
+            songCoverMini.config(image = songArtImageSmol)
+            songCoverMini.image = songArtImageSmol
+        except:
+            pass
         jpg_image.close()
     else:
-        songCover.config(image = song_cover_image)
+        try:
+            songCover.config(image = song_cover_image)
+        except:
+            pass
         try:
             songCoverSmol.config(image = song_cover_image_smol)
+        except:
+            pass
+        try:
+            songCoverMini.config(image = song_cover_image_smol)
         except:
             pass
     try:
@@ -113,39 +149,88 @@ def loadSong():
         songNameTextSmol.config(text = songName)
     except:
         pass
+    try:
+        songArtistLabelMini.config(text = songArtist)
+        songTitleLabelMini.config(text = songName)
+    except:
+        pass
     if songArtist == 'unknown':
-        songArtistText.config(text = songFilename)
+        try:
+            songArtistText.config(text = songFilename)
+        except:
+            pass
         try:
             songArtistTextSmol.config(text = songFilename)
         except:
             pass
+        try:
+            songArtistLabelMini.config(text = songFilename)
+        except:
+            pass
         if songName == 'unknown':
-            songNameText.config(text = '')
+            try:
+                songNameText.config(text = '')
+            except:
+                pass
             try:
                 songNameTextSmol.config(text = '')
             except:
                 pass
+            try:
+                songTitleLabelMini.config(text = '')
+            except:
+                pass
         else:
-            songNameText.config(text = songName)
+
+            try:
+                songNameText.config(text = songName)
+            except:
+                pass
             try:
                 songNameTextSmol.config(text = songName)
             except:
                 pass
+            try:
+                songTitleLabelMini.config(text = songName)
+            except:
+                pass
     elif songName == 'unknown':
-        songNameText.config(text = songFilename)
+        try:
+            songNameText.config(text = songFilename)
+        except:
+            pass
         try:
             songNameTextSmol.config(text = songFilename)
         except:
             pass
+        try:
+            songTitleLabelMini.config(text = songFilename)
+        except:
+            pass
     else:
-        songArtistText.config(text = songArtist)
-        songNameText.config(text = songName)
+        try:
+            songArtistText.config(text = songArtist)
+            songNameText.config(text = songName)
+        except:
+            pass
         try:
             songArtistTextSmol.config(text = songArtist)
             songNameTextSmol.config(text = songName)
         except:
             pass
-    root.title(songFilename + " | TkMusic")
+        try:
+            songArtistLabelMini.config(text = songArtist)
+            songTitleLabelMini.config(text = songName)
+        except:
+            pass
+    try:
+        main_window.title(songFilename + " | TkMusic")
+    except:
+        pass
+    try:
+        miniModeWindow.title(songFilename + " | TkMusic")
+    except:
+        pass
     player.play()
     checkLogo()
 
@@ -257,26 +342,20 @@ def getSongArtist(filepath):
 
 def getSongArt(filepath):
     try:
-        print("i'm")
         audio = File(filepath)
         if 'covr' in audio:
-            print("genderfluid ig")
             # MP3, FLAC, and some other formats
             album_art_data = audio['covr'][0]
         elif 'APIC:Cover' in audio:
-            print("and i hate that")
             # ID3v2 (commonly used in MP3)
             album_art_data = audio['APIC:Cover'].data
         elif 'metadata_block_picture' in audio:
-            print("and it's just so hard")
             # FLAC (base64-encoded)
             album_art_data = audio['metadata_block_picture'][0].data
         elif 'covr' in audio:
-            print("and i don't know how long")
             # MP4 (M4A)
             album_art_data = audio['covr'][0]
         elif 'WM/Picture' in audio:
-            print("i can take this anymore")
             # Windows Media Audio (WMA)
             album_art_data = audio['WM/Picture'][0].data
         else:
@@ -286,7 +365,7 @@ def getSongArt(filepath):
             f.write(album_art_data)
         return "song_cover.jpg"
     except Exception as e:
-        message(3,"Error","There was an error reading the song cover\n" + str(e))
+        message(3,getSongArt_message1_title_langtext,getSongArt_message1_text_langtext + str(e))
         return "nothing"
 
 def songPos():
@@ -297,11 +376,7 @@ def songPos():
     global exiting
     global ThreadStopped
     while True:
-        print("songpos working")
-        print(exiting)
         if exiting == True:
-            print("exiting")
-            print(exiting)
             return
         time.sleep(1)
         songMS = player.get_time()
@@ -310,13 +385,21 @@ def songPos():
         doubledot = songTime.rfind(":")
         songTimeFin = songTime[doubledot - 2:dot]
         if sliderPressed == False:
-            songPositionText.config(text = songTimeFin)
+            try:
+                songPositionText.config(text = songTimeFin)
+            except:
+                pass
             try:
                 songPositionTextSmol.config(text = songTimeFin)
             except:
                 pass
+            try:
+                songPositionTextMini.config(text = songTimeFin)
+            except:
+                pass
             sliderVar.set(songMS // 1000)
             sliderVarExtra.set(songMS // 1000)
+            sliderVarMini.set(songMS // 1000)
         if player.get_state() == vlc.State.Ended:
             break
     #time.sleep(0.2)#damit der song wirklich zuende spielt#brauche ich nicht, weil ich player.get_state() benutze
@@ -334,30 +417,59 @@ def togglePlayKey(event):
 
 def checkLogo():
     global togglePlayButtonSmol
+    global togglePlayButtonMini
     if player.get_state() == vlc.State.Playing:
-        togglePlayButton.config(image = play_image)
+        try:
+           togglePlayButton.config(image = play_image)
+        except:
+            pass
         try:
             togglePlayButtonSmol.config(image = play_image_smol)
         except:
             pass
+        try:
+            togglePlayButtonMini.config(image = play_image_smol)
+        except:
+            pass
     else:
-        togglePlayButton.config(image = pause_image)
+        try:
+            togglePlayButton.config(image = pause_image)
+        except:
+            pass
         try:
             togglePlayButtonSmol.config(image = pause_image_smol)
+        except:
+            pass
+        try:
+            togglePlayButtonMini.config(image = pause_image_smol)
         except:
             pass
 
 def checkLogoInverted():#beim fenster neuladen muss das irgendwie andersherum sein
     if player.get_state() == vlc.State.Playing:
-        togglePlayButton.config(image = pause_image)
+        try:
+            togglePlayButton.config(image = pause_image)
+        except:
+            pass
         try:
             togglePlayButtonSmol.config(image = pause_image_smol)
         except:
             pass
+        try:
+            togglePlayButtonMini.config(image = pause_image_smol)
+        except:
+            pass
     else:
-        togglePlayButton.config(image = play_image)
+        try:
+            togglePlayButton.config(image = play_image)
+        except:
+            pass
         try:
             togglePlayButtonSmol.config(image = play_image_smol)
+        except:
+            pass
+        try:
+            togglePlayButtonMini.config(image = play_image_smol)
         except:
             pass
 
@@ -365,6 +477,9 @@ def nextSong(where):
     global playlist
     global pPlaylist
     global song
+    global tree
+    global treeMiniMode
+    global miniModeActive
     try:
         song = playlist[0]
     except:
@@ -375,33 +490,49 @@ def nextSong(where):
         nextSong("nextSong")
     threading()
     if where == "skipF" or where == "skipB" or where == "fst" or where == "lst" or where == "end":
-        items = tree.get_children()
-        for item_id in items:
-            values = tree.item(item_id,"values")
-            tree.item(item_id,tags = ("not_playing"))
-            if values[3] == str(len(pPlaylist) + 1):
-                tree.see(item_id)
-                tree.item(item_id,tags = ("playing"))
-                if where == "skipF" or where == "end":
-                    remainingLength("f")
-                elif where == "skipB":
-                    remainingLength("b")
-                elif where == "fst":
-                    remainingLength("fst")
-                elif where == "lst":
-                    remainingLength("lst")
+        if miniModeActive.get() == False:
+            items = tree.get_children()
+            for item_id in items:
+                values = tree.item(item_id,"values")
+                tree.item(item_id,tags = ("not_playing"))
+                if values[3] == str(len(pPlaylist) + 1):
+                    tree.see(item_id)
+                    tree.item(item_id,tags = ("playing"))
+                    if where == "skipF" or where == "end":
+                        remainingLength("f")
+                    elif where == "skipB":
+                        remainingLength("b")
+                    elif where == "fst":
+                        remainingLength("fst")
+                    elif where == "lst":
+                        remainingLength("lst")
+        elif miniModeActive.get() == True:
+            items = treeMiniMode.get_children()
+            for item_id in items:
+                values = treeMiniMode.item(item_id,"values")
+                treeMiniMode.item(item_id,tags = ("not_playing"))
+                if values[3] == str(len(pPlaylist) + 1):
+                    treeMiniMode.see(item_id)
+                    treeMiniMode.item(item_id,tags = ("playing"))
+                    if where == "skipF" or where == "end":
+                        remainingLength("f")
+                    elif where == "skipB":
+                        remainingLength("b")
+                    elif where == "fst":
+                        remainingLength("fst")
+                    elif where == "lst":
+                        remainingLength("lst")
         plstSelSee(0,0)
         return
     updatePlaylist(0,0)
 
 def fastForward():
-    global tree
     global loopPlaylist
     if playlist == [] and pPlaylist == []:
         return
     try:
         if len(playlist) == 1 and loopPlaylist.get() == False:
-            message(1,"No next song","There is no next song, you can't skip to the next song.\n" + "If you want the first song of the playlist to play, turn the feature on in the settings.","customSettings,settings;No,nope",5000)#eigentlich ok und ein anderer button der einen zu den einstellungen/der entsprechenden einstellung führt, noch hnzufügen
+            message(1,fastForward_message1_title_langtext,fastForward_message1_text_langtext,"customSettings,settings;No,nope",5000)#eigentlich ok und ein anderer button der einen zu den einstellungen/der entsprechenden einstellung führt, noch hnzufügen
             return
         elif len(playlist) == 1 and loopPlaylist.get() == True:
             removeThem = []
@@ -420,7 +551,7 @@ def fastForward():
             nextSong("skipF")
     except Exception as e:
         print(e)
-        message(3,"Error","There was an error while trying to skip to the next song.\n\n" + str(e),"ok",0)
+        message(3,fastForward_message2_title_langtext,fastForward_message2_text_langtext + str(e),"ok",0)
 
 def fastForwardKey(event):
     fastForward()
@@ -445,7 +576,7 @@ def rewindSong():
     else:
         try:
             if len(pPlaylist) == 0 and loopPlaylist.get() == False:
-                message(1,"No previous song","There is no previous song, you can't rewind.\n" + "If you want the last song of the playlist to play, turn the feature on in the settings.","customSettings,settings;No,nope",5000)#eigentlich ok und ein anderer button der einen zu den einstellungen/der entsprechenden einstellung führt, noch hnzufügen
+                message(1,rewindSong_message1_title_langtext,rewindSong_message1_text_langtext,"customSettings,settings;No,nope",5000)#eigentlich ok und ein anderer button der einen zu den einstellungen/der entsprechenden einstellung führt, noch hnzufügen
                 return
             elif len(pPlaylist) == 0 and loopPlaylist.get() == True:
                 removeThem = []
@@ -463,7 +594,7 @@ def rewindSong():
             else:
                 nextSong("skipB")
         except Exception as e:
-            message(3,"Error","There was an error while trying to skip to the previous song.\n\n" + str(e),"ok",0)
+            message(3,rewindSong_message2_title_langtext,rewindSong_message2_text_langtext + str(e),"ok",0)
             return
 
 #def rewindSong():#behalten, damit du weißt wie du das mit dem index gemacht hast
@@ -518,6 +649,8 @@ def sliderChange(event):
         try:
             if extraWindow.winfo_exists():
                 player.set_time(sliderVarExtra.get() * 1000)
+            elif miniModeWindow.winfo_exists():
+                player.set_time(sliderVarMini.get() * 1000)
             else:
                 player.set_time(sliderVar.get() * 1000)
         except:
@@ -531,12 +664,17 @@ def sliderPressedTrue(event):
 def sliderChangePos(event):
     global sliderPressed
     global songPositionTextSmol
+    global songPositionTextMini
     global extraWindow
+    global miniModeWindow
     if sliderPressed == True:
         try:
             if extraWindow.winfo_exists():
                 sliderPos = sliderVarExtra.get()
                 sliderPos = str(datetime.timedelta(seconds = sliderPos))
+            elif miniModeWindow.winfo_exists():
+                sliderPos = sliderVarMini.get()
+                sliderPos = str(datetime.timedelta(seconds = songPos))
             else:
                 sliderPos = sliderVar.get()
                 sliderPos = str(datetime.timedelta(seconds = sliderPos))
@@ -549,28 +687,49 @@ def sliderChangePos(event):
             sliderPosFin = sliderPos[doubledot - 2:dot]
         else:
             sliderPosFin = sliderPos[doubledot - 2:]
-        songPositionText.config(text = sliderPosFin)
+        try:
+            songPositionText.config(text = sliderPosFin)
+        except:
+            pass
         try:
             songPositionTextSmol.config(text = sliderPosFin)
         except:
             pass
+        try:
+            songPositionTextMini.config(text = sliderPosFin)
+        except:
+            pass
 
 #playlist functions
-def addToPlaylist():
+def addToPlaylist(mbsong):#maybe song
     global playlist
     global plWtitleNameTrue
     global plWtitleName
+    global recentFiles
+    global recentSongs
+    global recentPlaylists
+    global filesToKeep
+    songsToAdd = []
+    howmany = filesToKeep.get()
     unsupportedFiles = ""
     if playlist == []:
         rememberme = True
     else:
         rememberme = False
     plWtitleNameTrue = False
-    songsToAdd = askopenfilenames()
-    if songsToAdd == '':
+    if mbsong == "no":
+        songsToAdd = openFilesDialog()
+    else:
+        songsToAdd.append(mbsong)
+    if songsToAdd == []:
         return
+    loading_Threading()
     for sOpllst in songsToAdd:#song or playlist
-        if sOpllst.endswith('.m3u'):
+        del recentFiles[howmany - 1]
+        recentFiles.insert(0,sOpllst + '\n')
+        if sOpllst.endswith('.m3u') or sOpllst.endswith('.txt'):
+            del recentPlaylists[howmany - 1]
+            recentPlaylists.insert(0,sOpllst + '\n')
             if rememberme == True:
                 plWtitleNameTrue = True
                 lastSlash = sOpllst.rfind("/")
@@ -580,27 +739,63 @@ def addToPlaylist():
             for songFplaylist in lines:#song from playlist
                 songFplaylist = songFplaylist[:-1]
                 playlist.append(songFplaylist)
+        elif sOpllst.endswith('.m3u8'):
+            del recentPlaylists[howmany - 1]
+            recentPlaylists.insert(0,sOpllst + '\n')
+            if rememberme == True:
+                plWtitleNameTrue = True
+                lastSlash = sOpllst.rfind("/")
+                plWtitleName = sOpllst[lastSlash + 1:]
+            with open(sOpllst,'r') as file:
+                lines = file.readlines()
+            for line in lines:
+                if line != "#EXTM3U":
+                    if line.startswith("#EXTINF:"):
+                        comma = line.find(",")
+                        separator = line.find(" - ")
+                        line = line[8:]
+                        lengthSec = line[:comma]
+                        line = line[comma + 1:]
+                        interpreter = line[:separator]
+                        line = line[separator + 4:]
+                        title = line
+                    else:
+                        playlist.append(line[:-1])
+            del playlist[0]
+        else:
+            del recentSongs[howmany - 1]
+            recentSongs.insert(0,sOpllst + '\n')
             #del songsToAdd[0]
+    filepath = os.path.join(dirname,"texts/recent_files.txt")
+    with open(filepath,'w') as file:
+        file.writelines(recentFiles)
+    filepath = os.path.join(dirname,"texts/recent_songs.txt")
+    with open(filepath,'w') as file:
+        file.writelines(recentSongs)
+    filepath = os.path.join(dirname,"texts/recent_playlists.txt")
+    with open(filepath,'w') as file:
+        file.writelines(recentPlaylists)
+    refreshRecentFiles()
 
     for element in songsToAdd:
-        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
+        if not element.lower().endswith('.mp3') and not element.lower().endswith('.ogg') and not element.lower().endswith('.flac') and not element.lower().endswith('.m4a') and not element.lower().endswith('.wma') and not element.lower().endswith('.wav') and not element.lower().endswith('.aiff') and not element.lower().endswith('.ac3') and not element.lower().endswith('.opus') and not element.lower().endswith('.mp2') and not element.lower().endswith('.wv') and not element.lower().endswith('.m3u') and not element.lower().endswith('.txt') and not element.lower().endswith('.m3u8'):#m3u, da wenn man eine playlist einlädt auch immer noch die playlist selbst dabei ist
             unsupportedFiles = unsupportedFiles + '\n' + element
-            print("unsupported file format")
             continue
         if element.endswith(".m3u"):
             continue
         playlist.append(element)
     if unsupportedFiles != "":
-        message(2,"Unsupported Files","These files are not supported:\n" + unsupportedFiles,"ok",0)
+        message(2,addToPlaylist_message1_title_langtext,addToPlaylist_message1_text_langtext + unsupportedFiles,"ok",0)
     if playlist == []:
         return
     if rememberme == True:
         nextSong("add")
         return
+    loading_stop()
     updatePlaylist(-1,-1)
 
 def addToPlaylistKey(event):
-    addToPlaylist()
+    addToPlaylist("no")
 
 def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     global tree
@@ -609,25 +804,50 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     global playlistLengthLabel
     global remainingPlaylistLengthLabel
     global plW
-    plW.title("Playlist loading...")
+    global miniModeActive
+    global plWminiMode
+    global treeMiniMode
+    global remainingPlaylistLengthLabelMini
+    loading_Threading()
+    if miniModeActive.get() == False:
+        plW.title(updatePlaylist_plW_title_langtext)
+    elif miniModeActive.get() == True:
+        plWminiMode.title(updatePlaylist_plWminiMode_title_langtext)
 #    loadingThreading()
     row_number = 1
-    for item in tree.get_children():
-        tree.delete(item)
-    playlistLengthLabel.config(text = "loading...")
-    remainingPlaylistLengthLabel.config(text = "loading...")
-    for pSong in pPlaylist:#played song
-        Title = getSongName(pSong)
-        Artist = getSongArtist(pSong)
-        #length = getSongLength(pSong)
-        tree.insert('',tk.END,values = (Title,Artist,"loading",row_number))
-        row_number = row_number + 1
-    for song in playlist:
-        Title = getSongName(song)
-        Artist = getSongArtist(song)
-        #length = getSongLength(song)
-        tree.insert('',tk.END,values = (Title,Artist,"loading",row_number))
-        row_number = row_number + 1
+    if miniModeActive.get() == False:
+        for item in tree.get_children():
+            tree.delete(item)
+        playlistLengthLabel.config(text = updatePlaylist_playlistLengthLabel_text_langtext)
+        remainingPlaylistLengthLabel.config(text = updatePlaylist_remainingPlaylistLengthLabel_text_langtext)
+        for pSong in pPlaylist:#played song
+            Title = getSongName(pSong)
+            Artist = getSongArtist(pSong)
+            #length = getSongLength(pSong)
+            tree.insert('',tk.END,values = (Title,Artist,tree_loading_text_langtext,row_number))
+            row_number = row_number + 1
+        for song in playlist:
+            Title = getSongName(song)
+            Artist = getSongArtist(song)
+            #length = getSongLength(song)
+            tree.insert('',tk.END,values = (Title,Artist,tree_loading_text_langtext,row_number))
+            row_number = row_number + 1
+    elif miniModeActive.get() == True:
+        for item in treeMiniMode.get_children():
+            treeMiniMode.delete(item)
+        remainingPlaylistLengthLabelMini.config(text = updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext)
+        for pSong in pPlaylist:#played song
+            Title = getSongName(pSong)
+            Artist = getSongArtist(pSong)
+            #length = getSongLength(pSong)
+            treeMiniMode.insert('',tk.END,values = (Title,Artist,treeMiniMode_loading_text_langtext,row_number))
+            row_number = row_number + 1
+        for song in playlist:
+            Title = getSongName(song)
+            Artist = getSongArtist(song)
+            #length = getSongLength(song)
+            treeMiniMode.insert('',tk.END,values = (Title,Artist,treeMiniMode_loading_text_langtext,row_number))
+            row_number = row_number + 1
     plstSelSee(selectCount,seeCount)
 #    loadingWindow.destroy()
     #for item_id in items:
@@ -640,32 +860,58 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     #    if values and values[0] == str(len(pPlaylist) + 1):
     #        tree.selection_set(item_id)
     #        return
+    loading_stop()
     updatePlaylistThread()
 
 def plstSelSee(selectCount,seeCount):#plstSelSee = plstSelSeeAndSee;0 = none; -1 = last
     global tree
+    global treeMiniMode
     global playlist
     global pPlaylist
-    items = tree.get_children()
-    for item_id in items:
-        tree.item(item_id,tags = ("not_playing"))
-        values = tree.item(item_id,"values")
-        if values[3] == str(len(pPlaylist) + 1):
-            #tree.selection_set(item_id)
-            #tree.see(item_id)
-            tree.item(item_id,tags = ("playing"))
-            playlistSelection = str(len(pPlaylist) + 1) + "/" + str(len(pPlaylist) + len(playlist))
-            plstSelectionLabel.config(text = playlistSelection)
-        if values[3] == str(selectCount):
-            tree.selection_set(item_id)
-        if values[3] == str(seeCount):
-            tree.see(item_id)
-        elif selectCount == -1:
-            if values[3] == str(len(pPlaylist) + len(playlist)):
+    global miniModeActive
+    global playlistSelectionLabelMini
+    if miniModeActive.get() == False:
+        items = tree.get_children()
+        for item_id in items:
+            tree.item(item_id,tags = ("not_playing"))
+            values = tree.item(item_id,"values")
+            if values[3] == str(len(pPlaylist) + 1):
+                #tree.selection_set(item_id)
+                #tree.see(item_id)
+                tree.item(item_id,tags = ("playing"))
+                playlistSelection = str(len(pPlaylist) + 1) + "/" + str(len(pPlaylist) + len(playlist))
+                plstSelectionLabel.config(text = playlistSelection)
+            if values[3] == str(selectCount):
                 tree.selection_set(item_id)
-        elif seeCount == -1:
-            if values[3] == str(len(pPlaylist) + len(playlist)):
+            if values[3] == str(seeCount):
                 tree.see(item_id)
+            elif selectCount == -1:
+                if values[3] == str(len(pPlaylist) + len(playlist)):
+                    tree.selection_set(item_id)
+            elif seeCount == -1:
+                if values[3] == str(len(pPlaylist) + len(playlist)):
+                    tree.see(item_id)
+    elif miniModeActive.get() == True:
+        items = treeMiniMode.get_children()
+        for item_id in items:
+            treeMiniMode.item(item_id,tags = ("not_playing"))
+            values = treeMiniMode.item(item_id,"values")
+            if values[3] == str(len(pPlaylist) + 1):
+                #tree.selection_set(item_id)
+                #tree.see(item_id)
+                treeMiniMode.item(item_id,tags = ("playing"))
+                playlistSelection = str(len(pPlaylist) + 1) + "/" + str(len(pPlaylist) + len(playlist))
+                playlistSelectionLabelMini.config(text = playlistSelection)
+            if values[3] == str(selectCount):
+                treeMiniMode.selection_set(item_id)
+            if values[3] == str(seeCount):
+                treeMiniMode.see(item_id)
+            elif selectCount == -1:
+                if values[3] == str(len(pPlaylist) + len(playlist)):
+                    treeMiniMode.selection_set(item_id)
+            elif seeCount == -1:
+                if values[3] == str(len(pPlaylist) + len(playlist)):
+                    treeMiniMode.see(item_id)
 
 def updatePlaylistThread():
     length_for_playlist_thread = Thread(target = length_for_playlist)
@@ -673,87 +919,169 @@ def updatePlaylistThread():
 
 def length_for_playlist():
     global tree
+    global treeMiniMode
     global loadingWindow
     global playlistLengthLabel
     global remainingPlaylistLengthLabel
+    global remainingPlaylistLengthLabelMini
     global plW
+    global plWminiMode
     global plWtitleNameTrue
     global plWtitleName
-    plW.title("Playlist duration loading...")
+    global miniModeActive
+    loading_Threading()
+    if miniModeActive.get() == False:
+        plW.title(length_for_playlist_plW_title_langtext)
+    elif miniModeActive.get() == True:
+        plWminiMode.title(length_for_playlist_plWminiMode_title_langtext)
     notFound = ""
     notFoundList1 = []
     notFoundList2 = []
     try:
-        items = tree.get_children()
-        count = 0
-        playlistLengthSec = 0#insgesamte länge der playlist
-        remainingPlaylistLengthSec = 0
-        for pSong in pPlaylist:
-            #print("pPlaylist")
-            if pSong.endswith('.m3u'):
-                break
-            try:
-                length,songLengthSec = getSongLength(pSong)
-                playlistLengthSec = playlistLengthSec + songLengthSec
-            except:
-                notFoundList1.append[pSong]
-                notFound = notFound + '\n' + pSong
-                #continue
-            item_id = items[count]
-            tree.item(item_id,values = (tree.item(item_id,"values")[0],tree.item(item_id,"values")[1],length,tree.item(item_id,"values")[3]))
-            count = count + 1
-        for song in playlist:
-            #print("playlist")
-            if song.endswith('.m3u'):
-                break
-            try:
-                length,songLengthSec = getSongLength(song)
-                playlistLengthSec = playlistLengthSec + songLengthSec
-                remainingPlaylistLengthSec = remainingPlaylistLengthSec + songLengthSec
-            except:
-                notFoundList2.append(song)
-                notFound = notFound + '\n' + song
-                #continue
-            try:
-                item_id = items[count]#der letzte ist immer zu hoch, keine ahnung warum
-            except:
-                pass
-            tree.item(item_id,values = (tree.item(item_id,"values")[0],tree.item(item_id,"values")[1],length,tree.item(item_id,"values")[3]))
-            count = count + 1
-        playlistLength = str(datetime.timedelta(seconds = playlistLengthSec))
-        remainingPlaylistLength = str(datetime.timedelta(seconds = remainingPlaylistLengthSec))
-        dot = playlistLength.rfind(".")
-        if dot != -1:
-            playlistLength = playlistLength[:dot]
-        playlistLengthLabel.config(text = playlistLength)
-        dot = remainingPlaylistLength.rfind(".")
-        if dot != -1:
-            remainingPlaylistLength = remainingPlaylistLength[:dot]
-        remainingPlaylistLengthLabel.config(text = remainingPlaylistLength)
-        for song in notFoundList2[::-1]:
-            #print(playlist[count])
-            try:
-                playlist.remove(song)
-            except:
-                pass
-        for pSong in notFoundList1[::-1]:
-            #print(pPlaylist[count])
-            try:
-                pPlaylist.remove(pSong)
-            except:
-                pass
-        if notFoundList1 != [] or notFoundList2 != []:
-            message(2,"File(s) not found","These files couldn't be found and were removed from the playlist:\n" + notFound,"ok",0)
-            updatePlaylist(0,0)
+        if miniModeActive.get() == False:
+            items = tree.get_children()
+            count = 0
+            playlistLengthSec = 0#insgesamte länge der playlist
+            remainingPlaylistLengthSec = 0
+            for pSong in pPlaylist:
+                #print("pPlaylist")
+                if pSong.endswith('.m3u'):
+                    break
+                try:
+                    length,songLengthSec = getSongLength(pSong)
+                    playlistLengthSec = playlistLengthSec + songLengthSec
+                except:
+                    notFoundList1.append[pSong]
+                    notFound = notFound + '\n' + pSong
+                    #continue
+                item_id = items[count]
+                tree.item(item_id,values = (tree.item(item_id,"values")[0],tree.item(item_id,"values")[1],length,tree.item(item_id,"values")[3]))
+                count = count + 1
+            for song in playlist:
+                #print("playlist")
+                if song.endswith('.m3u'):
+                    break
+                try:
+                    length,songLengthSec = getSongLength(song)
+                    playlistLengthSec = playlistLengthSec + songLengthSec
+                    remainingPlaylistLengthSec = remainingPlaylistLengthSec + songLengthSec
+                except:
+                    notFoundList2.append(song)
+                    notFound = notFound + '\n' + song
+                    #continue
+                try:
+                    item_id = items[count]#der letzte ist immer zu hoch, keine ahnung warum
+                except:
+                    pass
+                tree.item(item_id,values = (tree.item(item_id,"values")[0],tree.item(item_id,"values")[1],length,tree.item(item_id,"values")[3]))
+                count = count + 1
+            playlistLength = str(datetime.timedelta(seconds = playlistLengthSec))
+            remainingPlaylistLength = str(datetime.timedelta(seconds = remainingPlaylistLengthSec))
+            dot = playlistLength.rfind(".")
+            if dot != -1:
+                playlistLength = playlistLength[:dot]
+            playlistLengthLabel.config(text = playlistLength)
+            dot = remainingPlaylistLength.rfind(".")
+            if dot != -1:
+                remainingPlaylistLength = remainingPlaylistLength[:dot]
+            remainingPlaylistLengthLabel.config(text = remainingPlaylistLength)
+            for song in notFoundList2[::-1]:
+                #print(playlist[count])
+                try:
+                    playlist.remove(song)
+                except:
+                    pass
+            for pSong in notFoundList1[::-1]:
+                #print(pPlaylist[count])
+                try:
+                    pPlaylist.remove(pSong)
+                except:
+                    pass
+            if notFoundList1 != [] or notFoundList2 != []:
+                message(2,length_for_playlist_message1_title_langtext,length_for_playlist_message1_text_langtext + notFound,"ok",0)
+                loading_stop()
+                updatePlaylist(0,0)
+        if miniModeActive.get() == True:
+            items = treeMiniMode.get_children()
+            count = 0
+            playlistLengthSec = 0#insgesamte länge der playlist
+            remainingPlaylistLengthSec = 0
+            for pSong in pPlaylist:
+                #print("pPlaylist")
+                if pSong.endswith('.m3u'):
+                    break
+                try:
+                    length,songLengthSec = getSongLength(pSong)
+                    playlistLengthSec = playlistLengthSec + songLengthSec
+                except:
+                    notFoundList1.append[pSong]
+                    notFound = notFound + '\n' + pSong
+                    #continue
+                item_id = items[count]
+                treeMiniMode.item(item_id,values = (treeMiniMode.item(item_id,"values")[0],treeMiniMode.item(item_id,"values")[1],length,treeMiniMode.item(item_id,"values")[3]))
+                count = count + 1
+            for song in playlist:
+                #print("playlist")
+                if song.endswith('.m3u'):
+                    break
+                try:
+                    length,songLengthSec = getSongLength(song)
+                    playlistLengthSec = playlistLengthSec + songLengthSec
+                    remainingPlaylistLengthSec = remainingPlaylistLengthSec + songLengthSec
+                except:
+                    notFoundList2.append(song)
+                    notFound = notFound + '\n' + song
+                    #continue
+                try:
+                    item_id = items[count]#der letzte ist immer zu hoch, keine ahnung warum
+                except:
+                    pass
+                treeMiniMode.item(item_id,values = (treeMiniMode.item(item_id,"values")[0],treeMiniMode.item(item_id,"values")[1],length,treeMiniMode.item(item_id,"values")[3]))
+                count = count + 1
+            playlistLength = str(datetime.timedelta(seconds = playlistLengthSec))
+            remainingPlaylistLength = str(datetime.timedelta(seconds = remainingPlaylistLengthSec))
+            dot = playlistLength.rfind(".")
+            if dot != -1:
+                playlistLength = playlistLength[:dot]
+            dot = remainingPlaylistLength.rfind(".")
+            if dot != -1:
+                remainingPlaylistLength = remainingPlaylistLength[:dot]
+            remainingPlaylistLengthLabelMini.config(text = remainingPlaylistLength)
+            for song in notFoundList2[::-1]:
+                #print(playlist[count])
+                try:
+                    playlist.remove(song)
+                except:
+                    pass
+            for pSong in notFoundList1[::-1]:
+                #print(pPlaylist[count])
+                try:
+                    pPlaylist.remove(pSong)
+                except:
+                    pass
+            if notFoundList1 != [] or notFoundList2 != []:
+                message(2,length_for_playlist_message2_title_langtext,length_for_playlist_message2_text_langtext + notFound,"ok",0)
+                loading_stop()
+                updatePlaylist(0,0)
     except Exception as e:
+        loading_stop()
         print(e)
-    
-    if plWtitleNameTrue:
-        plW.title(plWtitleName)
-        return
-    plW.title("Playlist")
 
-def remainingLength(ForB):
+    if miniModeActive.get() == False:
+        if plWtitleNameTrue:
+            plW.title(plWtitleName)
+            loading_stop()
+            return
+        plW.title(plW_title_langtext)
+    elif miniModeActive.get() == True:
+        if plWtitleNameTrue:
+            plWminiMode.title(plWtitleName)
+            loading_stop()
+            return
+        plWminiMode.title(plW_title_langtext)
+    loading_stop()
+
+def remainingLength(ForB):#okay hier wird das noch ein problem wenn ich nicht die gesamte länge anzeige
     global remainingPlaylistLengthLabel
     global playlistLengthLabel
     remainingPlaylistLengthOld = remainingPlaylistLengthLabel["text"]
@@ -772,11 +1100,13 @@ def remainingLength(ForB):
         remainingPlaylistLengthLabel.config(text = remainingLength)
         return
     try:
+        whereSpace = remainingPlaylistLengthOld.find(" ")
+        days = remainingPlaylistLengthOld[:whereSpace - 1]
+        hours, minutes, seconds = map(int, remainingPlaylistLengthOld[-8:].split(':'))
+        remainingLengthSecOld = days * 86400 + hours * 3600 + minutes * 60 + seconds
+    except:
         hours, minutes, seconds = map(int, remainingPlaylistLengthOld.split(':'))
         remainingLengthSecOld = hours * 3600 + minutes * 60 + seconds
-    except:
-        minutes, seconds = map(int, remainingPlaylistLengthOld.split(':'))
-        remainingLengthSecOld = minutes * 60 + seconds
     length,songLengthSec = getSongLength(song)
     if ForB == "f":
         remainingLengthSec = remainingLengthSecOld - songLengthSec
@@ -789,10 +1119,17 @@ def remainingLength(ForB):
     remainingPlaylistLengthLabel.config(text = remainingLength)
 
 def playFromPlaylist():
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive.get() == False:
+        selectedItems = tree.selection()
+    elif miniModeActive.get() == True:
+        selectedItems = tree.selection()
     if len(selectedItems) > 1 or len(selectedItems) == 0:
         return
-    selectedRow = tree.item(selectedItems)
+    if miniModeActive.get() == False:
+        selectedRow = tree.item(selectedItems)
+    elif miniModeActive.get() == True:
+        selectedRow = tree.item(selectedItems)
     values = selectedRow['values']
     count = values[3]
     if count - len(pPlaylist) - 1 == 0:
@@ -815,12 +1152,19 @@ def playFromPlaylistEvent(event):
     playFromPlaylist()
 
 def delFrompllst():#delete from playlist
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive.get() == False:
+        selectedItems = tree.selection()
+    elif miniModeActive.get() == True:
+        selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     counts = []
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive.get() == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive.get() == True:
+            selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         counts.append(count)
@@ -857,18 +1201,71 @@ def delFrompllst():#delete from playlist
 def delFrompllstKey(event):
     delFrompllst()
 
+def delDuplicates():#noch fixen
+    global song
+    global playlist
+    global pPlaylist
+#    bPlaylist = pPlaylist + playlist#big playlist
+#    nPlaylist = []#new playlist
+#    [nPlaylist.append(item) for item in bPlaylist if item not in nPlaylist]
+#    where = nPlaylist.index(song)
+#    pPlaylist = nPlaylist[:where]
+#    playlist = nPlaylist[where:]
+    checkElement = []
+    newPp = []
+    newP = []
+    for element in pPlaylist:#musst dir was ausdenken, was passiert wenn ein song abgespielt wird der gerade gelöscht wurde
+    #mb kann dann entweder zum ersten vorkommen dieses songs gespielt werden oder man muss sich irgendwie anders merken wo der dann hin soll
+        try:
+            place = checkElement.index(element)#vlt brauche ich place für die idee da unten irgendwann nochmal
+        except:
+            newPp.append(element)
+            checkElement.append(element)
+    for element in playlist:
+        try:
+            place = checkElement.index(element)
+        except:
+            newP.append(element)
+            checkElement.append(element)
+    pPlaylist = []
+    playlist = []
+    for element in newPp:
+        pPlaylist.append(element)
+    for element in newP:
+        playlist.append(element)
+    updatePlaylist(0,0)#noch etwas hinzufügen, dass wenn ein duplikat gerade abgespielt wird, entweder zum nächsten song geskippt wird, oder das gecheckt wird und wenn das der fall ist, eine weitere option erscheint. generell könnte man aber auch eine option machen, die fragt, ob immer das erste vorkommnis oder ein anderes genommen werden soll
+
+def deleteAllSongs():
+    global playlist
+    global pPlaylist
+    playlist = []
+    pPlaylist = []
+    togglePlay()
+    updatePlaylist(0,0)
+
 def savePlaylist():
     global playlist
     global pPlaylist
+    global miniModeActive
     #global progressPercent
     #progress()
     #progressPercent = 100 / (len(playlist) + len(pPlaylist) + 2)
-    saveThere = asksaveasfilename(filetypes = (("Standard playlist file (older)","*.m3u"),("Standard playlist file (newer) !not yet supported!","*.m3u8"),("Text file","*.txt")))
-    if saveThere == '':
+    saveThere,selectedFilter = saveFileDialog()
+    if saveThere == "":
         return
-    elif saveThere.endswith(".m3u") != True:
-        saveThere = saveThere + ".m3u"
+    elif "(*.m3u)" in selectedFilter:
+        extension = ".m3u"
+    elif "(*.m3u8)" in selectedFilter:
+        extension = ".m3u8"
+    elif "(*.txt)" in selectedFilter:
+        extension = ".txt"
+    if saveThere.endswith(extension) == False:
+        saveThere = saveThere + extension
     lastSlash = saveThere.rfind("/")
+    if saveThere.endswith(".m3u"):
+        pllstformat = "m3u"
+    elif saveThere.endswith(".m3u8"):
+        pllstformat = "m3u8"
     playlistName = saveThere[lastSlash + 1:]
     try:#falls die playlist schon existiert, dass man sie ordentlich überschreiben kann
         with open(saveThere,"r") as file:
@@ -882,30 +1279,79 @@ def savePlaylist():
     #    makeProgress()
     #    makeProgress()
         pass
-    for element in playlist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
-    #    makeProgress()
-    for element in pPlaylist:
-        with open(saveThere, "a") as f:
-            f.write(element + '\n')
-    #    makeProgress()
-    plW.title(playlistName)
-    message(1,"Saved successfully","Saved playlist " + playlistName + " successfully","nope",2000)
+    if pllstformat == "m3u":
+        for element in pPlaylist:
+            with open(saveThere, "a") as f:
+                f.write(element + '\n')
+        for element in playlist:
+            with open(saveThere, "a") as f:
+                f.write(element + '\n')
+    elif pllstformat == "m3u8":
+        lines = []
+        lines.append("#EXTM3U\n")
+        for song in pPlaylist:
+            _,songLengthSec = getSongLength(song)
+            try:
+                dot = songLengthSec.rfind(".")
+                sognLengthSec = songLengthSec[:dot]#das hier noch fixen
+            except:
+                pass
+            title = getSongName(song)
+            artist = getSongArtist(song)
+            if title == "unknown":
+                songLS = song.rfind("/")
+                dot = song.rfind(".")
+                title = song[songLS + 1:dot]
+            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            lines.append(line)
+            lines.append(song + "\n")
+        for song in playlist:
+            _,songLengthSec = getSongLength(song)
+            try:
+                dot = songLengthSec.rfind(".")
+                sognLengthSec = songLengthSec[:dot]
+            except:
+                pass
+            title = getSongName(song)
+            artist = getSongArtist(song)
+            if title == "unknown":
+                songLS = song.rfind("/")
+                dot = song.rfind(".")
+                title = song[songLS + 1:dot]
+            line = "#EXTINF:" + str(songLengthSec) + "," + artist + " - " + title + "\n"
+            lines.append(line)
+            lines.append(song + "\n")
+        with open(saveThere,"a") as f:
+            f.writelines(lines)
+        #hier jetzt für jeden song die länge, den artist und titel herausfinden, bei nicht bekannt unknown hinschreiben und als titel den dateinamen, und halt davor #extinf
+    if miniModeActive.get() == False:
+        plW.title(playlistName)
+    elif miniModeActive.get() == True:
+        plWminiMode.title(playlistName)
+    recentFiles.insert(0,saveThere + '\n')
+    recentPlaylists.insert(0,saveThere + '\n')
+    message(1,savePlaylist_message1_title_langtext,savePlaylist_message1_text1_langtext + playlistName + savePlaylist_message1_text2_langtext,"nope",2000)#irgendwo beim einladen eine einstellung machen, dass entweder die meatdaten aus der m3u8  priorisiert werden oder die aus den audiodateien
 
 def upInPlaylist():
     global loopMove
     global playlist
     global pPlaylist
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive.get() == False:
+        selectedItems = tree.selection()
+    elif miniModeActive.get() == True:
+        selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive.get() == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive.get() == True:
+            selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         if count == 1 and loopMove.get() == False:
-            message(1,"No previous song","Do you want to move an element to the bottom of the list when it's at the top of the list and you try to move it up?","customSettings,settings;No,nope",5000)
+            message(1,upInPlaylist_message1_title_langtext,upInPlaylist_message1_text_langtext,"customSettings,settings;No,nope",5000)
             continue
         elif count == 1 and loopMove.get() == True:
             if count == len(pPlaylist) + 1:
@@ -944,15 +1390,22 @@ def downInPlaylist():
     global loopMove
     global playlist
     global pPlaylist
-    selectedItems = tree.selection()
+    global miniModeActive
+    if miniModeActive.get() == False:
+        selectedItems = tree.selection()
+    elif miniModeActive.get() == True:
+        selectedItems = treeMiniMode.selection()
     if len(selectedItems) == 0:
         return
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive.get() == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive.get() == True:
+            selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         if count == len(pPlaylist) + len(playlist) and loopMove.get() == False:
-            message(1,"No next song","Do you want to move an element to the top of the list when it's at the bottom of the list and you try to move it up?","customSettings,settings;No,nope",5000)#hier im uwu mode einen bottom witz machen xD, so wie: at the bottom (like me), idk, nur wenns funktioniert
+            message(1,downInPlaylist_message1_title_langtext,downInPlaylist_message1_text_langtext,"customSettings,settings;No,nope",5000)#hier im uwu mode einen bottom witz machen xD, so wie: at the bottom (like me), idk, nur wenns funktioniert
             continue
         elif count == len(pPlaylist)  + len(playlist) and loopMove.get() == True:
             if count == len(pPlaylist) + 1:
@@ -988,11 +1441,18 @@ def downInPlaylistKey(event):
 def topInPlaylist():
     global playlist
     global pPlaylist
-    selectedItems = tree.selection()
-    if len(selectedItems) == 0:
+    global miniModeActive
+    if miniModeActive.get() == False:
+        selectedItems = tree.selection()
+    elif miniModeActive.get() == True:
+        selectedItems = treeMiniMode.selection()
+    if len(selectedItems) == 0 or len(selectedItems) < 1:#nur vorläufig so machen, später einen fix dafür rausbringen, dass man mehrere selecten kann. vielleicht irgendwie mit einem counter track behalten, wie viele items nach unten die anderen items gerutscht sind.
         return
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive.get() == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive.get() == True:
+            selectedRow = treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         if count == 1:
@@ -1017,11 +1477,18 @@ def topInPlaylistKey(event):
 def bottomInPlaylist():
     global playlist
     global pPlaylist
-    selectedItems = tree.selection()
-    if len(selectedItems) == 0:
+    global miniModeActive
+    if miniModeActive.get() == False:
+        selectedItems = tree.selection()
+    elif miniModeActive.get() == True:
+        selectedItems = treeMiniMode.selection()
+    if len(selectedItems) == 0 or len(selectedItems) < 1:#nur vorläufig so machen, später einen fix dafür rausbringen, dass man mehrere selecten kann. vielleicht irgendwie mit einem counter track behalten, wie viele items nach oben die anderen items gerutscht sind.
         return
     for item in selectedItems:
-        selectedRow = tree.item(item)
+        if miniModeActive.get() == False:
+            selectedRow = tree.item(item)
+        elif miniModeActive.get() == True:
+            selectedRow == treeMiniMode.item(item)
         values = selectedRow['values']
         count = values[3]
         if count == len(playlist) + len(pPlaylist):
@@ -1046,19 +1513,26 @@ def bottomInPlaylistKey(event):
 def shufflePlaylist():
     global playlist
     global pPlaylist
+    global shuffleReset
     if playlist == [] and pPlaylist == []:
         return
     pSong = []
     pSong.append(playlist[0])
     del playlist[0]
-    count = len(pPlaylist)
-    while count > 0:
-        playlist.append(pPlaylist[0])
-        del pPlaylist[0]#nicht einfach del pPlaylist, weil sonst die variable selbst gelöscht wird
-        count = count - 1
-    random.shuffle(playlist)
-    playlist.insert(0,pSong[0])
-    updatePlaylist(1,1)
+    if shuffleReset.get() == True:
+        count = len(pPlaylist)
+        while count > 0:
+            playlist.append(pPlaylist[0])
+            del pPlaylist[0]#nicht einfach del pPlaylist, weil sonst die variable selbst gelöscht wird
+            count = count - 1
+        random.shuffle(playlist)
+        playlist.insert(0,pSong[0])
+        updatePlaylist(1,1)
+    else:
+        random.shuffle(playlist)
+        random.shuffle(pPlaylist)
+        playlist.insert(0,pSong[0])
+        updatePlaylist(len(pPlaylist) + 1,len(pPlaylist) + 1)
 
 def changeVolume(event):
     global volumePressed
@@ -1076,7 +1550,7 @@ def changeVolume(event):
         except:
             pass
 
-def changeVolumeUpKey(event):
+def changeVolumeUp():
     volumeText = volume.get()
     if volumeText > 0:
         volume.set(volumeText - 1)
@@ -1085,7 +1559,7 @@ def changeVolumeUpKey(event):
         #volumeSlider.set(volumeText)#geht automatisch
         volumeInfo.config(text = volumeText + 1)
 
-def changeVolumeDownKey(event):
+def changeVolumeDown():
     volumeText = volume.get()
     if volumeText < 100:
         volume.set(volumeText + 1)
@@ -1093,6 +1567,12 @@ def changeVolumeDownKey(event):
         player.audio_set_volume(volumeText - 1)
         #volumeSlider.set(volumeText)#geht automatisch
         volumeInfo.config(text = volumeText - 1)
+
+def changeVolumeUpKey(event):
+    changeVolumeUp()
+
+def changeVolumeDownKey(event):
+    changeVolumeDown()
 
 def volumePressedTrue(event):
     global volumePressed
@@ -1111,32 +1591,35 @@ def volumePressedFalse(event):
 
 #for extra window space
 #def makeWindowBigger():
-#    global rootWidth
-#    while rootWidth < 100:
-#        rootWidth = rootWidth + 1
-#        rootWidthStr = str(rootWidth)
-#        root.geometry(rootWidthStr + 'x360+100+100')
+#    global main_windowWidth
+#    while main_windowWidth < 100:
+#        main_windowWidth = main_windowWidth + 1
+#        main_windowWidthStr = str(main_windowWidth)
+#        main_window.geometry(main_windowWidthStr + 'x360+100+100')
 
 #system functions
 def infoWE():
-    extraWindow.title("Info & help")
+    extraWindow.title(infoWE_extraWindow_title_langtext)
     versionFrame = ttk.Frame(extraWindow)
     versionFrame.pack(side = tk.BOTTOM,fill = tk.X)
     licenseAttributionFrame = ttk.Frame(extraWindow)
     licenseAttributionFrame.pack(side = tk.TOP,fill = tk.X)
-    changelogButton = ttk.Button(versionFrame,text = "Changelog and beta feedback",command = lambda: (windowExtra("Changelog")))
+    changelogButton = ttk.Button(versionFrame,text = infoWE_changelogButton_text_langtext,command = lambda: (windowExtra("Changelog")))
     changelogButton.pack(side = tk.RIGHT)
-    version = ttk.Label(versionFrame,text = "Version 1.0 BETA 7")
+    version = ttk.Label(versionFrame,text = "Version 1.0_2")
     version.pack(fill = tk.X)
-    attributions = ttk.Button(licenseAttributionFrame,text = "Attributions",command = lambda: (windowExtra("attributions")))
+    attributions = ttk.Button(licenseAttributionFrame,text = infoWE_attributions_text_langtext,command = lambda: (windowExtra("attributions")))
     attributions.pack(side = tk.RIGHT)
-    licenseButton = ttk.Button(licenseAttributionFrame,text = "License",command = lambda: (windowExtra("License")))
+    licenseButton = ttk.Button(licenseAttributionFrame,text = infoWE_licenseButton_text_langtext,command = lambda: (windowExtra("License")))
     licenseButton.pack(side = tk.LEFT)#,fill = tk.X)
     licenseText = ttk.Label(licenseAttributionFrame,text = "GLP Version 2")
     licenseText.pack()#fill = tk.X,anchor = tk.CENTER)
     bSeparator = ttk.Separator(extraWindow,orient = 'horizontal')#bottom separator
     bSeparator.pack(side = tk.BOTTOM,fill = tk.X)
-    filepath = os.path.join(dirname,"texts/info.txt")
+    if language == "English":
+        filepath = os.path.join(dirname,"texts/info_English.txt")
+    if language == "Deutsch":
+        filepath = os.path.join(dirname,"texts/info_Deutsch.txt")
     with open(filepath,'r') as file:
         lines = file.readlines()
     infoTextText = ""
@@ -1149,15 +1632,29 @@ def infoWE():
 
 def settingsWE():
     extraWindow.title("Settings")
-    twoWindowsCheckbutton = ttk.Checkbutton(extraWindow,text = "Display the playlist in an extra window",command = lambda: (settings("twoWindows")),variable = twoWindows,onvalue = True,offvalue = False)
+    twoWindowsCheckbutton = ttk.Checkbutton(extraWindow,text = settingsWE_twoWindowsCheckbutton_text_langtext,command = lambda: (settings("twoWindows")),variable = twoWindows,onvalue = True,offvalue = False)
     twoWindowsCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
-    showVolumeInfoCheckbutton = ttk.Checkbutton(extraWindow,text = "Show the value of the volume slider",command = lambda: (settings("volumeSliderText")),variable = volumeSliderTextOnOff,onvalue = True,offvalue = False)
+    twoWindowsCheckbutton.config(state = "disabled")
+    showVolumeInfoCheckbutton = ttk.Checkbutton(extraWindow,text = settingsWE_showVolumeInfoCheckbutton_text_langtext,command = lambda: (settings("volumeSliderText")),variable = volumeSliderTextOnOff,onvalue = True,offvalue = False)
     showVolumeInfoCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
-    loopPlaylistCheckbutton = ttk.Checkbutton(extraWindow,text= "Loop the playlist when skipping (last song -> first song; first song <- last song)",command = lambda: (settings("loopPlaylist")),variable = loopPlaylist,onvalue = True,offvalue = False)
+    loopPlaylistCheckbutton = ttk.Checkbutton(extraWindow,text= settingsWE_loopPlaylistCheckbutton_text_langtext,command = lambda: (settings("loopPlaylist")),variable = loopPlaylist,onvalue = True,offvalue = False)
     loopPlaylistCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
-    loopMoveCheckbutton = ttk.Checkbutton(extraWindow,text = "Loop the playlist when moving elements (first song ^ last song; last song ▿ first song)",command = lambda: (settings("loopMove")),variable = loopMove,onvalue = True,offvalue = False)
+    loopMoveCheckbutton = ttk.Checkbutton(extraWindow,text = settingsWE_loopMoveCheckbutton_text_langtext,command = lambda: (settings("loopMove")),variable = loopMove,onvalue = True,offvalue = False)
     loopMoveCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
-    messageLogsButton = ttk.Button(extraWindow,text = "Message Logs",command = lambda: (windowExtra("messageLogs")))
+    filesToKeepFrame = ttk.Frame(extraWindow)
+    filesToKeepFrame.pack(side = tk.TOP,anchor = tk.NW)
+    filesToKeepLabel = ttk.Label(filesToKeepFrame,text = settingsWE_filesToKeepLabel_text_langtext)
+    filesToKeepLabel.pack(side = tk.LEFT,anchor = tk.NW)
+    filesToKeepSpinbox = ttk.Spinbox(filesToKeepFrame,from_ = 0, to = 20,textvariable = filesToKeep,command = filesToKeepChanged)
+    filesToKeepSpinbox.pack(side = tk.LEFT,anchor = tk.NW)
+    shufflePositionResetCheckbutton = ttk.Checkbutton(extraWindow,text = settingsWE_shufflePositionResetCheckbutton_text_langtext,command = lambda: (settings("shuffleReset")),variable = shuffleReset,onvalue = True,offvalue = False)
+    shufflePositionResetCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+    preferPllstDataCheckbutton = ttk.Checkbutton(extraWindow,text = "Prefer data from m3u8 files over metadata from audio files (not doing anything yet)",command = lambda: (settings("preferPllstData")),variable = preferPllstData,onvalue = True,offvalue = False)
+    preferPllstDataCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+    preferPllstDataCheckbutton.config(state = "disabled")
+    languageSelectOptionMenu = ttk.OptionMenu(extraWindow,languageStringVar,None,*languageListOptionMenu,direction = 'above',command = languageChange)#container,variable,default,values
+    languageSelectOptionMenu.pack(side = tk.TOP,anchor = tk.NW)
+    messageLogsButton = ttk.Button(extraWindow,text = settingsWE_messageLogsButton_text_langtext,command = lambda: (windowExtra("messageLogs")))
     messageLogsButton.pack(side = tk.BOTTOM,anchor = tk.W)
 
 def messageLogsWE():
@@ -1169,26 +1666,26 @@ def messageLogsWE():
     global tree1
     global tree2
     global tree3
-    extraWindow.title("Message Logs (only updates on opening)")
+    extraWindow.title(messageLogsWE_extraWindow_title_langtext)
     logs = ttk.Notebook(extraWindow)
     logs.pack(fill = tk.BOTH)
     info = ttk.Frame(logs)
     warning = ttk.Frame(logs)
     error = ttk.Frame(logs)
-    logs.add(info,text = "Infos")
-    logs.add(warning,text = "Warnings")
-    logs.add(error,text = "Errors")
+    logs.add(info,text = messageLogsWE_logs_add1_text_langtext)
+    logs.add(warning,text = messageLogsWE_logs_add2_text_langtext)
+    logs.add(error,text = messageLogsWE_logs_add3_text_langtext)
     logs.bind('<<NotebookTabChanged>>',notebookTabChange)
     logs.select(selectedLog)
     columns = ('Title','Message','Buttons','Time','count')
     tree1 = ttk.Treeview(info,columns = columns,show = 'headings')
     tree2 = ttk.Treeview(warning,columns = columns,show = 'headings')
     tree3 = ttk.Treeview(error,columns = columns,show = 'headings')
-    tree1.heading('Title',text = "Title")
-    tree1.heading('Message',text = "Message")
-    tree1.heading('Buttons',text = "Buttons")
-    tree1.heading('Time',text = "Times")
-    tree1.heading('count',text = "Nr")
+    tree1.heading('Title',text = messageLogsWE_tree1_2_3_heading1_text_langtext)
+    tree1.heading('Message',text = messageLogsWE_tree1_2_3_heading2_text_langtext)
+    tree1.heading('Buttons',text = messageLogsWE_tree1_2_3_heading3_text_langtext)
+    tree1.heading('Time',text = messageLogsWE_tree1_2_3_heading4_text_langtext)
+    tree1.heading('count',text = messageLogsWE_tree1_2_3_heading5_text_langtext)
     tree1.column('Title',width = 100)
     tree1.column('Message',width = 200)
     tree1.column('Buttons',width = 50)
@@ -1198,11 +1695,11 @@ def messageLogsWE():
     tree1.bind('<Motion>','break')
     tree1.bind('<Double-1>',messageLogClicked)
     #tree1.bind('<Enter>',messageLogClicked)
-    tree2.heading('Title',text = "Title")
-    tree2.heading('Message',text = "Message")
-    tree2.heading('Buttons',text = "Buttons")
-    tree2.heading('Time',text = "Times")
-    tree2.heading('count',text = "Nr")
+    tree2.heading('Title',text = messageLogsWE_tree1_2_3_heading1_text_langtext)
+    tree2.heading('Message',text = messageLogsWE_tree1_2_3_heading2_text_langtext)
+    tree2.heading('Buttons',text = messageLogsWE_tree1_2_3_heading3_text_langtext)
+    tree2.heading('Time',text = messageLogsWE_tree1_2_3_heading4_text_langtext)
+    tree2.heading('count',text = messageLogsWE_tree1_2_3_heading5_text_langtext)
     tree2.column('Title',width = 100)
     tree2.column('Message',width = 200)
     tree2.column('Buttons',width = 50)
@@ -1212,11 +1709,11 @@ def messageLogsWE():
     tree2.bind('<Motion>','break')
     tree2.bind('<Double-1>',messageLogClicked)
     #tree2.bind('<Enter>',messageLogClicked)
-    tree3.heading('Title',text = "Title")
-    tree3.heading('Message',text = "Message")
-    tree3.heading('Buttons',text = "Buttons")
-    tree3.heading('Time',text = "Times")
-    tree3.heading('count',text = "Nr")
+    tree3.heading('Title',text = messageLogsWE_tree1_2_3_heading1_text_langtext)
+    tree3.heading('Message',text = messageLogsWE_tree1_2_3_heading2_text_langtext)
+    tree3.heading('Buttons',text = messageLogsWE_tree1_2_3_heading3_text_langtext)
+    tree3.heading('Time',text = messageLogsWE_tree1_2_3_heading4_text_langtext)
+    tree3.heading('count',text = messageLogsWE_tree1_2_3_heading5_text_langtext)
     tree3.column('Title',width = 100)
     tree3.column('Message',width = 200)
     tree3.column('Buttons',width = 50)
@@ -1250,16 +1747,18 @@ def messageLogsWE():
         elements = messageErrorLog[element:element + 4]
         tree3.insert('',tk.END,values = (elements[0],elements[1],elements[2],str(elements[3]) + "ms",count))
         count = count + 1
-    #die scrollbars sind nd sichtbar
     #wenn man nds ausgewählt hat (halt bei der song-/playlistauswahl sollte ich denke ich das logo von der warnung zur info machen
     #außerdem sollte ich gucken, ob ich nd aus infos, warnings und erros info messages warning messages und error messages amche, oder nur bei infos/info das messages ranhänge naja gute nacht, vergiss nd das morgen mitzunehmen
 
 def attributionsWE():
-    filepath = os.path.join(dirname,"texts/attributions.txt")
+    if language == "English":
+        filepath = os.path.join(dirname,"texts/attributions_English.txt")
+    if language == "Deutsch":
+        filepath = os.path.join(dirname,"texts/attributions_Deutsch.txt")
     with open(filepath,"r") as file:
         text = file.read()
-    extraWindow.title("Attributions")
-    attributionLinksButton = ttk.Button(extraWindow,text = "Links",command = lambda: (windowExtra("attributionButtons")))
+    extraWindow.title(attributionsWE_extraWindow_title_langtext)
+    attributionLinksButton = ttk.Button(extraWindow,text = attributionsWE_attributionLinksButton_text_langtext,command = lambda: (windowExtra("attributionButtons")))
     attributionLinksButton.pack(side = tk.BOTTOM,fill = tk.X)
     attributionsText = ScrolledText(extraWindow,wrap = "word")
     attributionsText.pack(fill = tk.BOTH,side = tk.BOTTOM,anchor = tk.NW)
@@ -1267,21 +1766,42 @@ def attributionsWE():
     attributionsText.config(state = 'disabled',font = 'Helvetica 9')
 
 def attributionButtonsWE():
-    extraWindow.title("Attributions")
-    buttons = ["https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.videolan.org/","VideoLAN","https://github.com/dreamAviator","Me (dreamAviator) on GitHub"]
-    bCount = len(buttons) // 2#buttons count
-    while bCount > 0:
-        bText = buttons[-1]
-        del buttons[-1]
-        url = buttons[-1]#button text
-        del buttons[-1]
-        bCount = bCount - 1
-        attributionsButton = ttk.Button(extraWindow,text = bText,command = functools.partial(openurl,url))
-        attributionsButton.pack(side = tk.BOTTOM,fill = tk.X)
+    global buttons
+    global buttonsTree#irgendwie mehrere seiten oder so machen (7 links passen auf eine seite)
+    extraWindow.title(attributionButtonsWE_extraWindow_title_langtext)
+    pageFrame = ttk.Frame(extraWindow)
+    pageFrame.pack(side = tk.BOTTOM,fill = tk.X)
+    buttonColumns = ('Text','count','url')
+    buttonsTree = ttk.Treeview(pageFrame,columns = buttonColumns,show = 'headings')
+    buttonsTree.column('Text',stretch = True)
+    buttonsTree.column('count',width = 0,stretch = False)
+    buttonsTree.column('url',width = 0,stretch = False)
+    buttonsTree.pack(side = tk.LEFT,fill = tk.BOTH,expand = True)
+    buttonsTree.bind('<Double-1>',attributionButtonClicked)
+    buttonsScrollbar = ttk.Scrollbar(pageFrame,orient = tk.VERTICAL,command = buttonsTree.yview)
+    buttonsTree.configure(yscroll = buttonsScrollbar.set)
+    buttonsScrollbar.pack(side = tk.RIGHT,fill = tk.Y)
+    count = 0
+    counttwo = 0
+    urls = []
+    buttons = ["https://github.com/dreamAviator","Me (dreamAviator) on GitHub","https://www.videolan.org/","VideoLAN","https://icon-icons.com/","Icon-Icons","https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/","Dirtyworks on Icon-Icons","https://www.flaticon.com","Flaticon","https://www.flaticon.com/authors/william-richon","William Richon on Flaticon","https://www.flaticon.com/authors/pixel-perfect","Pixel perfect","https://www.flaticon.com/authors/freepik","Freepik on Flaticon","https://www.flaticon.com/authors/karthiks-18","karthiks_18 on Flaticon","https://www.flaticon.com/authors/iconjam","Iconjam on Flaticon","https://openclipart.org/artist/JoelM","JoelM","https://www.flaticon.com/authors/smashicons","Smashicons on FLaticon"]
+    for item in buttons[1::2]:
+        buttonsTree.insert('',tk.END,values = (item,count,buttons[counttwo]))
+        counttwo = counttwo + 2#hier doch knöpfe in einem scrollable canvas machen
+
+def attributionButtonClicked(event):
+    selectedItems = buttonsTree.selection()
+    row = buttonsTree.item(selectedItems)
+    values = row['values']
+    webbrowser.open(values[2])
 
 def changelogWE():
+    extraWindow.title(changelogWE_extraWindow_title_langtext)
     text = ""
-    filepath = os.path.join(dirname,"texts/changelog_and_feedback.txt")
+    if language == "English":
+        filepath = os.path.join(dirname,"texts/changelog_English.txt")
+    elif language == "Deutsch":
+        filepath = os.path.join(dirname,"texts/changelog_Deutsch.txt")
     with open(filepath,'r') as file:
         lines = file.readlines()
     for line in lines:
@@ -1292,6 +1812,7 @@ def changelogWE():
     textLabel.config(state = 'disabled',font = 'Helvetica 9')
 
 def licenseWE():
+    extraWindow.title(licenseWE_extraWindow_title_langtext)
     text = ""
     filepath = os.path.join(dirname,"texts/license.txt")
     with open(filepath,'r') as file:
@@ -1322,36 +1843,75 @@ def windowExtra(extraType):
     global volumeInfoExtra
     global volumeSliderExtra
     global musicSliderExtra
+    global songArtImageSmol
+    global sub_menu3
     #window
     try:
         song = playlist[0]
     except:
         pass
     songLength = "00:00"
-    songArtist = "Artist"
-    songName = "Title"
+    songArtist = songArtist_variable_langtext
+    songName = songName_variable_langtext
     try:
         extraWindow.destroy()
     except:
         pass
-    root.attributes('-alpha',0)
+    main_window.attributes('-alpha',0)
     extraWindow = tk.Toplevel()
+    extraWindow.resizable(False,False)
     if extraType == "info" or extraType == "attributions" or extraType == "attributionButtons" or extraType == "Changelog" or extraType == "License":
         icon = info_icon
     elif extraType == "settings":
         icon = settings_icon
     elif extraType == "messageLogs":
         icon = message_icon
-    root_size_etc = root.geometry()
+    main_window_size_etc = main_window.geometry()
     if platform.system() == "Windows":
         extraWindow.iconbitmap(icon)
     elif platform.system() == "Linux":
         extraWindow.iconphoto(False,icon)
-    extraWindow.geometry(root_size_etc)
+    extraWindow.geometry(main_window_size_etc)
     extraWindow.bind('<Escape>',closeExtraEvent)
     extraWindow.bind('<space>',togglePlayKey)
     extraWindow.focus()
     extraWindow.protocol("WM_DELETE_WINDOW", closeExtra)
+        #menus
+    menubar3 = tk.Menu(extraWindow)
+    extraWindow.config(menu = menubar3)
+            #file_menu
+    file_menu3 = tk.Menu(menubar3,tearoff = False)
+    file_menu3.add_command(label = windowExtra_file_menu3_command1_label_langtext,command = lambda: (addToPlaylist("no")))
+    sub_menu3 = tk.Menu(file_menu3,tearoff = False)
+    file_menu3.add_cascade(label = windowExtra_file_menu3_cascade1_label_langtext,menu = sub_menu3)
+    file_menu3.add_command(label = windowExtra_file_menu3_command2_label_langtext,command = savePlaylist)
+    file_menu3.add_command(label = windowExtra_file_menu3_command3_label_langtext,command = deleteAllSongs)
+    file_menu3.add_separator()
+    file_menu3.add_command(label = windowExtra_file_menu3_command_ME_label_langtext,command = metadataEditorStart)
+    file_menu3.add_separator()
+    file_menu3.add_command(label = windowExtra_file_menu3_command4_label_langtext,command = lambda: (windowExtra("settings")))
+    file_menu3.add_separator()
+    file_menu3.add_command(label=windowExtra_file_menu3_command5_label_langtext,command=exitProgram)
+    menubar3.add_cascade(label=windowExtra_menubar3_cascade1_label_langtext,menu=file_menu3,underline=0)
+            #view_menu
+    view_menu3 = tk.Menu(menubar3,tearoff = False)
+    view_menu3.add_command(label = windowExtra_view_menu3_command1_label_langtext,command = lambda: (settingsFmenu("volumeSliderText")))
+    view_menu3.add_command(label = windowExtra_view_menu3_command2_label_langtext,command = lambda: (settingsFmenu("twoWindows")))
+    view_menu3.entryconfig(windowExtra_view_menu3_command2_label_langtext,state = "disabled")
+    view_menu3.add_command(label = windowExtra_view_menu3_command3_label_langtext,command = lambda: (settingsFmenu("miniMode")))
+    view_menu3.entryconfig(windowExtra_view_menu3_command3_label_langtext,state = "disabled")
+    menubar3.add_cascade(label = windowExtra_menubar3_cascade2_label_langtext,menu = view_menu3,underline = 0)
+            #help_menu
+    help_menu3 = tk.Menu(menubar3,tearoff = False)
+    help_menu3.add_command(label = windowExtra_help_menu3_command1_label_langtext,command = lambda:(windowExtra("info")))
+    help_menu3.add_command(label = windowExtra_help_menu3_command2_label_langtext,command = lambda:(windowExtra("Changelog")))
+    help_menu3.add_command(label = windowExtra_help_menu3_command3_label_langtext,command = lambda:(windowExtra("License")))
+    help_menu3.add_separator()
+    help_menu3.add_command(label = windowExtra_help_menu3_command4_label_langtext,command = lambda:(windowExtra("settings")))
+    help_menu3.add_command(label = windowExtra_help_menu3_command5_label_langtext,command = lambda:(windowExtra("messageLogs")))
+    menubar3.add_cascade(label = windowExtra_menubar3_cascade3_label_langtext,menu = help_menu3,underline = 0)
+    #
+    refreshRecentFiles()
     #frames
     toolbarFrameExtra = ttk.Frame(extraWindow,width = 50)
     toolbarFrameExtra.pack(side = tk.LEFT,fill = tk.Y)
@@ -1417,10 +1977,6 @@ def windowExtra(extraType):
         songArtistTextSmol.config(text = songArtist)
         songNameTextSmol.config(text = songName)
         if songArt != "nothing":
-            jpg_image = Image.open(songArt)
-            new_size = (50,50)
-            jpg_image_resized = jpg_image.resize(new_size)
-            jpg_image_resized.save('song_cover_smol.png',format = 'PNG')
             songArtImage = tk.PhotoImage(file = 'song_cover_smol.png')
             songCoverSmol.config(image = songArtImage)
             songCoverSmol.image = songArtImage
@@ -1440,40 +1996,40 @@ def windowExtra(extraType):
     headlineSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
     headlineSeparator.pack(side = tk.TOP,fill = tk.X)
     if extraType == "info":
-        headline.config(text = "Info & help")
+        headline.config(text = windowExtra_extraType_info_headline_text_langtext)
         infoWE()
     elif extraType == "settings":
-        headline.config(text = "Settings")
+        headline.config(text = windowExtra_extraType_settings_headline_text_langtext)
         settingsWE()
     elif extraType == "messageLogs":
-        headline.config(text = "Message Logs")
-        backButton = ttk.Button(extraWindow,text = "Settings",command = lambda: (windowExtra("settings")))
+        headline.config(text = windowExtra_extraType_messageLogs_headline_text_langtext)
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_messageLogs_backButton_text_langtext,command = lambda: (windowExtra("settings")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         messageLogsWE()
     elif extraType == "attributions":
-        headline.config(text = "Attributions")
-        backButton = ttk.Button(extraWindow,text = "Info & help",command = lambda: (windowExtra("info")))
+        headline.config(text = windowExtra_extraType_attributions_headline_text_langtext)
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_attributions_backButton_text_langtext,command = lambda: (windowExtra("info")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
         attributionsWE()
     elif extraType == "attributionButtons":
-        headline.config(text = "Links")
-        backButton = ttk.Button(extraWindow,text = "Attributions",command = lambda: (windowExtra("attributions")))
+        headline.config(text = windowExtra_extraType_attributionButtons_headline_text_langtext)
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_attributionButtons_backbutton_text_langtext,command = lambda: (windowExtra("attributions")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
         attributionButtonsWE()
     elif extraType == "Changelog":
-        headline.config(text = "Changelog and feedback")
-        backButton = ttk.Button(extraWindow,text = "Info & help",command = lambda: (windowExtra("info")))
+        headline.config(text = windowExtra_extraType_Changelog_headline_text_langtext)
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_Changelog_backButton_text_langtext,command = lambda: (windowExtra("info")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
         changelogWE()
     elif extraType == "License":
         headline.config(text = "GNU GENERAL PUBLIC LICENSE Version 2")
-        backButton = ttk.Button(extraWindow,text = "Info & help",command = lambda: (windowExtra("info")))
+        backButton = ttk.Button(extraWindow,text = windowExtra_extraType_License_backButton_text_langtext,command = lambda: (windowExtra("info")))
         backButton.pack(side = tk.TOP,fill = tk.X)
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
@@ -1482,9 +2038,10 @@ def windowExtra(extraType):
 def closeExtra():
     global extraWindow
     extraWindow.destroy()
-    root.attributes('-alpha',1)
-    root.lift()
+    main_window.attributes('-alpha',1)
+    main_window.lift()
     checkLogoInverted()
+    #hier wird einfach nur restore main_window aufgerufen und oben wird main_window einmal destroyt (sieht so cursed aus mit diesem t xD)
 
 def closeExtraEvent(event):
     closeExtra()
@@ -1497,6 +2054,7 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
     global messageInfoLog
     global messageWarningLog
     global messageErrorLog
+
     if image == 1:
         messageInfoLog.append(title)
         messageInfoLog.append(message)
@@ -1522,7 +2080,10 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
         icon = error_icon
         messageType = "Error"
     else:
-        print("Yo the programmer made a mistake I'm sorry")
+        if platform.system() == "Windows":
+            toast.show_toast(title,message,duration = time,icon_path = icon,threaded = True)
+        elif platform.system() == "Linux":
+            m = notify2.Notification(title,message).show()#funktion hinzufügen, mti der man die anzeige der programmeigenen benachrichtigungen/der betriebssystem benachrichtigungen ausschalten kann. zumindest die ohne buttons
     messageWindow = tk.Toplevel()
     if platform.system() == "Windows":
         messageWindow.iconbitmap(icon)
@@ -1537,7 +2098,6 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
         messageWindow.after(time,messageWindow.destroy)
     if button == "nope":
         if time == 0:
-            print("fuck a mistake")
             return
     elif button == "ok":
         buttonFrame = ttk.Frame(messageWindow)
@@ -1576,10 +2136,15 @@ def message(image,title,message,button,time):#image bekommt: 1, 2, 3 (info, warn
         elif wTd == "settings":
             button2 = ttk.Button(buttonFrame,text = title,command = lambda: (windowExtra("settings"),messageWindow.destroy()))
             button2.pack(side = tk.RIGHT)
-    else:
-        print("Yup I made a mistake")
     messageLabel = ttk.Label(messageFrame,text = message)
     messageLabel.pack()
+
+def rcmenuCheck(event):
+    selection = tree.selection()
+    if selection == ():
+        rcmenu1.post(event.x_root,event.y_root)
+    else:
+        rcmenu2.post(event.x_root,event.y_root)
 
 def progress():
     global progressbar
@@ -1598,53 +2163,84 @@ def makeProgress():
     if progressbar['value'] < 100:
         progressbar['value'] = progressbar['value'] + progressPercent
 
-def loading():
-    global loadingWindow
-    global loading_icon_1
-    global loading_icon_2
-    global loading_icon_3
-    global loading_image_1
-    global loading_image_2
-    global loading_image_3
-    try:
-        loadingWindow.destroy()
-    except:
-        pass
-    loadingWindow = tk.Toplevel()
-    loadingWindow.geometry('500x360+100+100')
-    loadingWindow.resizable(False,False)
-    loadingLabel1 = ttk.Label(loadingWindow,image = loading_image_1)
-    loadingLabel1.pack()
-    loadingLabel2 = ttk.Label(loadingWindow,text = "Loading...")
-    loadingLabel2.pack()
-    while True:
-        loadingWindow.title("Loading...")
-        loadingWindow.iconbitmap(loading_icon_1)
-        loadingLabel1.config(image = loading_image_1)
-        loadingLabel2.config(text = "Loading...")
-        time.sleep(0.2)
-        loadingWindow.title("Loading.")
-        loadingWindow.iconbitmap(loading_icon_2)
-        loadingLabel1.config(image = loading_image_2)
-        loadingLabel2.config(text = "Loading.")
-        time.sleep(0.2)
-        loadingWindow.title("Loading..")
-        loadingWindow.iconbitmap(loading_icon_3)
-        loadingLabel1.config(image = loading_image_3)
-        loadingLabel2.config(text = "Loading..")
-        time.sleep(0.2)
-        
+def loading_Threading():
+    loading_thread = Thread(target = loading)
+    loading_thread.start()
 
-def loadingThreading():
-    loadingThread = Thread(target = loading)
-    loadingThread.start()
+def loading():
+    global main_window
+    global plW
+    global cursor_state
+    while cursor_state == "normal" and exiting != True:
+        if platform.system() == "Linux":
+            main_window.config(cursor = "watch")
+            main_window.update_idletasks()
+            plW.config(cursor = "watch")
+            plW.update_idletasks()
+            cursor_state = "loading"
+        else:
+            main_window.config(cursor = "wait")
+            main_window.update_idletasks()
+            plW.config(cursor = "wait")
+            plW.update_idletasks()
+            cursor_state = "loading"
+
+def loading_stop():
+    global cursor_state
+    while cursor_state == "loading":
+        main_window.config(cursor = "")
+        main_window.update_idletasks()
+        plW.config(cursor = "")
+        plW.update_idletasks()
+        cursor_state = "normal"
+
+
+#def loadingThreading():
+#    loadingThread = Thread(target = loading)
+#    loadingThread.start()
 
 def reverseTuple(tuple):
     newTuple = tuple[::-1]
     return newTuple
 
+def refreshRecentFiles():
+    global sub_menu1
+    global sub_menu21
+    global sub_menu22
+    global sub_menu3
+    global recentFiles
+    global recentSongs
+    global recentPlaylists
+    global playlist
+    global pPlaylist
+    for filename in  recentFiles:
+        sub_menu1.delete(0,tk.END)
+    for filename in  recentSongs:
+        sub_menu21.delete(0,tk.END)
+    for filename in  recentPlaylists:
+        sub_menu22.delete(0,tk.END)
+    try:
+        for filename in  recentFiles:
+            sub_menu3.delete(0,tk.END)
+    except:
+        pass
+    count = 0
+    for filename in recentFiles:
+        sub_menu1.add_command(label=filename[:-1], command=lambda f=filename[:-1]: addToPlaylist(str(f)))#von duckduckgo gpt3.5
+        #sub_menu1.add_command(label = filename[:-2],command = lambda:(addToPlaylist(str(filename))))
+        #sub_menu1.add_command(label = filename[:-1],command = addToPlaylist(str(filename)))
+    for filename in recentSongs:
+        sub_menu21.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
+    for filename in recentPlaylists:
+        sub_menu22.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
+    try:
+        for filename in recentFiles:
+            sub_menu3.add_command(label = filename[:-1],command = lambda f=filename[:-1]: addToPlaylist(str(f)))
+    except:
+        pass
+
 def buildTwoWindows(ToF):
-    message(1,"Not yet supported","This does not work yet.\nRight now you can only have the playlist in an extra Window","ok",5000)
+    message(1,buildTwoWindows_message1_title_langtext,buildTwoWindows_message1_text_langtext,"ok",5000)
 
 def buildVolumeSliderText(ToF):
     global volumeSlider
@@ -1668,8 +2264,13 @@ def buildVolumeSliderText(ToF):
     if ToF == True:
         volumeInfo = ttk.Label(toolbarFrame,text = volumeText)
         volumeInfo.pack(side = tk.TOP)
-        volumeInfoExtra = ttk.Label(toolbarFrameExtra,text = volumeText)
-        volumeInfoExtra.pack(side = tk.TOP)
+        try:
+            volumeInfoExtra = ttk.Label(toolbarFrameExtra,text = volumeText)
+            volumeInfoExtra.pack(side = tk.TOP)
+        except:
+            pass
+    else:
+        volumeSliderText = "False"
     volumeSlider = ttk.Scale(toolbarFrame,variable = volume,from_ = 0,to = 100,orient = 'vertical')
     volumeSlider.bind("<Motion>",changeVolume)
     volumeSlider.bind("<ButtonRelease-1>",volumePressedFalse)
@@ -1683,6 +2284,184 @@ def buildVolumeSliderText(ToF):
         volumeSliderExtra.pack(side = tk.BOTTOM,fill = tk.Y,expand = True,pady = 10)
     except:
         pass
+
+def buildMiniMode_main_window(event):
+    global numberforminimode_main_window
+    numberforminimode_main_window = numberforminimode_main_window + 1
+    if numberforminimode_main_window == 21:
+        numberforminimode_main_window = 1
+        buildMiniMode()
+
+def buildMiniMode_plW(event):
+    global numberforminimode_plW
+    numberforminimode_plW = numberforminimode_plW + 1
+    if numberforminimode_plW == 26:
+        numberforminimode_plW = 1
+        buildMiniMode()
+
+def buildMiniMode():
+    message(1,buildMiniMode_message1_title_langtext,buildMiniMode_message1_text_langtext,"ok",5000)
+    return
+    global main_window
+    global plW
+    global main_window_size
+    global plW_size
+    global exit_button_image
+    global rewind_button_image_smol
+    global forward_button_image_smol
+    global play_image_smol
+    global pause_image_smol
+    global song_cover_image_smol
+    global remainingPlaylistLength
+    global songName
+    global songArtist
+    global songLength
+    global songPosition
+    global songLengthSeconds
+    global plstSelection
+    global songCoverMini
+    global songLengthTextMini
+    global songTitleLabelMini
+    global songArtistLabelMini
+    global songPositionTextMini
+    global musicSliderMini
+    global plWminiMode
+    global treeMiniMode
+    global miniModeActive
+    global remainingPlaylistLengthLabelMini
+    global playlistSelectionLabelMini
+    global togglePlayButtonMini
+    global songArtImageSmol
+    miniModeActive = True
+    main_window_size = main_window.geometry()
+    plW_size = plW.geometry()
+    main_window.destroy()
+    plW.destroy()
+    x_pos = main_window_size.find('x')
+    firstplus_pos = main_window_size.find('+')
+    secondplus_pos = main_window_size.rfind('+')
+    main_window_size_1 = main_window_size[:x_pos + 1]
+    main_window_size_2 = main_window_size[firstplus_pos + 1:secondplus_pos]
+    miniModeSize = main_window_size_1 + "82+" + main_window_size_2 + "+380"
+    miniModeWindow = tk.Toplevel()
+    miniModeWindow.geometry(miniModeSize)
+    miniModeWindow.title(buildMiniMode_miniModeWindow_title_langtext)
+    #iconshit
+    miniModeWindow.protocol("WM_DELETE_WINDOW",exitProgram)
+    #Frames
+    musicControlFrameMini = ttk.Frame(miniModeWindow,height = 50)
+    musicControlFrameMini.pack(side = tk.BOTTOM,fill = tk.X)
+        #musicControlFrame
+    musicControlFrameMiniL = ttk.Frame(musicControlFrameMini,width = 50)
+    musicControlFrameMiniL.pack(side = tk.LEFT)
+    musicControlFrameMiniR = ttk.Frame(musicControlFrameMini,width = 300)
+    musicControlFrameMiniR.pack(side = tk.RIGHT)
+    musicInfoFrameMini2_1 = ttk.Frame(musicControlFrameMini)
+    musicInfoFrameMini2_1.pack(side = tk.TOP,fill = tk.X)
+    musicInfoFrameMini2_2 = ttk.Frame(musicControlFrameMini)
+    musicInfoFrameMini2_2.pack(side = tk.BOTTOM,fill = tk.X)
+    musicInfoFrameMini1 = ttk.Frame(miniModeWindow)
+    musicInfoFrameMini1.pack(side = tk.BOTTOM,fill = tk.X)
+    #not frames xD
+        #musicControlFrameMiniL
+    songCoverMini = ttk.Label(musicControlFrameMiniL,image = song_cover_image_smol)
+    songCoverMini.pack()
+        #musicControlFrameMiniR
+    exitButtonMini = ttk.Button(musicControlFrameMiniR,image = exit_button_image,command = restorenormal_mode)
+    exitButtonMini.pack(side = tk.RIGHT)
+    forwardButtonMini = ttk.Button(musicControlFrameMiniR,image = forward_button_image_smol,command = fastForward)
+    forwardButtonMini.pack(side = tk.RIGHT)
+    togglePlayButtonMini = ttk.Button(musicControlFrameMiniR,image = play_image_smol,command = togglePlay)
+    togglePlayButtonMini.pack(side = tk.RIGHT)
+    rewindButtonMini = ttk.Button(musicControlFrameMiniR,image = rewind_button_image_smol,command = rewindSong)
+    rewindButtonMini.pack(side = tk.RIGHT)
+    checkLogoInverted()
+        #musicInfoFrameMini1
+    songPositionTextMini = ttk.Label(musicInfoFrameMini1,text = songPosition)
+    songPositionTextMini.pack(side = tk.LEFT)
+    songLengthTextMini = ttk.Label(musicInfoFrameMini1,text = songLength)
+    songLengthTextMini.pack(side = tk.RIGHT)
+    musicSliderMini = ttk.Scale(musicInfoFrameMini1,variable = sliderVarMini,from_ = 0,to = songLengthSeconds,orient = 'horizontal')
+    musicSliderMini.bind("<Motion>",sliderChangePos)
+    musicSliderMini.bind("<ButtonRelease-1>",sliderChange)
+    musicSliderMini.bind("<ButtonPress-1>",sliderPressedTrue)
+    musicSliderMini.pack(side = tk.BOTTOM,fill = tk.X,expand = True)
+        #musicInfoFrameMini2_1
+    songTitleLabelMini = ttk.Label(musicInfoFrameMini2_1,text = songName)
+    songTitleLabelMini.pack(side = tk.LEFT)
+    songArtistLabelMini = ttk.Label(musicInfoFrameMini2_1,text = songArtist)
+    songArtistLabelMini.pack(sid = tk.RIGHT)
+        #musicInfoFrameMini2-2
+    playlistSelectionLabelMini = ttk.Label(musicInfoFrameMini2_2,text = plstSelection)
+    playlistSelectionLabelMini.pack(side = tk.LEFT)
+    remainingPlaylistLengthLabelMini = ttk.Label(musicInfoFrameMini2_2,text = remainingPlaylistLength)
+    remainingPlaylistLengthLabelMini.pack(side = tk.RIGHT)
+    try:
+        songLength,songLengthSec = getSongLength(song)
+        songArtist = getSongArtist(song)
+        songName = getSongName(song)
+        songArt = getSongArt(song)
+        musicSliderExtra.config(to = songLengthSec)
+        songLengthTextSmol.config(text = songLength)
+        songLS = song.rfind("/")#song last slash
+        songFilename = song[songLS + 1:]
+        songArtistTextSmol.config(text = songArtist)
+        songNameTextSmol.config(text = songName)
+        if songArt != "nothing":
+            songArtImage = tk.PhotoImage(file = 'song_cover_smol.png')#warum klappt das hier nicht!?!?!
+            songCoverMini.config(image = songArtImageSmol)
+            songCoverMini.image = songArtImageSmol
+        if songArtist == 'unknown':
+            songArtistLabelMini.config(text = songFilename)
+            if songName == 'unknown':
+                songTitleLabelMini.config(text = '')
+            else:
+                songTitleLabelMini.config(text = songName)
+        elif songName == 'unknown':
+            songNameTitleLabelMini.config(text = songFilename)
+    except:
+        pass
+    plWminiMode = tk.Toplevel()
+    main_window_size_2_int = int(main_window_size_2)
+    main_window_size_2_int = main_window_size_2_int + 500
+    main_window_size_2_str = str(main_window_size_2_int)
+    plWminiMode.geometry(main_window_size_1 + "82+" + main_window_size_2_str + "+380")
+    plWminiMode.title("Playlist")
+    #iconshit
+    plWminiMode.protocol("WM_DELETE_WINDOW",exitProgram)
+    plWminiMode.bind("<Delete>",delFrompllstKey)
+    plWminiMode.bind("<Up>",upInPlaylistKey)
+    plWminiMode.bind("<Down>",downInPlaylistKey)
+    plWminiMode.bind("<Left>",topInPlaylistKey)
+    plWminiMode.bind("<Right>",bottomInPlaylistKey)
+    #playlist
+    columns = ('Title','Artist','length','count')
+    treeMiniMode = ttk.Treeview(plWminiMode,columns = columns,show = 'headings')
+    treeMiniMode.heading('Title',text = buildMiniMode_treeMiniMode_heading1_text_langtext)
+    treeMiniMode.heading('Artist',text = buildMiniMode_treeMiniMode_heading2_text_langtext)
+    treeMiniMode.heading('length',text = buildMiniMode_treeMiniMode_heading3_text_langtext)
+    treeMiniMode.column('Title',width = 217)
+    treeMiniMode.column('Artist',width = 217)
+    treeMiniMode.column('length',width = 50)
+    treeMiniMode.column('count',width = 0,stretch = False)
+    treeMiniMode.tag_configure("playing", foreground="green")
+    treeMiniMode.tag_configure("not_playing",foreground = "black")
+    treeMiniMode.pack(side = tk.LEFT,fill = tk.Y)
+    treeMiniMode.bind('<Motion>','break')
+    treeMiniMode.bind('<Double-1>',playFromPlaylistEvent)
+    scrollbarMiniMode = ttk.Scrollbar(plWminiMode,orient = tk.VERTICAL,command = treeMiniMode.yview)
+    treeMiniMode.configure(yscroll = scrollbarMiniMode.set)
+    scrollbarMiniMode.pack(side = tk.RIGHT,fill = tk.Y)
+    updatePlaylist(0,0)
+
+def restorenormal_mode():
+    pass
+
+def restoremain_window():
+    pass
+
+def restorePlW():
+    pass
 
 def messageLogClicked(event):
     global tree1
@@ -1722,12 +2501,12 @@ def messageLogClicked(event):
         time = values[3]
         count = values[4]
         if time == "0ms":
-            timeText = "Doesn't close automatically"
+            timeText = messageLogClicked_time0_timeText_langtext
         else:
             timeText = time
         time = int(time[:-2])
         messageInfo = tk.Toplevel()
-        messageInfo.title("Message Details | " + messageType + " " + str(count))
+        messageInfo.title(messageLogClicked_messageInfo_title_langtext + messageType + " " + str(count))
         messageInfo.resizable(False,False)#message_icon
         if platform.system() == "Windows":
             messageInfo.iconbitmap(message_icon)
@@ -1736,33 +2515,119 @@ def messageLogClicked(event):
         messageInfo.focus()
         buttonFrame = ttk.Frame(messageInfo)
         buttonFrame.pack(side = tk.BOTTOM,fill = tk.X)
-        messageDetails = ttk.Label(messageInfo,text = "Message Details")
+        messageDetails = ttk.Label(messageInfo,text = messageLogClicked_messageDetails_text_langtext)
         messageDetails.pack(side = tk.TOP,anchor = tk.NW)
         separator1 = ttk.Separator(messageInfo,orient = 'horizontal')
         separator1.pack(side = tk.TOP,fill = tk.X)
-        messageImageText = ttk.Label(messageInfo,text = "Icon:\n" + icon)
+        messageImageText = ttk.Label(messageInfo,text = messageLogClicked_messageImageText_text_langtext + icon)
         messageImageText.pack(side = tk.TOP,anchor = tk.NW)#maybe das wieder messageimage nennen, wenn du dich entscheiden hast, kein bild anzuezeigen
         #messageImage = ttk.Label(messageInfo,image = icon)
         #messageImage.pack(side = tk.TOP,anchor = tk.NW)
-        messageTitle = ttk.Label(messageInfo,text = "Title:\n" + title)
+        messageTitle = ttk.Label(messageInfo,text = messageLogClicked_messageTitle_text_langtext + title)
         messageTitle.pack(side = tk.TOP,anchor = tk.NW)
-        messageMessage = ttk.Label(messageInfo,text = "Message:\n" + messageText)
+        messageMessage = ttk.Label(messageInfo,text = messageLogClicked_messageMessage_text_langtext + messageText)
         messageMessage.pack(side = tk.TOP,anchor = tk.NW)
-        messageButtons = ttk.Label(messageInfo,text = "Buttons:\n" + buttons)
+        messageButtons = ttk.Label(messageInfo,text = messageLogClicked_messageButtons_text_langtext + buttons)
         messageButtons.pack(side = tk.TOP,anchor = tk.NW)
-        messageTime = ttk.Label(messageInfo,text = "Time:\n" + timeText)
+        messageTime = ttk.Label(messageInfo,text = messageLogClicked_messageTime_text_langtext + timeText)
         messageTime.pack(side = tk.TOP,anchor = tk.NW)
         separator2 = ttk.Separator(messageInfo,orient = 'horizontal')
         separator2.pack(side = tk.TOP,fill = tk.X)
-        previewButton = ttk.Button(buttonFrame,text = "Preview message",command = lambda: (message(iconNR,title,messageText,buttons,time)))
+        previewButton = ttk.Button(buttonFrame,text = messageLogClicked_previewButton_text_langtext,command = lambda: (message(iconNR,title,messageText,buttons,time)))
         previewButton.pack(side = tk.RIGHT,anchor = tk.NW)#vielleicht als text nur Preview und nd preview message
-        closeButton = ttk.Button(buttonFrame,text = "Close",command = messageInfo.destroy)
+        closeButton = ttk.Button(buttonFrame,text = messageLogClicked_closeButton_text_langtext,command = messageInfo.destroy)
         closeButton.pack(side = tk.LEFT,anchor = tk.NW)
 
 def notebookTabChange(event):
     global logs
     global selectedLog
     selectedLog = str(logs.index("current"))
+
+def filesToKeepChanged():
+    global filesToKeep
+    global recentFiles
+    global recentSongs
+    global recentPlaylists
+    howmany = filesToKeep.get()
+    filepath = os.path.join(dirname,"texts/settings.txt")
+    with open(filepath,'r') as file:
+        lines = file.readlines()
+    lines[5] = str(howmany) + '\n'
+    with open(filepath,'w') as file:
+        file.writelines(lines)
+    temp_list = []
+    count = howmany
+    while count > 0:
+        try:
+            temp_list.insert(0,recentFiles[count - 1])
+        except:
+            temp_list.insert(0,"empty file\n")
+        count = count - 1
+    recentFiles = []
+    recentFiles = temp_list
+    temp_list = []
+    count = howmany
+    while count > 0:
+        try:
+            temp_list.insert(0,recentSongs[count - 1])
+        except:
+            temp_list.insert(0,"empty file\n")
+        count = count - 1
+    recentSongs = []
+    recentSongs = temp_list
+    temp_list = []
+    count = howmany
+    while count > 0:
+        try:
+            temp_list.insert(0,recentPlaylists[count - 1])
+        except:
+            temp_list.insert(0,"empty file\n")
+        count = count - 1
+    recentPlaylists = []
+    recentPlaylists = temp_list
+    filepath = os.path.join(dirname,"texts/recent_files.txt")
+    with open(filepath,'r') as file:
+        lines = file.readlines()
+    del lines
+    lines = recentFiles
+    with open(filepath,'w') as file:
+        file.writelines(lines)
+    filepath = os.path.join(dirname,"texts/recent_songs.txt")
+    with open(filepath,'r') as file:
+        lines = file.readlines()
+    del lines
+    lines = recentSongs
+    with open(filepath,'w') as file:
+        file.writelines(lines)
+    filepath = os.path.join(dirname,"texts/recent_playlists.txt")
+    with open(filepath,'r') as file:
+        lines = file.readlines()
+    del lines
+    lines = recentPlaylists
+    with open(filepath,'w') as file:
+        file.writelines(lines)
+    refreshRecentFiles()
+
+def settingsFmenu(setting):
+    if setting == "volumeSliderText":
+        volumeSliderText = volumeSliderTextOnOff.get()
+        if volumeSliderText == False:
+            volumeSliderTextOnOff.set("True")
+        else:
+            volumeSliderTextOnOff.set("False")
+    elif setting == "twoWindows":
+        twoWindowsText = twoWindows.get()
+        if twoWindowsText == False:
+            twoWindows.set("True")
+        else:
+            twoWindows.set("False")
+    elif setting == "miniMode":
+        miniModeActiveText = miniModeActive.get()
+        if miniModeActiveText == False:
+            miniModeActive.set("True")
+        else:
+            miniModeActive.set("False")
+    settings(setting)
 
 def settings(setting):
     global loopPlaylist
@@ -1806,13 +2671,932 @@ def settings(setting):
             buildTwoWindows(True)
         lines[4] = ""
         lines[4] = twoWindowsText + '\n'
+    elif setting == "miniMode":
+        miniModeActiveText = miniModeActive.get()
+        if miniModeActiveText == False:
+            miniModeActiveText = ""
+            buildMiniMode(False)
+        else:
+            miniModeActiveText = "True"
+            buildMiniMode(True)
+        lines[6] = ""
+        lines[6] = miniModeActiveText + '\n'
+    elif setting == "shuffleReset":
+        shuffleResetText = shuffleReset.get()
+        if shuffleResetText == False:
+            shuffleResetText = ""
+        else:
+            shuffleResetText = "True"
+        lines[7] = ""
+        lines[7] = shuffleResetText + '\n'
+    elif setting == "notebookTabMEChange":
+        lines[8] = ""
+        lines[8] = str(notebookTabME) + '\n'
+    elif setting == "preferPllstData":
+        preferPllstDataText = preferPllstData.get()
+        if preferPllstDataText == False:
+            preferPllstDataText = ""
+        else:
+            preferPllstDataText = "True"
+        lines[9] = ""
+        lines[9] = preferPllstDataText + '\n'
+    elif setting == "copyFileVarME":
+        copyFileVarMEText = copyFileVarME.get()
+        if copyFileVarMEText == False:
+            copyFileVarMEText = ""
+        else:
+            copyFileVarMEText = "True"
+        lines[10] = ""
+        lines[10] = copyFileVarMEText + '\n'
+    elif setting == "copyFileVarME":
+        resetTitleVarText = resetTitleVar.get()
+        if resetTitleVarText == False:
+            resetTitleVarText = ""
+        else:
+            resetTitleVarText = "True"
+        lines[11] = ""
+        lines[11] = resetTitleVarText + '\n'
+    elif setting == "copyFileVarME":
+        resetInterpreterVarText = resetInterpreterVar.get()
+        if resetInterpreterVarText == False:
+            resetInterpreterVarText = ""
+        else:
+            resetInterpreterVarText = "True"
+        lines[12] = ""
+        lines[12] = resetInterpreterVarText + '\n'
+    elif setting == "copyFileVarME":
+        resetAlbumVarText = resetAlbumVar.get()
+        if resetAlbumVarText == False:
+            resetAlbumVarText = ""
+        else:
+            resetAlbumVarText = "True"
+        lines[13] = ""
+        lines[13] = resetAlbumVarText + '\n'
     with open(filepath,'w') as file:
         file.writelines(lines)
 
+#metadata editor
+def editMetadataOfSelected():#hier noch machen, dass wenn nur eine datei ausgewählt ist, diese in single edit eingeladen wird
+    toEdit = []
+    global miniModeActive
+    if miniModeActive.get() == False:
+        selectedItems = tree.selection()
+    elif miniModeActive.get() == True:
+        selectedItems = treeMiniMode.selection()
+    if len(selectedItems) == 0:
+        return
+    counts = []
+    for item in selectedItems:
+        if miniModeActive.get() == False:
+            selectedRow = tree.item(item)
+        elif miniModeActivee.get() == True:
+            selectedRow = treeMiniMode.item(item)
+        values = selectedRow['values']
+        count = values[3]
+        counts.append(count)
+    for count in counts:
+        if count <= len(pPlaylist):
+            toEdit.append(pPlaylist[count - 1])
+        elif count - len(pPlaylist) - 1 == 0:
+            toEdit.append(playlist[0])
+        else:
+            toEdit.append(playlist[count - len(pPlaylist) - 1])
+    loadFilesP2(toEdit)
+    metadataEditorStart()
+
+def metadataEditorStart():
+    if metadataWindow.wm_state() == "withdrawn":
+        metadataWindow.deiconify()
+        namePattern.set(namePatternEntryBEME.get())
+        #namePatternEntryBEME.config(textvariable = namePattern)
+    else:
+        metadataWindow.withdraw()
+
+def loadFilesP1():#part1
+    global filenamesME
+    loadFilesP2(openFilesDialogME())
+
+def loadFilesP2(filenamesMEtemp):
+    for filename in filenamesMEtemp:
+        if filename not in filenamesME:
+            filenamesME.append(filename)
+    updateSelectedFilesTree(filenamesME)
+
+def updateSelectedFilesTree(filenamesME):
+    for item in selectedFilesTreeBEME.get_children():
+        selectedFilesTreeBEME.delete(item)
+    for item in selectedFilesTreeREME.get_children():
+        selectedFilesTreeREME.delete(item)
+    fileCountTextBEME.config(text = str(len(filenamesME)) + updateSelectedFilesTree_fileCountTextBEME_text_langtext)
+    fileCountTextREME.config(text = str(len(filenamesME)) + updateSelectedFilesTree_fileCountTextREME_text_langtext)
+    for filename in filenamesME:
+        tupel = (filename,)
+        selectedFilesTreeBEME.insert('',tk.END,values = (tupel))
+        selectedFilesTreeREME.insert('',tk.END,values = (tupel))
+
+def deleteFiles():
+    selectedItems = selectedFilesTreeBEME.selection()
+    for item in selectedItems:
+        where = filenamesME.index(selectedFilesTreeBEME.item(item,"values")[0])
+        del filenamesME[where]
+        selectedFilesTreeBEME.delete(item)
+    selectedItems = selectedFilesTreeREME.selection()
+    for item in selectedItems:
+        where = filenamesME.index(selectedFilesTreeREME.item(item,"values")[0])
+        del filenamesME[where]
+        selectedFilesTreeREME.delete(item)
+    updateSelectedFilesTree(filenamesME)
+
+def loadFileSEME():
+    global filenameME
+    global currentImageME
+    currentImageME = "default"
+    filenameMEtemp = openFileDialog()
+    if filenameMEtemp == "":
+        return
+    filenameME = filenameMEtemp
+    selectFileButtonSEME.config(text = filenameME)
+    lastSlash = filenameME.rfind("/")
+    filenameMEname = filenameME[lastSlash + 1:]
+    title,interpreter,album,_,cover = getMetadataME(filenameME)
+    if title == None:
+        title = "None"
+    if interpreter == None:
+        interpreter = "None"
+    if album == None:
+        album = "None"
+    titleString,interpreterString,albumString = makeMetadataToStringME(title,interpreter,album)
+    fileInfoTreeSEME.item("filename",values = (loadFileSEME_fileInfoTreeSEME_item1_values1_langtext,filenameMEname))
+    fileInfoTreeSEME.item("title",values = (loadFileSEME_fileInfoTreeSEME_item2_values1_langtext,titleString))
+    fileInfoTreeSEME.item("interpret",values = (loadFileSEME_fileInfoTreeSEME_item3_values1_langtext,interpreterString))
+    fileInfoTreeSEME.item("album",values = (loadFileSEME_fileInfoTreeSEME_item4_values1_langtext,albumString))
+    if cover != None:
+        jpg_image = pilImage.open(cover)
+        new_size = (100,100)
+        jpg_image_resized = jpg_image.resize(new_size)
+        jpg_image_resized.save(os.path.join(dirname,'icons/song_cover_me.png'),format = 'PNG')
+        songCoverImageMEnew = tk.PhotoImage(file = os.path.join(dirname,'icons/song_cover_me.png'))
+        songCoverButtonME.image = songCoverImageMEnew
+        songCoverButtonME.config(image = songCoverImageMEnew)
+    else:
+        songCoverButtonME.image = songCoverImageME
+        songCoverButtonME.config(image = songCoverImageME)
+
+def loadImageME():
+    global newCoverMEfilepath
+    global currentImageME
+    filenameMEtemp = openFileDialog()
+    if filenameMEtemp == "":
+        return
+    currentImageME = "custom"
+    newCoverMEfilepath = filenameMEtemp
+    newCoverME = pilImage.open(filenameMEtemp)
+    newCoverME.save(os.path.join(dirname,'icons/new_song_cover_me.png'),format = 'PNG')
+    imagePreview_old_size_ME = pilImage.open(filenameMEtemp)
+    new_size = (100,100)
+    imagePreviewME = imagePreview_old_size_ME.resize(new_size)
+    imagePreviewME.save(os.path.join(dirname,'icons/new_song_cover_preview_me.png'),format = 'PNG')
+    newSongCoverPreviewImageME = tk.PhotoImage(file = os.path.join(dirname,'icons/new_song_cover_preview_me.png'))
+    songCoverButtonME.image = newSongCoverPreviewImageME
+    songCoverButtonME.config(image = newSongCoverPreviewImageME)
+
+def start():
+    global saveDirectoryME
+    global filenamesME
+    selectedMode = modesME.index(modesME.select())
+    if selectedMode == 2:
+        singleEditMEoperation()
+        updatePlaylist(0,0)
+        return
+    filenamesMEtwo = []
+    if saveDirectoryME == "":
+        message(2,start_message1_title_langtext,start_message1_text_langtext,"ok",5000)
+        return
+    if filenamesME == []:
+        message(2,start_message2_title_langtext,start_message2_text_langtext,"ok",5000)
+        return
+    for song in filenamesME:
+        lastslash = song.rfind("/")
+        songName = song[lastslash + 1:]
+        shutil.copy(song,saveDirectoryME + "/" + songName)
+        filenamesMEtwo.append(saveDirectoryME + "/" + songName)
+    if selectedMode == 1:
+        batchEditMEoperation(filenamesME,filenamesMEtwo)
+    elif selectedMode == 3:
+        renameMEoperation(filenamesMEtwo)
+    for indexOne,filename in enumerate(filenamesME):
+        for indexTwo,pllstFile in enumerate(playlist):#playlistFile
+            if filename == pllstFile:
+                del playlist[indexTwo]
+                playlist.insert(indexTwo,filenamesMEtwo[indexOne])
+    for indexOne,filename in enumerate(filenamesME):
+        for indexTwo,pllstFile in enumerate(pPlaylist):#playlistFile
+            if filename == pllstFile:
+                del pPlaylist[indexTwo]
+                pPlaylist.insert(indexTwo,filenamesMEtwo[indexOne])
+    updatePlaylist(0,0)
+
+def batchEditMEoperation(filenamesME,filenamesMEtwo):
+    pattern = namePattern.get()
+    if "%" not in pattern:
+        message(3,batchEditMEoperation_message1_title_langtext,batchEditMEoperation_message1_text_langtext,"ok",0)
+        return
+    pattern_data = []
+    while len(pattern) != 1:
+        pattern = pattern[1:]
+        where = pattern.find("%")
+        pattern_data.append(pattern[:where])
+        pattern = pattern[where:]
+    for song in filenamesMEtwo:
+        lastslash = song.rfind("/")
+        songName = song[lastslash + 1:]
+        fileExtension = songName.rfind('.')
+        title = ""
+        interpreter = ""
+        album = ""
+        songNameToEdit = songName[:-4]
+        for i in range(len(pattern_data)):
+            element = pattern_data[i]
+            if element != "t" and element != "i" and element != "a":
+                where = songNameToEdit.find(element)
+                songNameToEdit = songNameToEdit[where + len(element):]
+            else:
+                if i != len(pattern_data) - 1:
+                    elementtwo = pattern_data[i + 1]
+                    wheretwo = songNameToEdit.find(elementtwo)
+                    if element == "t":
+                        title = songNameToEdit[:wheretwo]
+                    elif element == "i":
+                        interpreter = songNameToEdit[:wheretwo]
+                    elif element == "a":
+                        album = songNameToEdit[:wheretwo]
+                else:
+                    if element == "t":
+                        title = songNameToEdit
+                    elif element == "i":
+                        interpreter = songNameToEdit
+                    elif element == "a":
+                        album = songNameToEdit
+
+        if title != "":
+            if resetTitleVar.get() == True:
+                title = ""
+            if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                audioToEdit = MP3(song)
+                try:
+                    audioToEdit.add_tags()
+                except:
+                    pass
+                audioToEdit.save()
+                audioToEdit = ID3(song)
+                audioToEdit["TIT2"] = TIT2(encoding=3, text=title)
+                audioToEdit.save()
+            elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                audioToEdit = MP4(song)
+                if audioToEdit.tags == None:
+                    audioToEdit.tags = MP4Tags()
+                audioToEdit["\xa9nam"] = title
+                audioToEdit.save()
+        else:
+            if resetTitleVar.get() == True:
+                if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = MP3(song)
+                    try:
+                        audioToEdit.add_tags()
+                    except:
+                        pass
+                    audioToEdit.save()
+                    audioToEdit = ID3(song)
+                    audioToEdit["TIT2"] = TIT2(encoding=3, text="")
+                    audioToEdit.save()
+                elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                    audioToEdit = MP4(song)
+                    if audioToEdit.tags == None:
+                        audioToEdit.tags = MP4Tags()
+                    audioToEdit["\xa9nam"] = ""
+                    audioToEdit.save()
+        if interpreter != "":
+            if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                audioToEdit = MP3(song)
+                try:
+                    audioToEdit.add_tags()
+                except:
+                    pass
+                audioToEdit.save()
+                audioToEdit = ID3(song)
+                audioToEdit["TPE1"] = TPE1(encoding=3, text=interpreter)
+                audioToEdit.save()
+            elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                audioToEdit = MP4(song)
+                if audioToEdit.tags == None:
+                    audioToEdit.tags = MP4Tags()
+                audioToEdit["\xa9ART"] = interpreter
+                audioToEdit.save()
+        else:
+            if resetInterpreterVar.get() == True:
+                if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = MP3(song)
+                    try:
+                        audioToEdit.add_tags()
+                    except:
+                        pass
+                    audioToEdit.save()
+                    audioToEdit = ID3(song)
+                    audioToEdit["TPE1"] = TPE1(encoding=3, text="")
+                    audioToEdit.save()
+                elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                    audioToEdit = MP4(song)
+                    if audioToEdit.tags == None:
+                        audioToEdit.tags = MP4Tags()
+                    audioToEdit["\xa9ART"] = ""
+                    audioToEdit.save()
+        if album != "":
+            if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                audioToEdit = MP3(song)
+                try:
+                    audioToEdit.add_tags()
+                except:
+                    pass
+                audioToEdit.save()
+                audioToEdit = ID3(song)
+                audioToEdit["TALB"] = TALB(encoding=3, text=album)
+                audioToEdit.save()
+            elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                audioToEdit = MP4(song)
+                if audioToEdit.tags == None:
+                    audioToEdit.tags = MP4Tags()
+                audioToEdit["\xa9alb"] = album
+                audioToEdit.save()
+        else:
+            if resetAlbumVar.get() == True:
+                if songName[fileExtension + 1:] == 'mp3' or songName[fileExtension + 1:] == 'MP3':
+                    audioToEdit = MP3(song)
+                    try:
+                        audioToEdit.add_tags()
+                    except:
+                        pass
+                    audioToEdit.save()
+                    audioToEdit = ID3(song)
+                    audioToEdit["TALB"] = TALB(encoding=3, text="")
+                    audioToEdit.save()
+                elif songName[fileExtension + 1:] == 'm4a' or songName[fileExtension + 1:] == 'M4A':
+                    audioToEdit = MP4(song)
+                    if audioToEdit.tags == None:
+                        audioToEdit.tags = MP4Tags()
+                    audioToEdit["\xa9alb"] = ""
+                    audioToEdit.save()
+
+def singleEditMEoperation():
+    global saveDirectoryME
+    global filenameME
+    global newCoverMEfilepath
+    global currentImageME
+    if filenameME == "":
+        message(2,singleEditMEoperation_message1_title_langtext,singleEditMEoperation_message1_text_langtext,"ok",5000)
+        return
+    if copyFileVarME.get() == True:
+        if saveDirectoryME == "":
+            message(2,singleEditMEoperation_message2_title_langtext,singleEditMEoperation_message2_text_langtext,"ok",5000)
+            return
+        lastSlash = filenameME.rfind("/")
+        filenameMEname = filenameME[lastSlash + 1:]
+        shutil.copy(filenameME,saveDirectoryME + "/" + filenameMEname)
+        filenameME = saveDirectoryME + "/" + filenameMEname
+    newFilenameME = list(fileInfoTreeSEME.item("filename","values"))[1]
+    title = list(fileInfoTreeSEME.item("title","values"))[1]
+    interpreter = list(fileInfoTreeSEME.item("interpret","values"))[1]
+    album = list(fileInfoTreeSEME.item("album","values"))[1]
+    if title == "None":
+        title = ""
+    if interpreter == None:
+        interpreter = ""
+    if album == None:
+        album = "None"
+    if filenameME.endswith(".mp3") or filename.endswith(".MP3"):
+        audioToEdit = MP3(filenameME)
+        try:
+            audioToEdit.add_tags()
+        except:
+            pass
+        audioToEdit.save()
+        audioToEdit = ID3(filenameME)
+        audioToEdit["TIT2"] = TIT2(encoding=3,text = title)
+        audioToEdit["TPE1"] = TPE1(encoding=3,text = interpreter)
+        audioToEdit["TALB"] = TALB(encoding=3,text = album)
+        if currentImageME != "default":
+            with open(newCoverMEfilepath,"rb") as img_file:
+                cover_image_data = img_file.read()
+            audioToEdit.add(APIC(encoding = 3,mime = "image/png",type = 3,desc = "Cover",data = cover_image_data))
+        audioToEdit.save()
+    elif filenameME.endswith(".m4a") or filenameME.endswith(".M4A"):
+        audioToEdit = MP4(filenameME)
+        if audioToEdit.tags == None:
+            audioToEdit.tags = MP4Tags()
+        audioToEdit["\xa9nam"] = title
+        audioToEdit["\xa9ART"] = interpreter
+        audioToEdit["\xa9alb"] = album
+        if currentImageME != "default":
+            with open(newCoverMEfilepath,"rb") as img_file:
+                cover_image_data = img_file.read()
+            audioToEdit["covr"] = [cover_image_data]
+        audioToEdit.save()
+    os.rename(filenameME,saveDirectoryME + "/" + newFilenameME)
+
+def renameMEoperation(filenamesME):
+    pattern = namePattern.get()
+    newSongName = ""
+    if "%" not in pattern:
+        message(3,renameMEoperation_message1_title_langtext,renameMEoperation_message1_text_langtext,"ok",0)
+        return
+    pattern_data = []
+    while len(pattern) != 1:
+        pattern = pattern[1:]
+        where = pattern.find("%")
+        pattern_data.append(pattern[:where])
+        pattern = pattern[where:]
+    for filename in filenamesME:
+        lastSlash = filename.rfind("/")
+        songName = filename[lastSlash + 1:]
+        fileExtension = songName.rfind('.')
+        title,interpreter,album,extension,_ = getMetadataME(filename)
+        titleString,interpreterString,albumString = makeMetadataToStringME(title,interpreter,album)
+        for element in pattern_data:
+            if element == "t":
+                element = titleString
+            elif element == "i":
+                element = interpreterString
+            elif element == "a":
+                element = albumString
+            newSongName = newSongName + ''.join(element)
+        newSongName = newSongNam + extension
+        newfilepath = filename[:lastSlash + 1] + newSongNamee
+        os.rename(filename,newfilepath)
+
+def startEvent(event):
+    start()
+
+def getMetadataME(filename):
+    if filename.endswith(".mp3") or filename.endswith(".MP3"):
+        audioForInfo = MP3(filename,ID3 = ID3)
+        titleObject = audioForInfo.tags.get("TIT2",None)
+        interpreterObject = audioForInfo.tags.get("TPE1",None)
+        albumObject = audioForInfo.tags.get("TALB",None)
+        if titleObject == None:
+            title = None
+        else:
+            title = titleObject.text
+        if interpreterObject == None:
+            interpreter = None
+        else:
+            interpreter = interpreterObject.text
+        if albumObject == None:
+            album = None
+        else:
+            album = albumObject.text
+        extension = ".mp3"
+    elif filename.endswith(".m4a") or filename.endswith(".M4A"):
+        audioForInfo = MP4(filename)
+        title = audioForInfo.tags.get("\xa9nam",[None])
+        interpreter = audioForInfo.tags.get("\xa9ART",[None])
+        album = audioForInfo.tags.get("\xa9alb",[None])
+        extension = ".m4a"
+    audioToEdit = File(filename)
+    if 'covr' in audioToEdit:
+        #mp3, flac, and some other formats (m4a)
+        cover = audioToEdit['covr'][0]
+    elif 'APIC:Cover' in audioToEdit:
+        #ID3v2 (commonly used in mp3)
+        cover = audioToEdit['APIC:Cover'].data
+    else:
+        cover = None
+    if cover != None:
+        with open(os.path.join(dirname,"icons/song_cover.jpg"),'wb') as f:
+            f.write(cover)
+        cover = "song_cover.jpg"
+    return title,interpreter,album,extension,cover
+
+def makeMetadataToStringME(title,interpreter,album):
+    titleString = ""
+    interpreterString = ""
+    albumString = ""
+    if title != [None]:
+        if type(title) is not str:
+            titleString = titleString + title[0]
+            del title[0]
+            for element in title:
+                titleString = titleString + ", "
+                titleString = titleString + element
+        else:
+            titleString = title
+    else:
+        titleString = None
+    if interpreter != [None]:
+        if type(interpreter) is not str:
+            interpreterString = interpreterString + interpreter[0]
+            del interpreter[0]
+            for element in interpreter:
+                interpreterString = interpreterString + ", "
+                interpreterString = interpreterString + element
+        else:
+            interpreterString = interpreter
+    else:
+        interpreterString = None
+    if album != [None]:
+        if type(album) is not str:
+            albumString = albumString + album[0]
+            del album[0]
+            for element in album:
+                albumString = albumString + ", "
+                albumString = albumString + element
+        else:
+            albumString = album
+    else:
+        albumString = None
+    return titleString,interpreterString,albumString
+
+def namePatternChange(event):
+    namePattern.set(namePatternEntryBEME.get())
+
+def namePatternHelp():#einf eine help message sache machen.
+    message(1,namePatternHelp_message1_title_langtext,namePatternHelp_message1_text_langtext,"ok",0)
+
+    #system
+def whereSave():
+    global saveDirectoryME
+    saveDirectoryME = openDirectoryDialog()
+    selectedMode = modesME.index(modesME.select())
+    whereSaveButtonBEME.config(text = saveDirectoryME)
+    whereSaveButtonREME.config(text = saveDirectoryME)
+    whereSaveButtonSEME.config(text = saveDirectoryME)
+
+    #gui
+def doubleClickSEME(event):
+    global current_itemSEME,current_col_indexSEME
+    current_itemSEME = fileInfoTreeSEME.identify_row(event.y)
+    columnSEME = fileInfoTreeSEME.identify_row(event.x)
+    current_col_indexSEME = int(columnSEME[1:]) - 1
+    if current_col_indexSEME == 1:
+        x,y,width,height = fileInfoTreeSEME.bbox(current_itemSEME,columnSEME)
+        value = fileInfoTreeSEME.item(current_itemSEME,"values")[current_col_indexSEME]
+        entry_varSEME.set(value)
+        entrySEME.place(x = x + fileInfoTreeSEME.winfo_x(),y = y + fileInfoTreeSEME.winfo_y(),width = width,height = height)
+        entrySEME.focus()
+        entrySEME.bind("<Return>",lambda e: update_valueSEME())
+        rentrySEME.bind("<FocusOut>",lambda e: update_valueSEME())
+
+def update_valueSEME():
+    if current_itemSEME and current_col_indexSEME is not None:
+        new_value = entry_varSEME.get()
+        values = lst(fileInfoTreeSEME.item(current_itemSEME,"values"))
+        values[current_col_indexSEME] = new_value
+        fileInfoTreeSEME.item(current_itemSEME,values = values)
+    entrySEME.place_forget()
+
+def copyFileCheck():
+    trueorfalse = copyFileVarME.get()
+    if trueorfalse == True:
+        whereSaveButtonSEME.state(['!disabled'])
+    else:
+        whereSaveButtonSEME.state(['diasbled'])
+    settings(copyFileCheck)
+
+def openFileDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    options |= QFileDialog.ReadOnly
+    singlefile,_ = QFileDialog.getOpenFileName(None,openFileDialog_QFileDialog_getOpenFileName1_langtext,"",openFileDialog_QFileDialog_getOpenFileName2_langtext,options = options)
+    return singlefile
+
+def openFilesDialogME():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    options |= QFileDialog.ReadOnly
+    files,_ = QFileDialog.getOpenFileNames(None,openFilesDialogME_QFileDialog_getOpenFileNames1_langtext,"",openFilesDialogME_QFileDialog_getOpenFileNames2_langtext,options = options)#hier noch einmal nur supported oder tested oder so hinzufügen
+    return files
+
+def openDirectoryDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    options |= QFileDialog.ShowDirsOnly | QFileDialog.ReadOnly
+    directory = QFileDialog.getExistingDirectory(None, openDirectoryDialog_QFileDialog_getExistingDirectory_langtext, "", options=options)
+    return directory
+
+def notebookTabMEChange(event):#klappt noch nicht ganz
+    global notebookTabME
+    selectedTabME = modesME.index(modesME.select())
+    if selectedTabME == 0:
+        modesME.select(notebookTabME)
+        start()
+    elif selectedTabME == 1:
+        notebookTabME = 1
+        metadataWindow.title(notebookTabMEChange_1_metadataWindow_title_langtext)
+    elif selectedTabME == 2:
+        notebookTabME = 2
+        metadataWindow.title(notebookTabMEChange_2_metadataWindow_title_langtext)
+    elif selectedTabME == 3:
+        notebookTabME = 3
+        metadataWindow.title(notebookTabMEChange_3_metadataWindow_title_langtext)
+    elif selectedTabME == 4:
+        notebookTabME = 4
+        metadataWindow.title(notebookTabMEChange_4_metadataWindow_title_langtext)
+    elif selectedTabME == 5:
+        metadataWindow.title(notebookTabMEChange_5_metadataWindow_title_langtext)
+        modesME.select(notebookTabME)
+        metadataEditorStart()
+    if selectedTabME != 5:
+        settings("notebookTabMEChange")
+
+#general
+def openFilesDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    options |= QFileDialog.ReadOnly
+    files, _ = QFileDialog.getOpenFileNames(None, openFilesDialog_QFileDialog_getOpenFileNames1_langtext, "", openFilesDialog_QFileDialog_getOpenFileNames2_langtext,options = options)
+    return files
+
+def saveFileDialog():
+    app = QApplication(sys.argv)
+    options = QFileDialog.Options()
+    fileName,selectedFilter = QFileDialog.getSaveFileName(None,saveFileDialog_QFileDialog_SaveFilterName1_langtext,"",saveFileDialog_QFileDialog_SaveFilterName2_langtext,options = options)
+    return fileName,selectedFilter
+
+def loadLanguages():
+    languageList = []
+    languageListOptionMenu = []
+    for filename in os.listdir(os.path.join(dirname,'texts/language')):
+        if filename.startswith("language_"):
+            filepath = os.path.join(os.path.join(dirname,'texts/language'),filename)
+            underscore = filename.find("_")
+            languageList.append([filename[underscore + 1:-4],filepath])
+            languageListOptionMenu.append(filename[underscore + 1:-4])
+    return languageList,languageListOptionMenu
+
+def languageChange(event):
+    language = languageStringVar.get()
+    loadLanguage(language,languageList)
+    with open(os.path.join(dirname,'texts/language/selection.txt'),'w') as languageFile:
+        languageFile.writelines([language + "\n"])
+    message(1,languageChange_message1_title_langtext,languageChange_message1_text_langtext,"ok",0)
+
+def loadLanguage(language,languageList):
+    global main_window_title_langtext, file_menu1_command1_label_langtext, file_menu1_cascade1_label_langtext, file_menu1_command2_label_langtext, file_menu1_command3_label_langtext, file_menu1_command4_label_langtext, file_menu1_command5_label_langtext, menubar1_cascade1_label_langtext, view_menu1_command1_label_langtext, view_menu1_command2_label_langtext, view_menu1_command3_label_langtext, menubar1_cascade2_label_langtext, help_menu1_command1_label_langtext, help_menu1_command2_label_langtext, help_menu1_command3_label_langtext, help_menu1_command4_label_langtext, help_menu1_command5_label_langtext, menubar1_cascade3_label_langtext, plW_title_langtext, file_menu2_command1_label_langtext, file_menu2_cascade1_label_langtext, file_menu2_cascade2_label_langtext, file_menu2_command2_label_langtext, file_menu2_command3_label_langtext, file_menu2_command4_label_langtext, file_menu2_command5_label_langtext, file_menu2_cascade3_label_langtext, edit_menu2_command1_label_langtext, edit_menu2_command2_label_langtext, edit_menu2_command3_label_langtext, edit_menu2_command4_label_langtext, edit_menu2_command5_label_langtext, edit_menu2_command6_label_langtext, edit_menu2_command7_label_langtext, menubar2_cascade1_label_langtext, songName_variable_langtext, songArtist_variable_langtext, songFilename_variable_langtext, tree_heading1_text_langtext, tree_heading2_text_langtext, tree_heading3_text_langtext, rcmenu1_command1_label_langtext, rcmenu1_command2_label_langtext, rcmenu2_command1_label_langtext, rcmenu2_command2_label_langtext, rcmenu2_command3_label_langtext, rcmenu2_command4_label_langtext, rcmenu2_command5_label_langtext, playlistSelectedLabel_text_langtext, playlistDurationLabel_text_langtext, remainingPlaylistDurationLabel_text_langtext, getSongArt_message1_title_langtext, getSongArt_message1_text_langtext, fastForward_message1_title_langtext, fastForward_message1_text_langtext, fastForward_message2_title_langtext, fastForward_message2_text_langtext, rewindSong_message1_title_langtext, rewindSong_message1_text_langtext, rewindSong_message2_title_langtext, rewindSong_message2_text_langtext, addToPlaylist_message1_title_langtext, addToPlaylist_message1_text_langtext, updatePlaylist_plW_title_langtext, updatePlaylist_plWminiMode_title_langtext, updatePlaylist_playlistLengthLabel_text_langtext, updatePlaylist_remainingPlaylistLengthLabel_text_langtext, tree_loading_text_langtext, updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext, treeMiniMode_loading_text_langtext, length_for_playlist_plW_title_langtext, length_for_playlist_plWminiMode_title_langtext, length_for_playlist_message1_title_langtext, length_for_playlist_message1_text_langtext, length_for_playlist_message2_title_langtext, length_for_playlist_message2_text_langtext, savePlaylist_message1_title_langtext, savePlaylist_message1_text1_langtext, savePlaylist_message1_text2_langtext, upInPlaylist_message1_title_langtext, upInPlaylist_message1_text_langtext, downInPlaylist_message1_title_langtext, downInPlaylist_message1_text_langtext, infoWE_extraWindow_title_langtext, infoWE_changelogButton_text_langtext, infoWE_attributions_text_langtext, infoWE_licenseButton_text_langtext, settingsWE_extraWindow_title_langtext, settingsWE_twoWindowsCheckbutton_text_langtext, settingsWE_showVolumeInfoCheckbutton_text_langtext, settingsWE_loopPlaylistCheckbutton_text_langtext, settingsWE_loopMoveCheckbutton_text_langtext, settingsWE_filesToKeepLabel_text_langtext, settingsWE_shufflePositionResetCheckbutton_text_langtext, settingsWE_messageLogsButton_text_langtext, messageLogsWE_extraWindow_title_langtext, messageLogsWE_logs_add1_text_langtext, messageLogsWE_logs_add2_text_langtext, messageLogsWE_logs_add3_text_langtext, messageLogsWE_tree1_2_3_heading1_text_langtext, messageLogsWE_tree1_2_3_heading2_text_langtext, messageLogsWE_tree1_2_3_heading3_text_langtext, messageLogsWE_tree1_2_3_heading4_text_langtext, messageLogsWE_tree1_2_3_heading5_text_langtext, attributionsWE_extraWindow_title_langtext, attributionsWE_attributionLinksButton_text_langtext, attributionButtonsWE_extraWindow_title_langtext, changelogWE_extraWindow_title_langtext, licenseWE_extraWindow_title_langtext, windowExtra_file_menu3_command1_label_langtext, windowExtra_file_menu3_cascade1_label_langtext, windowExtra_file_menu3_command2_label_langtext, windowExtra_file_menu3_command3_label_langtext, windowExtra_file_menu3_command4_label_langtext, windowExtra_file_menu3_command5_label_langtext, windowExtra_menubar3_cascade1_label_langtext, windowExtra_view_menu3_command1_label_langtext, windowExtra_view_menu3_command2_label_langtext, windowExtra_view_menu3_command3_label_langtext, windowExtra_menubar3_cascade2_label_langtext, windowExtra_help_menu3_command1_label_langtext, windowExtra_help_menu3_command2_label_langtext, windowExtra_help_menu3_command3_label_langtext, windowExtra_help_menu3_command4_label_langtext, windowExtra_help_menu3_command5_label_langtext, windowExtra_menubar3_cascade3_label_langtext, windowExtra_extraType_info_headline_text_langtext, windowExtra_extraType_settings_headline_text_langtext, windowExtra_extraType_messageLogs_headline_text_langtext, windowExtra_extraType_messageLogs_backButton_text_langtext, windowExtra_extraType_attributions_headline_text_langtext, windowExtra_extraType_attributions_backButton_text_langtext, windowExtra_extraType_attributionButtons_headline_text_langtext, windowExtra_extraType_attributionButtons_backbutton_text_langtext, windowExtra_extraType_Changelog_headline_text_langtext, windowExtra_extraType_Changelog_backButton_text_langtext, windowExtra_extraType_License_backButton_text_langtext, progress_progressWindow_title_langtext, buildTwoWindows_message1_title_langtext, buildTwoWindows_message1_text_langtext, buildMiniMode_message1_title_langtext, buildMiniMode_message1_text_langtext, buildMiniMode_miniModeWindow_title_langtext, buildMiniMode_plWminiMode_title_langtext, buildMiniMode_treeMiniMode_heading1_text_langtext, buildMiniMode_treeMiniMode_heading2_text_langtext, buildMiniMode_treeMiniMode_heading3_text_langtext, messageLogClicked_time0_timeText_langtext, messageLogClicked_messageInfo_title_langtext, messageLogClicked_messageDetails_text_langtext, messageLogClicked_messageImageText_text_langtext, messageLogClicked_messageTitle_text_langtext, messageLogClicked_messageMessage_text_langtext, messageLogClicked_messageButtons_text_langtext, messageLogClicked_messageTime_text_langtext, messageLogClicked_previewButton_text_langtext, messageLogClicked_closeButton_text_langtext, empty_file_text_list, openFilesDialog_QFileDialog_getOpenFileNames1_langtext, openFilesDialog_QFileDialog_getOpenFileNames2_langtext, saveFileDialog_QFileDialog_SaveFilterName1_langtext, saveFileDialog_QFileDialog_SaveFilterName2_langtext, exitProgram_message1_title_langtext, exitProgram_message1_text_langtext, exitProgram_main_window_title_langtext, exitProgram_plW_title_langtext, languageChange_message1_title_langtext, languageChange_message1_text_langtext, windowExtra_file_menu3_command_ME_label_langtext, updateSelectedFilesTree_fileCountTextBEME_text_langtext, updateSelectedFilesTree_fileCountTextREME_text_langtext, loadFileSEME_fileInfoTreeSEME_item1_values1_langtext, loadFileSEME_fileInfoTreeSEME_item2_values1_langtext, loadFileSEME_fileInfoTreeSEME_item3_values1_langtext, loadFileSEME_fileInfoTreeSEME_item4_values1_langtext, start_message1_title_langtext, start_message1_text_langtext, start_message2_title_langtext, start_message2_text_langtext, batchEditMEoperation_message1_title_langtext, batchEditMEoperation_message1_text_langtext, singleEditMEoperation_message1_title_langtext, singleEditMEoperation_message1_text_langtext, singleEditMEoperation_message2_title_langtext, singleEditMEoperation_message2_text_langtext, renameMEoperation_message1_title_langtext, renameMEoperation_message1_text_langtext, namePatternHelp_message1_title_langtext, namePatternHelp_message1_text_langtext, openFileDialog_QFileDialog_getOpenFileName1_langtext, openFileDialog_QFileDialog_getOpenFileName2_langtext, openFilesDialogME_QFileDialog_getOpenFileNames1_langtext, openFilesDialogME_QFileDialog_getOpenFileNames2_langtext, openDirectoryDialog_QFileDialog_getExistingDirectory_langtext, notebookTabMEChange_1_metadataWindow_title_langtext, notebookTabMEChange_2_metadataWindow_title_langtext, notebookTabMEChange_3_metadataWindow_title_langtext, notebookTabMEChange_4_metadataWindow_title_langtext, notebookTabMEChange_5_metadataWindow_title_langtext, file_menu1_command_ME_label_langtext, file_menu2_command_ME_label_langtext, metadataWindow_title_langtext, modesME_startTabME_text_langtext, modesME_batchEditME_text_langtext, modesME_singleEditME_text_langtext, modesME_renameME_text_langtext, modesME_settingsME_text_langtext, modesME_quitTabME_text_langtext, fileCountTextBEME_text_langtext, deleteFilesButtonBEME_text_langtext, selectFilesButtonBEME_text_langtext, namePatternTextBEME_text_langtext, namePatternHelpButtonBEME_text_langtext, resetTitleCheckbutton_text_langtext, resetInterpreterCheckbutton_text_langtext, resetAlbumCheckbutton_text_langtext, whereSaveButtonBEME_text_langtext, whereSaveTextBEME_text_langtext, startToSaveLabelME_text_langtext, selectFileButtonSEME_text_langtext, fileInfoTreeSEME_heading1_text_langtext, fileInfoTreeSEME_heading2_text_langtext, fileInfoTreeSEME_insert_iid_filename_values_langtext, fileInfoTreeSEME_insert_iid_title_values_langtext, fileInfoTreeSEME_insert_iid_interpret_values_langtext, fileInfoTreeSEME_insert_iid_album_values_langtext, whereSaveButtonSEME_text_langtext, copyFileCheckbuttonME_text_langtext, fileCountTextREME_text_langtext, deleteFilesButtonREME_text_langtext, selectFilesButtonREME_text_langtext, namePatternTextREME_text_langtext, namePatternHelpButtonREME_text_langtext, whereSaveTextREME_text_langtext, whereSaveButtonREME_text_langtext
+    #ohjemine
+    for languageListList in languageList:
+        if languageListList[0] == language:
+            languagePath = languageListList[1]
+            break
+    with open(languagePath,'r',encoding = 'utf-8') as languageFile:
+        oldLines = languageFile.readlines()
+    lines = []
+    for line in oldLines:
+        line = line[:-1]
+        lines.append(line)
+    main_window_title_langtext = lines[0]
+    file_menu1_command1_label_langtext = lines[1]
+    file_menu1_cascade1_label_langtext = lines[2]
+    file_menu1_command2_label_langtext = lines[3]
+    file_menu1_command3_label_langtext = lines[4]
+    file_menu1_command4_label_langtext = lines[5]
+    file_menu1_command5_label_langtext = lines[6]
+    menubar1_cascade1_label_langtext = lines[7]
+    view_menu1_command1_label_langtext = lines[8]
+    view_menu1_command2_label_langtext = lines[9]
+    view_menu1_command3_label_langtext = lines[10]
+    menubar1_cascade2_label_langtext = lines[11]
+    help_menu1_command1_label_langtext = lines[12]
+    help_menu1_command2_label_langtext = lines[13]
+    help_menu1_command3_label_langtext = lines[14]
+    help_menu1_command4_label_langtext = lines[15]
+    help_menu1_command5_label_langtext = lines[16]
+    menubar1_cascade3_label_langtext = lines[17]
+    plW_title_langtext = lines[18]
+    file_menu2_command1_label_langtext = lines[19]
+    file_menu2_cascade1_label_langtext = lines[20]
+    file_menu2_cascade2_label_langtext = lines[21]
+    file_menu2_command2_label_langtext = lines[22]
+    file_menu2_command3_label_langtext = lines[23]
+    file_menu2_command4_label_langtext = lines[24]
+    file_menu2_command5_label_langtext = lines[25]
+    file_menu2_cascade3_label_langtext = lines[26]
+    edit_menu2_command1_label_langtext = lines[27]
+    edit_menu2_command2_label_langtext = lines[28]
+    edit_menu2_command3_label_langtext = lines[29]
+    edit_menu2_command4_label_langtext = lines[30]
+    edit_menu2_command5_label_langtext = lines[31]
+    edit_menu2_command6_label_langtext = lines[32]
+    edit_menu2_command7_label_langtext = lines[33]
+    menubar2_cascade1_label_langtext = lines[34]
+    songName_variable_langtext = lines[35]
+    songArtist_variable_langtext = lines[36]
+    songFilename_variable_langtext = lines[37]
+    tree_heading1_text_langtext = lines[38]
+    tree_heading2_text_langtext = lines[39]
+    tree_heading3_text_langtext = lines[40]
+    rcmenu1_command1_label_langtext = lines[41]
+    rcmenu1_command2_label_langtext = lines[42]
+    rcmenu2_command1_label_langtext = lines[43]
+    rcmenu2_command2_label_langtext = lines[44]
+    rcmenu2_command3_label_langtext = lines[45]
+    rcmenu2_command4_label_langtext = lines[46]
+    rcmenu2_command5_label_langtext = lines[47]
+    playlistSelectedLabel_text_langtext = lines[48]
+    playlistDurationLabel_text_langtext = lines[49]
+    remainingPlaylistDurationLabel_text_langtext = lines[50]
+    getSongArt_message1_title_langtext = lines[51]
+    getSongArt_message1_text_langtext = lines[52]
+    fastForward_message1_title_langtext = lines[53]
+    fastForward_message1_text_langtext = lines[54]
+    fastForward_message2_title_langtext = lines[55]
+    fastForward_message2_text_langtext = lines[56]
+    rewindSong_message1_title_langtext = lines[57]
+    rewindSong_message1_text_langtext = lines[58]
+    rewindSong_message2_title_langtext = lines[59]
+    rewindSong_message2_text_langtext = lines[60]
+    addToPlaylist_message1_title_langtext = lines[61]
+    addToPlaylist_message1_text_langtext = lines[62]
+    updatePlaylist_plW_title_langtext = lines[63]
+    updatePlaylist_plWminiMode_title_langtext = lines[64]
+    updatePlaylist_playlistLengthLabel_text_langtext = lines[65]
+    updatePlaylist_remainingPlaylistLengthLabel_text_langtext = lines[66]
+    tree_loading_text_langtext = lines[67]
+    updatePlaylist_remainingPlaylistLengthLabelMini_text_langtext = lines[68]
+    treeMiniMode_loading_text_langtext = lines[69]
+    length_for_playlist_plW_title_langtext = lines[70]
+    length_for_playlist_plWminiMode_title_langtext = lines[71]
+    length_for_playlist_message1_title_langtext = lines[72]
+    length_for_playlist_message1_text_langtext = lines[73]
+    length_for_playlist_message2_title_langtext = lines[74]
+    length_for_playlist_message2_text_langtext = lines[75]
+    savePlaylist_message1_title_langtext = lines[76]
+    savePlaylist_message1_text1_langtext = lines[77]
+    savePlaylist_message1_text2_langtext = lines[78]
+    upInPlaylist_message1_title_langtext = lines[79]
+    upInPlaylist_message1_text_langtext = lines[80]
+    downInPlaylist_message1_title_langtext = lines[81]
+    downInPlaylist_message1_text_langtext = lines[82]
+    infoWE_extraWindow_title_langtext = lines[83]
+    infoWE_changelogButton_text_langtext = lines[84]
+    infoWE_attributions_text_langtext = lines[85]
+    infoWE_licenseButton_text_langtext = lines[86]
+    settingsWE_extraWindow_title_langtext = lines[87]
+    settingsWE_twoWindowsCheckbutton_text_langtext = lines[88]
+    settingsWE_showVolumeInfoCheckbutton_text_langtext = lines[89]
+    settingsWE_loopPlaylistCheckbutton_text_langtext = lines[90]
+    settingsWE_loopMoveCheckbutton_text_langtext = lines[91]
+    settingsWE_filesToKeepLabel_text_langtext = lines[92]
+    settingsWE_shufflePositionResetCheckbutton_text_langtext = lines[93]
+    settingsWE_messageLogsButton_text_langtext = lines[94]
+    messageLogsWE_extraWindow_title_langtext = lines[95]
+    messageLogsWE_logs_add1_text_langtext = lines[96]
+    messageLogsWE_logs_add2_text_langtext = lines[97]
+    messageLogsWE_logs_add3_text_langtext = lines[98]
+    messageLogsWE_tree1_2_3_heading1_text_langtext = lines[99]
+    messageLogsWE_tree1_2_3_heading2_text_langtext = lines[100]
+    messageLogsWE_tree1_2_3_heading3_text_langtext = lines[101]
+    messageLogsWE_tree1_2_3_heading4_text_langtext = lines[102]
+    messageLogsWE_tree1_2_3_heading5_text_langtext = lines[103]
+    attributionsWE_extraWindow_title_langtext = lines[104]
+    attributionsWE_attributionLinksButton_text_langtext = lines[105]
+    attributionButtonsWE_extraWindow_title_langtext = lines[106]
+    changelogWE_extraWindow_title_langtext = lines[107]
+    licenseWE_extraWindow_title_langtext = lines[108]
+    windowExtra_file_menu3_command1_label_langtext = lines[109]
+    windowExtra_file_menu3_cascade1_label_langtext = lines[110]
+    windowExtra_file_menu3_command2_label_langtext = lines[111]
+    windowExtra_file_menu3_command3_label_langtext = lines[112]
+    windowExtra_file_menu3_command4_label_langtext = lines[113]
+    windowExtra_file_menu3_command5_label_langtext = lines[114]
+    windowExtra_menubar3_cascade1_label_langtext = lines[115]
+    windowExtra_view_menu3_command1_label_langtext = lines[116]
+    windowExtra_view_menu3_command2_label_langtext = lines[117]
+    windowExtra_view_menu3_command3_label_langtext = lines[118]
+    windowExtra_menubar3_cascade2_label_langtext = lines[119]
+    windowExtra_help_menu3_command1_label_langtext = lines[120]
+    windowExtra_help_menu3_command2_label_langtext = lines[121]
+    windowExtra_help_menu3_command3_label_langtext = lines[122]
+    windowExtra_help_menu3_command4_label_langtext = lines[123]
+    windowExtra_help_menu3_command5_label_langtext = lines[124]
+    windowExtra_menubar3_cascade3_label_langtext = lines[125]
+    windowExtra_extraType_info_headline_text_langtext = lines[126]
+    windowExtra_extraType_settings_headline_text_langtext = lines[127]
+    windowExtra_extraType_messageLogs_headline_text_langtext = lines[128]
+    windowExtra_extraType_messageLogs_backButton_text_langtext = lines[129]
+    windowExtra_extraType_attributions_headline_text_langtext = lines[130]
+    windowExtra_extraType_attributions_backButton_text_langtext = lines[131]
+    windowExtra_extraType_attributionButtons_headline_text_langtext = lines[132]
+    windowExtra_extraType_attributionButtons_backbutton_text_langtext = lines[133]
+    windowExtra_extraType_Changelog_headline_text_langtext = lines[134]
+    windowExtra_extraType_Changelog_backButton_text_langtext = lines[135]
+    windowExtra_extraType_License_backButton_text_langtext = lines[136]
+    progress_progressWindow_title_langtext = lines[137]
+    buildTwoWindows_message1_title_langtext = lines[138]
+    buildTwoWindows_message1_text_langtext = lines[139]
+    buildMiniMode_message1_title_langtext = lines[140]
+    buildMiniMode_message1_text_langtext = lines[141]
+    buildMiniMode_miniModeWindow_title_langtext = lines[142]
+    buildMiniMode_plWminiMode_title_langtext = lines[143]
+    buildMiniMode_treeMiniMode_heading1_text_langtext = lines[144]
+    buildMiniMode_treeMiniMode_heading2_text_langtext = lines[145]
+    buildMiniMode_treeMiniMode_heading3_text_langtext = lines[146]
+    messageLogClicked_time0_timeText_langtext = lines[147]
+    messageLogClicked_messageInfo_title_langtext = lines[148]
+    messageLogClicked_messageDetails_text_langtext = lines[149]
+    messageLogClicked_messageImageText_text_langtext = lines[150]
+    messageLogClicked_messageTitle_text_langtext = lines[151]
+    messageLogClicked_messageMessage_text_langtext = lines[152]
+    messageLogClicked_messageButtons_text_langtext = lines[153]
+    messageLogClicked_messageTime_text_langtext = lines[154]
+    messageLogClicked_previewButton_text_langtext = lines[155]
+    messageLogClicked_closeButton_text_langtext = lines[156]
+    empty_file_text_list = lines[157]
+    openFilesDialog_QFileDialog_getOpenFileNames1_langtext = lines[158]
+    openFilesDialog_QFileDialog_getOpenFileNames2_langtext = lines[159]
+    saveFileDialog_QFileDialog_SaveFilterName1_langtext = lines[160]
+    saveFileDialog_QFileDialog_SaveFilterName2_langtext = lines[161]
+    exitProgram_message1_title_langtext = lines[162]
+    exitProgram_message1_text_langtext = lines[163]
+    exitProgram_main_window_title_langtext = lines[164]
+    exitProgram_plW_title_langtext = lines[165]
+    languageChange_message1_title_langtext = lines[166]
+    languageChange_message1_text_langtext = lines[167]
+    windowExtra_file_menu3_command_ME_label_langtext = lines[168]
+    updateSelectedFilesTree_fileCountTextBEME_text_langtext = lines[169]
+    updateSelectedFilesTree_fileCountTextREME_text_langtext = lines[170]
+    loadFileSEME_fileInfoTreeSEME_item1_values1_langtext = lines[171]
+    loadFileSEME_fileInfoTreeSEME_item2_values1_langtext = lines[172]
+    loadFileSEME_fileInfoTreeSEME_item3_values1_langtext = lines[173]
+    loadFileSEME_fileInfoTreeSEME_item4_values1_langtext = lines[174]
+    start_message1_title_langtext = lines[175]
+    start_message1_text_langtext = lines[176]
+    start_message2_title_langtext = lines[177]
+    start_message2_text_langtext = lines[178]
+    batchEditMEoperation_message1_title_langtext = lines[179]
+    batchEditMEoperation_message1_text_langtext = lines[180]
+    singleEditMEoperation_message1_title_langtext = lines[181]
+    singleEditMEoperation_message1_text_langtext = lines[182]
+    singleEditMEoperation_message2_title_langtext = lines[183]
+    singleEditMEoperation_message2_text_langtext = lines[184]
+    renameMEoperation_message1_title_langtext = lines[185]
+    renameMEoperation_message1_text_langtext = lines[186]
+    namePatternHelp_message1_title_langtext = lines[187]
+    namePatternHelp_message1_text_langtext = lines[188]
+    openFileDialog_QFileDialog_getOpenFileName1_langtext = lines[189]
+    openFileDialog_QFileDialog_getOpenFileName2_langtext = lines[190]
+    openFilesDialogME_QFileDialog_getOpenFileNames1_langtext = lines[191]
+    openFilesDialogME_QFileDialog_getOpenFileNames2_langtext = lines[192]
+    openDirectoryDialog_QFileDialog_getExistingDirectory_langtext = lines[193]
+    notebookTabMEChange_1_metadataWindow_title_langtext = lines[194]
+    notebookTabMEChange_2_metadataWindow_title_langtext = lines[195]
+    notebookTabMEChange_3_metadataWindow_title_langtext = lines[196]
+    notebookTabMEChange_4_metadataWindow_title_langtext = lines[197]
+    notebookTabMEChange_5_metadataWindow_title_langtext = lines[198]
+    file_menu1_command_ME_label_langtext = lines[199]
+    file_menu2_command_ME_label_langtext = lines[200]
+    metadataWindow_title_langtext = lines[201]
+    modesME_startTabME_text_langtext = lines[202]
+    modesME_batchEditME_text_langtext = lines[203]
+    modesME_singleEditME_text_langtext = lines[204]
+    modesME_renameME_text_langtext = lines[205]
+    modesME_settingsME_text_langtext = lines[206]
+    modesME_quitTabME_text_langtext = lines[207]
+    fileCountTextBEME_text_langtext = lines[208]
+    deleteFilesButtonBEME_text_langtext = lines[209]
+    selectFilesButtonBEME_text_langtext = lines[210]
+    namePatternTextBEME_text_langtext = lines[211]
+    namePatternHelpButtonBEME_text_langtext = lines[212]
+    resetTitleCheckbutton_text_langtext = lines[213]
+    resetInterpreterCheckbutton_text_langtext = lines[214]
+    resetAlbumCheckbutton_text_langtext = lines[215]
+    whereSaveButtonBEME_text_langtext = lines[216]
+    whereSaveTextBEME_text_langtext = lines[217]
+    startToSaveLabelME_text_langtext = lines[218]
+    selectFileButtonSEME_text_langtext = lines[219]
+    fileInfoTreeSEME_heading1_text_langtext = lines[220]
+    fileInfoTreeSEME_heading2_text_langtext = lines[221]
+    fileInfoTreeSEME_insert_iid_filename_values_langtext = lines[222]
+    fileInfoTreeSEME_insert_iid_title_values_langtext = lines[223]
+    fileInfoTreeSEME_insert_iid_interpret_values_langtext = lines[224]
+    fileInfoTreeSEME_insert_iid_album_values_langtext = lines[225]
+    whereSaveButtonSEME_text_langtext = lines[226]
+    copyFileCheckbuttonME_text_langtext = lines[227]
+    fileCountTextREME_text_langtext = lines[228]
+    deleteFilesButtonREME_text_langtext = lines[229]
+    selectFilesButtonREME_text_langtext = lines[230]
+    namePatternTextREME_text_langtext = lines[231]
+    namePatternHelpButtonREME_text_langtext = lines[232]
+    whereSaveTextREME_text_langtext = lines[233]
+    whereSaveButtonREME_text_langtext = lines[234]
+    return
 
 def exitProgram():
     global exiting
     global ThreadStopped
+    global plW
+    global main_window
+    loading_stop()
+    message(1,exitProgram_message1_title_langtext,exitProgram_message1_text_langtext,"ok",0)
+    main_window.title(exitProgram_main_window_title_langtext)
+    plW.title(exitProgram_plW_title_langtext)
     exiting = True
     #time.sleep(2)
     sys.exit()
@@ -1822,17 +3606,63 @@ def exitProgram():
 def hideInBackground(event):#auch playlistWindow in hintergrund bringen
     pass
 
-#main window
-global root
-global rootWidth
-rootWidth = 500
-rootWidthStr = str(rootWidth)
+with open(os.path.join(dirname,'texts/language/selection.txt'),'r') as languageFile:
+    language = languageFile.readlines()[0]
+language = language[:-1]
+languageList,languageListOptionMenu = loadLanguages()
+loadLanguage(language,languageList)
+
+#root_window
 root = tk.Tk()
-root.title("Music Player")
-root.geometry(rootWidthStr + 'x360+100+100')
-root.resizable(False,False)
-#root.iconbitmap(logo)#noch kein logo
-root.bind('<Escape>',hideInBackground)
+root.withdraw()
+
+#main window
+global main_window
+global main_windowWidth
+main_windowWidth = 500
+main_windowWidthStr = str(main_windowWidth)
+main_window = tk.Toplevel()
+main_window.title(main_window_title_langtext)
+main_window.geometry(main_windowWidthStr + 'x360+100+100')
+main_window.bind('<Escape>',hideInBackground)
+    #menus
+menubar1 = tk.Menu(main_window)
+main_window.config(menu = menubar1)
+        #file_menu
+file_menu1 = tk.Menu(menubar1,tearoff = False)
+file_menu1.add_command(label = file_menu1_command1_label_langtext,command = lambda: (addToPlaylist("no")))
+sub_menu1 = tk.Menu(file_menu1,tearoff = False)
+file_menu1.add_cascade(label = file_menu1_cascade1_label_langtext,menu = sub_menu1)
+file_menu1.add_command(label = file_menu1_command2_label_langtext,command = savePlaylist)
+file_menu1.add_command(label = file_menu1_command3_label_langtext,command = deleteAllSongs)
+file_menu1.add_separator()
+file_menu1.add_command(label = file_menu1_command_ME_label_langtext,command = metadataEditorStart)
+file_menu1.add_separator()
+file_menu1.add_command(label = file_menu1_command4_label_langtext,command = lambda: (windowExtra("settings")))
+file_menu1.add_separator()
+file_menu1.add_command(label=file_menu1_command5_label_langtext,command=exitProgram)
+menubar1.add_cascade(label=menubar1_cascade1_label_langtext,menu=file_menu1,underline=0)
+        #view_menu
+view_menu1 = tk.Menu(menubar1,tearoff = False)
+view_menu1.add_command(label = view_menu1_command1_label_langtext,command = lambda: (settingsFmenu("volumeSliderText")))
+view_menu1.add_command(label = view_menu1_command2_label_langtext,command = lambda: (settingsFmenu("twoWindows")))
+view_menu1.entryconfig(view_menu1_command2_label_langtext,state = "disabled")
+view_menu1.add_command(label = view_menu1_command3_label_langtext,command = lambda: (settingsFmenu("miniMode")))
+view_menu1.entryconfig(view_menu1_command3_label_langtext,state = "disabled")
+menubar1.add_cascade(label = menubar1_cascade2_label_langtext,menu = view_menu1,underline = 0)
+        #help_menu
+#keyboard shortcuts
+#license
+#changelog
+#halt alle sachen die im help menu standardmäßig sind und/oder die im info window sind
+help_menu1 = tk.Menu(menubar1,tearoff = False)
+help_menu1.add_command(label = help_menu1_command1_label_langtext,command = lambda:(windowExtra("info")))
+help_menu1.add_command(label = help_menu1_command2_label_langtext,command = lambda:(windowExtra("Changelog")))
+help_menu1.add_command(label = help_menu1_command3_label_langtext,command = lambda:(windowExtra("License")))
+help_menu1.add_separator()
+help_menu1.add_command(label = help_menu1_command4_label_langtext,command = lambda:(windowExtra("settings")))
+help_menu1.add_command(label = help_menu1_command5_label_langtext,command = lambda:(windowExtra("messageLogs")))
+menubar1.add_cascade(label = menubar1_cascade3_label_langtext,menu = help_menu1,underline = 0)
 
 #playlist window
 global plW #playlistWindow
@@ -1840,19 +3670,77 @@ global playlistWidth
 playlistWidth = 430
 playlistWidthStr = str(playlistWidth)
 plW = tk.Toplevel()
-plW.title("Playlist")
+plW.title(plW_title_langtext)
 plW.geometry(playlistWidthStr + 'x360+600+100')
 plW.resizable(False,False)
+    #menus
+menubar2 = tk.Menu(plW)
+plW.config(menu = menubar2)
+        #file_menu
+file_menu2 = tk.Menu(menubar2,tearoff = False)
+file_menu2.add_command(label = file_menu2_command1_label_langtext,command = lambda: (addToPlaylist("no")))
+sub_menu21 = tk.Menu(file_menu2,tearoff = False)
+file_menu2.add_cascade(label = file_menu2_cascade1_label_langtext,menu = sub_menu21)
+sub_menu22 = tk.Menu(file_menu2,tearoff = False)
+# sub_menu3.add_command(label = 'Recent playlist 1')
+file_menu2.add_cascade(label = file_menu2_cascade2_label_langtext,menu = sub_menu22)
+file_menu2.add_command(label = file_menu2_command2_label_langtext,command = savePlaylist)
+file_menu2.add_command(label = file_menu2_command3_label_langtext,command = deleteAllSongs)
+file_menu2.add_separator()
+file_menu2.add_command(label = file_menu2_command_ME_label_langtext,command = metadataEditorStart)
+file_menu2.add_separator()
+file_menu2.add_command(label = file_menu2_command4_label_langtext,command = lambda: (windowExtra("settings")))
+file_menu2.add_separator()
+file_menu2.add_command(label=file_menu2_command5_label_langtext,command=exitProgram)
+menubar2.add_cascade(label=file_menu2_cascade3_label_langtext,menu=file_menu2,underline=0)
+        #edit_menu
+edit_menu2 = tk.Menu(menubar2,tearoff = False)#das erste edit menu, aber ist in menubar 2, der übersicht halber ist das nummer 2
+edit_menu2.add_command(label = edit_menu2_command1_label_langtext,command = topInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command2_label_langtext,command = upInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command3_label_langtext,command = downInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command4_label_langtext,command = bottomInPlaylist)
+edit_menu2.add_command(label = edit_menu2_command5_label_langtext,command = delFrompllst)
+edit_menu2.add_command(label = edit_menu2_command6_label_langtext,command = delDuplicates)
+edit_menu2.add_command(label = edit_menu2_command7_label_langtext,command = deleteAllSongs)
+menubar2.add_cascade(label = menubar2_cascade1_label_langtext,menu = edit_menu2,underline = 0)
+
+#metadata editor window
+#tkinter
+metadataWindow = tk.Toplevel()
+metadataWindow.title(metadataWindow_title_langtext)
+metadataWindow.geometry('500x360+100+100')
+metadataWindow.resizable(False,False)
 
 #variables
 sliderVar = tk.IntVar()
 sliderVarExtra = tk.IntVar()
+sliderVarMini = tk.IntVar()
 volume = tk.IntVar()
+filesToKeep = tk.IntVar()
 volumeSliderTextOnOff = tk.BooleanVar()
 loopPlaylist = tk.BooleanVar()
 loopMove = tk.BooleanVar()
 twoWindows = tk.BooleanVar()
+miniModeActive = tk.BooleanVar()
+shuffleReset = tk.BooleanVar()
+preferPllstData = tk.BooleanVar()
+languageStringVar = tk.StringVar()
+languageStringVar.set(language)
+#metadata_editor
+filenamesME = []
+notebookTabME = 1
+namePattern = tk.StringVar()
+saveDirectoryME = ""
+entry_varSEME = tk.StringVar()
+current_itemSEME = None
+current_col_indexSEME = None
+copyFileVarME = tk.BooleanVar()
+resetTitleVar = tk.BooleanVar()
+resetInterpreterVar = tk.BooleanVar()
+resetAlbumVar = tk.BooleanVar()
+currentImageME = "default"
 #variables from settings
+    #settings.txt
 filepath_settings = os.path.join(dirname,"texts/settings.txt")
 with open(filepath_settings,'r') as file:
     lines = file.readlines()
@@ -1871,6 +3759,44 @@ loopMove.set(bool(loopMoveText))
 twoWindowsString = lines[4]
 twoWindowsText = twoWindowsString[:-1]
 twoWindows.set(bool(twoWindowsText))
+filesToKeepText = lines[5]
+filesToKeep.set(int(filesToKeepText))
+shuffleResetString = lines[7]
+shuffleResetText = shuffleResetString[:-1]
+shuffleReset.set(bool(shuffleResetText))
+metadataTabString = lines[8]
+metadataTabText = metadataTabString[:-1]
+notebookTabME = int(metadataTabText)
+preferPllstDataString = lines[9]
+preferPllstDataText = preferPllstDataString[:-1]
+preferPllstData.set(bool(preferPllstDataText))
+copyFileVarMEString = lines[10]
+copyFileVarMEText = copyFileVarMEString[:-1]
+copyFileVarME.set(bool(copyFileVarMEText))
+resetTitleVarString = lines[11]
+resetTitleVarText = resetTitleVarString[:-1]
+resetTitleVar.set(bool(resetTitleVarText))
+resetInterpreterVarString = lines[12]
+resetInterpreterVarText = resetInterpreterVarString[:-1]
+resetInterpreterVar.set(bool(resetInterpreterVarText))
+resetAlbumVarString = lines[13]
+resetAlbumVarText = resetAlbumVarString[:-1]
+resetAlbumVar.set(bool(resetAlbumVarText))
+    #recent_files.txt
+filepath_recent_files = os.path.join(dirname,"texts/recent_files.txt")
+with open(filepath_recent_files,'r') as file:
+    lines = file.readlines()
+recentFiles = [] + lines
+    #recent_files.txt
+filepath_recent_songs = os.path.join(dirname,"texts/recent_songs.txt")
+with open(filepath_recent_songs,'r') as file:
+    lines = file.readlines()
+recentSongs = [] + lines
+    #recent_playlists.txt
+filepath_recent_playlists = os.path.join(dirname,"texts/recent_playlists.txt")
+with open(filepath_recent_playlists,'r') as file:
+    lines = file.readlines()
+recentPlaylists = [] + lines
 #variables for start
 playlist = []
 pPlaylist = []#played playlist
@@ -1884,17 +3810,23 @@ songLength = "00:00"
 playlistLength = "00:00:00"
 remainingPlaylistLength = "00:00:00"
 plstSelection = "0/0"
-songName = "Title"
-songArtist = "Artist"
-songFilename = "Filename"
+songName = songName_variable_langtext
+songArtist = songArtist_variable_langtext
+songFilename = songFilename_variable_langtext
+cursor_state = "normal"
 sliderPressed = False
 volumePressed = False
 exiting = False
 ThreadStopped = False
+plWtitleNameTrue = False
+numberforminimode_main_window = 1
+numberforminimode_plW = 1
 
 #images
 #print(os.path.join(dirname,'vlc\libvlc.dll'))
 if platform.system() == "Windows":
+    default_icon = os.path.join(dirname,'icons/default_icon.ico')
+    playlist_icon = os.path.join(dirname,'icons/playlist_icon.ico')
     info_icon = os.path.join(dirname,'icons/info.ico')
     settings_icon = os.path.join(dirname,'icons/settings.ico')
     warning_icon = os.path.join(dirname,'icons/warning.ico')
@@ -1903,12 +3835,18 @@ if platform.system() == "Windows":
     #loading_icon_1 = os.path.join(dirname,'icons/loading_1.ico')
     #loading_icon_2 = os.path.join(dirname,'icons/loading_2.ico')
     #loading_icon_3 = os.path.join(dirname,'icons/loading_3.ico')
+    metadata_icon = os.path.join(dirname,'icons/metadata_icon.ico')
 elif platform.system() == "Linux":
+    default_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon.png'))
+    playlist_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/playlist_icon.png'))
     info_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/info_icon.png'))
     settings_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/settings_icon.png'))
     warning_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/warning_icon.png'))
     error_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/error_icon.png'))
     message_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/message_icon.png'))
+    metadata_icon = tk.PhotoImage(file = os.path.join(dirname,'icons/metadata_icon.png'))
+app_logo_image = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_smol.png'))
+app_logo_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_vewy_smol.png'))
 exit_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/quit_smol.png'))
 settings_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/settings_smol.png'))
 info_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/info_smol.png'))
@@ -1924,12 +3862,14 @@ pause_image = tk.PhotoImage(file = os.path.join(dirname,'icons/pause_smol.png'))
 pause_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/pause_vewy_smol.png'))
 #song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_black_smol.png'))
 #song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_white_smol.png'))
-song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_smol.png'))
+#song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_smol.png'))
 #song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_grey_smol.png'))
+song_cover_image = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_smol.png'))
 #song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_black_vewy_smol.png'))
 #song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_white_vewy_smol.png'))
-song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_vewy_smol.png'))
+#song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/cover_vewy_smol.png'))
 #song_cover_image_smol = tk.PhotoImage(file = 'os.path.join(dirname,icons/cover_grey_vewy_smol.png'))
+song_cover_image_smol = tk.PhotoImage(file = os.path.join(dirname,'icons/default_icon_no_text_vewy_smol.png'))
 #song_cover_image_temp = tk.PhotoImage(file = os.path.join(dirname, 'temporary_song_cover.png'))
 #song_cover_image_temp_smol = tk.PhotoImage(file = os.path.join(dirname, 'temporary_song_cover_smol.png'))
 delete_from_playlist_button_image = tk.PhotoImage(file = os.path.join(dirname,'icons/delete_from_playlist_smol.png'))
@@ -1947,18 +3887,31 @@ left_image = tk.PhotoImage(file = os.path.join(dirname,'icons/left_smol.png'))
 loading_image_1 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_1_smol.png'))
 loading_image_2 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_2_smol.png'))
 loading_image_3 = tk.PhotoImage(file = os.path.join(dirname,'icons/loading_3_smol.png'))
+songCoverImageME = tk.PhotoImage(file = os.path.join(dirname,'icons/songCoverImage_ME.png'))
+
+#window_icons
+#nachricht löschen (text auf default icon größer machen)
+main_window.resizable(False,False)
+if platform.system() == "Windows":
+    main_window.iconbitmap(default_icon)
+    plW.iconbitmap(playlist_icon)
+    metadataWindow.iconbitmap(metadata_icon)
+elif platform.system() == "Linux":
+    main_window.iconphoto(False,default_icon)
+    plW.iconphoto(False,playlist_icon)
+    metadataWindow.iconphoto(False,metadata_icon)
 
 #frames
-    #root
-toolbarFrame = ttk.Frame(root,width = 50)
+    #main_window
+toolbarFrame = ttk.Frame(main_window,width = 50)
 toolbarFrame.pack(side = tk.LEFT,fill = tk.Y)
-musicControlFrame = ttk.Frame(root,height = 100)
+musicControlFrame = ttk.Frame(main_window,height = 100)
 musicControlFrame.pack(side = tk.BOTTOM,fill = tk.X)
-sliderFrame = ttk.Frame(root)
+sliderFrame = ttk.Frame(main_window)
 sliderFrame.pack(side = tk.BOTTOM,fill = tk.X,padx = 10)
-songInfoFrame = ttk.Frame(root)
+songInfoFrame = ttk.Frame(main_window)
 songInfoFrame.pack(side = tk.BOTTOM,fill = tk.X,padx = 10)
-songCoverFrame = ttk.Frame(root,width = 200,height = 200)
+songCoverFrame = ttk.Frame(main_window,width = 200,height = 200)
 songCoverFrame.pack(anchor = tk.CENTER,pady = 5)
     #playlist window
 btmBtnsFrame = ttk.Frame(plW,height = 50)#bottom buttons
@@ -1968,7 +3921,7 @@ sdBtnsFrame.pack(side = tk.RIGHT,fill = tk.Y)
 playlistFrame = ttk.Frame(plW)
 playlistFrame.pack(side = tk.TOP,expand = True,fill = tk.BOTH)
 
-#root
+#main_window
     #toolbarFrame
 exitButton = tk.Button(toolbarFrame,image = exit_button_image,command = exitProgram,borderwidth = 0)
 exitButton.pack(side = tk.BOTTOM,anchor = tk.S)
@@ -1976,9 +3929,8 @@ settingsButton = tk.Button(toolbarFrame,image = settings_button_image,command = 
 settingsButton.pack(side = tk.BOTTOM)
 infoButton = tk.Button(toolbarFrame,image = info_button_image,command = lambda: (windowExtra("info")),borderwidth = 0)
 infoButton.pack(side = tk.BOTTOM)
-if volumeSliderText == "True":
-    volumeInfo = ttk.Label(toolbarFrame,text = volumeText)
-    volumeInfo.pack(side = tk.TOP)
+volumeInfo = ttk.Label(toolbarFrame,text = volumeText)
+volumeInfo.pack(side = tk.TOP)
 volumeSlider = ttk.Scale(toolbarFrame,variable = volume,from_ = 0,to = 100,orient = 'vertical')
 volumeSlider.bind("<Motion>",changeVolume)
 volumeSlider.bind("<ButtonRelease-1>",volumePressedFalse)
@@ -2021,11 +3973,11 @@ songNameText.pack(side = tk.RIGHT)
 
     #songCoverFrame
 songCover = ttk.Label(songCoverFrame,image = song_cover_image)
-songCover.pack()
+songCover.pack(ipady = 20)
 
 #playlist window
     #btmBtnsFrame
-addToPlaylistButton = ttk.Button(btmBtnsFrame,image = add_to_playlist_image,command = addToPlaylist)
+addToPlaylistButton = ttk.Button(btmBtnsFrame,image = add_to_playlist_image,command = lambda: (addToPlaylist("no")))
 addToPlaylistButton.pack(side = tk.LEFT)
 savePlaylistButton = ttk.Button(btmBtnsFrame,image = save_playlist_image,command = savePlaylist)
 savePlaylistButton.pack(side = tk.LEFT)
@@ -2052,9 +4004,9 @@ columns = ('Title','Artist','length','count')
 
 tree = ttk.Treeview(playlistFrame,columns = columns,show = 'headings')
 
-tree.heading('Title',text = 'Title')
-tree.heading('Artist',text = 'Artist')
-tree.heading('length',text = 'Length')
+tree.heading('Title',text = tree_heading1_text_langtext)
+tree.heading('Artist',text = tree_heading2_text_langtext)
+tree.heading('length',text = tree_heading3_text_langtext)
 tree.column('Title',width = 150)
 tree.column('Artist',width = 150)
 tree.column('length',width = 50)
@@ -2068,6 +4020,22 @@ tree.bind('<Motion>','break')
 
 tree.bind('<Double-1>',playFromPlaylistEvent)
 
+#right click menu
+rcmenu1 = tk.Menu(tree,tearoff = 0)#right click menu
+rcmenu1.add_command(label = rcmenu1_command1_label_langtext,command = deleteAllSongs)
+rcmenu1.add_command(label = "Metadata editor",command = metadataEditorStart)
+rcmenu1.add_command(label = rcmenu1_command2_label_langtext,command = delDuplicates)
+
+rcmenu2 = tk.Menu(tree,tearoff = 0)
+rcmenu2.add_command(label = rcmenu2_command1_label_langtext,command = topInPlaylist)
+rcmenu2.add_command(label = rcmenu2_command2_label_langtext,command = upInPlaylist)
+rcmenu2.add_command(label = rcmenu2_command3_label_langtext,command = downInPlaylist)
+rcmenu2.add_command(label = rcmenu2_command4_label_langtext,command = bottomInPlaylist)
+rcmenu2.add_command(label = rcmenu2_command5_label_langtext,command = delFrompllst)
+rcmenu2.add_separator()
+rcmenu2.add_command(label = "Edit metadata",command = editMetadataOfSelected)
+tree.bind("<Button-3>",rcmenuCheck)# event:rcmenu1.post(event.x_root,event.y_root))
+
 #FRAMES
 btmBtnsFFrame = ttk.Frame(btmBtnsFrame)#bottom buttons frame frame
 btmBtnsFFrame.pack(fill = tk.X)
@@ -2080,19 +4048,19 @@ remainingLengthFrame = ttk.Frame(btmBtnsFFrame)
 remainingLengthFrame.pack(side = tk.TOP,fill = tk.X)
 
     #selectedSongFrame
-playlistSelectedLabel = ttk.Label(selectedSongFrame,text = "playing song")#vlt hier überall das "label" wegnehmen
+playlistSelectedLabel = ttk.Label(selectedSongFrame,text = playlistSelectedLabel_text_langtext)#vlt hier überall das "label" wegnehmen
 playlistSelectedLabel.pack(side = tk.LEFT)
 plstSelectionLabel = ttk.Label(selectedSongFrame,text = plstSelection)
 plstSelectionLabel.pack(side = tk.RIGHT)
 
     #lengthFrame
-playlistDurationLabel = ttk.Label(lengthFrame,text = "duration")
+playlistDurationLabel = ttk.Label(lengthFrame,text = playlistDurationLabel_text_langtext)
 playlistDurationLabel.pack(side = tk.LEFT)
 playlistLengthLabel = ttk.Label(lengthFrame,text = playlistLength)
 playlistLengthLabel.pack(side = tk.RIGHT)
 
     #remainingLengthFrame
-remainingPlaylistDurationLabel = ttk.Label(remainingLengthFrame,text = "remaining")
+remainingPlaylistDurationLabel = ttk.Label(remainingLengthFrame,text = remainingPlaylistDurationLabel_text_langtext)
 remainingPlaylistDurationLabel.pack(side = tk.LEFT)
 remainingPlaylistLengthLabel = ttk.Label(remainingLengthFrame,text = remainingPlaylistLength)
 remainingPlaylistLengthLabel.pack(side = tk.RIGHT)
@@ -2104,12 +4072,12 @@ scrollbar.pack(side = tk.RIGHT,fill = tk.Y)
 
 #window bindings
     #toggle play
-root.bind_all('<space>',togglePlayKey)
-root.bind_all('<Pause>',togglePlayKey)
+main_window.bind_all('<space>',togglePlayKey)
+main_window.bind_all('<Pause>',togglePlayKey)
     #add to playlist
-root.bind_all('<Control-o>',addToPlaylistKey)
+main_window.bind_all('<Control-o>',addToPlaylistKey)
     #delete from playlist
-#root.bind("<Delete>",delFrompllstKey)#probably nicht
+#main_window.bind("<Delete>",delFrompllstKey)#probably nicht
 plW.bind("<Delete>",delFrompllstKey)
     #move in playlist
 plW.bind("<Up>",upInPlaylistKey)
@@ -2117,29 +4085,180 @@ plW.bind("<Down>",downInPlaylistKey)
 plW.bind("<Left>",topInPlaylistKey)
 plW.bind("<Right>",bottomInPlaylistKey)
     #volume
-root.bind_all("<plus>",changeVolumeUpKey)
-root.bind_all("<minus>",changeVolumeDownKey)
-	#skip/rewind
-root.bind("<Right>",fastForwardKey)
-root.bind("<Left>",rewindSongKey)
-	#step skip/rewind
-root.bind("<Shift-Right>",stepFastForwardKey)
-root.bind("<Shift-Left>",stepRewindSongKey)
+main_window.bind_all("<plus>",changeVolumeUpKey)
+main_window.bind_all("<minus>",changeVolumeDownKey)
+    #skip/rewind
+main_window.bind("<Right>",fastForwardKey)
+main_window.bind("<Left>",rewindSongKey)
+    #step skip/rewind
+main_window.bind("<Shift-Right>",stepFastForwardKey)
+main_window.bind("<Shift-Left>",stepRewindSongKey)
     #open settings
-#root.bind_all('i',windowExtra("info"))
-#root.bind_all('I',windowExtra("info"))
+#main_window.bind_all('i',windowExtra("info"))
+#main_window.bind_all('I',windowExtra("info"))
     #open info page/window
-#root.bind_all('s',windowExtra("settings"))
-#root.bind_all('S',windowExtra("settings"))
-
-root.protocol("WM_DELETE_WINDOW", exitProgram)
+#main_window.bind_all('s',windowExtra("settings"))
+#main_window.bind_all('S',windowExtra("settings"))
+main_window.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
 
+#metadata editor window
+modesME = ttk.Notebook(metadataWindow)
+modesME.pack(side = tk.TOP,fill = tk.BOTH)
+startTabME = ttk.Frame(modesME)
+batchEditME = ttk.Frame(modesME)
+singleEditME = ttk.Frame(modesME)
+renameME = ttk.Frame(modesME)
+settingsME = ttk.Frame(modesME)
+quitTabME = ttk.Frame(modesME)
+
+modesME.add(startTabME,text = modesME_startTabME_text_langtext)
+modesME.add(batchEditME,text = modesME_batchEditME_text_langtext)
+modesME.add(singleEditME,text = modesME_singleEditME_text_langtext)
+modesME.add(renameME,text = modesME_renameME_text_langtext)
+modesME.add(settingsME,text = modesME_settingsME_text_langtext)
+modesME.add(quitTabME,text = modesME_quitTabME_text_langtext)
+modesME.select(notebookTabME)
+modesME.bind('<<NotebookTabChanged>>',notebookTabMEChange)
+
+columnsME = ('File')
+columnsSEME = ('Tag','Data')
+
+progressbarSTME = ttk.Progressbar(startTabME,orient = 'horizontal',mode = 'determinate',length = 500)
+progressbarSTME.pack(side = tk.BOTTOM)
+
+#batchEditME - be
+selectFilesFrameBEME = ttk.Frame(batchEditME)
+selectFilesFrameBEME.pack(side = tk.TOP,fill = tk.X)
+selectFilesFrameInnerBEME = ttk.Frame(selectFilesFrameBEME)
+selectFilesFrameInnerBEME.pack(side = tk.LEFT)
+namePatternFrameBEME = ttk.Frame(batchEditME)
+namePatternFrameBEME.pack(side = tk.TOP,fill = tk.X)
+
+fileCountTextBEME = ttk.Label(selectFilesFrameInnerBEME,text = fileCountTextBEME_text_langtext)
+fileCountTextBEME.pack(side = tk.BOTTOM)
+deleteFilesButtonBEME = ttk.Button(selectFilesFrameInnerBEME,text = deleteFilesButtonBEME_text_langtext,command = deleteFiles)
+deleteFilesButtonBEME.pack(side = tk.BOTTOM)
+selectFilesButtonBEME = ttk.Button(selectFilesFrameInnerBEME,text = selectFilesButtonBEME_text_langtext,command = loadFilesP1)
+selectFilesButtonBEME.pack(side = tk.BOTTOM,fill = tk.X)
+scrollbarBEME = ttk.Scrollbar(selectFilesFrameBEME)
+selectedFilesTreeBEME = ttk.Treeview(selectFilesFrameBEME,yscrollcommand = scrollbarBEME.set,columns = columnsME,show = "headings",height = 4)
+scrollbarBEME.configure(command = selectedFilesTreeBEME.yview)
+scrollbarBEME.pack(side = tk.RIGHT,fill = tk.Y)
+selectedFilesTreeBEME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+
+namePatternTextBEME = ttk.Label(namePatternFrameBEME,text = namePatternTextBEME_text_langtext)
+namePatternTextBEME.pack(side = tk.TOP,anchor = tk.NW)
+namePatternHelpButtonBEME = ttk.Button(namePatternFrameBEME,text = namePatternHelpButtonBEME_text_langtext,command = namePatternHelp)
+namePatternHelpButtonBEME.pack(side = tk.RIGHT)
+namePatternEntryBEME = ttk.Entry(namePatternFrameBEME,textvariable = namePattern)
+namePatternEntryBEME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+namePatternEntryBEME.bind('<KeyRelease>',namePatternChange)
+resetTitleCheckbutton = ttk.Checkbutton(batchEditME,text = resetTitleCheckbutton_text_langtext,variable = resetTitleVar,onvalue = True,offvalue = False,command = lambda: (settings("resetTitleVar")))
+resetTitleCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+resetInterpreterCheckbutton = ttk.Checkbutton(batchEditME,text = resetInterpreterCheckbutton_text_langtext,variable = resetInterpreterVar,onvalue = True,offvalue = False,command = lambda: (settings("resetInterpreterVar")))
+resetInterpreterCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+resetAlbumCheckbutton = ttk.Checkbutton(batchEditME,text = resetAlbumCheckbutton_text_langtext,variable = resetAlbumVar,onvalue = True,offvalue = False,command = lambda: (settings("resetAlbumVar")))
+resetAlbumCheckbutton.pack(side = tk.TOP,anchor = tk.NW)
+
+whereSaveButtonBEME = ttk.Button(batchEditME,text = whereSaveButtonBEME_text_langtext,command = whereSave)
+whereSaveButtonBEME.pack(side = tk.BOTTOM,anchor = tk.NW)
+whereSaveTextBEME = ttk.Label(batchEditME,text = whereSaveTextBEME_text_langtext)
+whereSaveTextBEME.pack(side = tk.BOTTOM,anchor = tk.NW)
+
+separatorBEoneME = ttk.Separator(batchEditME,orient = 'horizontal')
+separatorBEoneME.pack(side = tk.BOTTOM,fill = tk.X)
+
+
+#singleEditME - se
+startToSaveLabelME = ttk.Label(singleEditME,text = startToSaveLabelME_text_langtext)
+startToSaveLabelME.pack()
+selectFileButtonSEME = ttk.Button(singleEditME,text = selectFileButtonSEME_text_langtext,command = loadFileSEME)
+selectFileButtonSEME.pack(side = tk.TOP,fill = tk.X)
+
+fileInfoTreeSEME = ttk.Treeview(singleEditME,columns = columnsSEME,show = "headings",height = 4)
+fileInfoTreeSEME.heading('Tag',text = fileInfoTreeSEME_heading1_text_langtext)
+fileInfoTreeSEME.heading('Data',text = fileInfoTreeSEME_heading2_text_langtext)
+fileInfoTreeSEME.column('Tag',width = 25)
+fileInfoTreeSEME.column('Data')
+fileInfoTreeSEME.pack(side = tk.TOP,fill = tk.BOTH,expand = True)
+fileInfoTreeSEME.insert('',tk.END,iid = "filename",values = (fileInfoTreeSEME_insert_iid_filename_values_langtext))
+fileInfoTreeSEME.insert('',tk.END,iid = "title",values = (fileInfoTreeSEME_insert_iid_title_values_langtext))
+fileInfoTreeSEME.insert('',tk.END,iid = "interpret",values = (fileInfoTreeSEME_insert_iid_interpret_values_langtext))
+fileInfoTreeSEME.insert('',tk.END,iid = "album",values = (fileInfoTreeSEME_insert_iid_album_values_langtext))
+fileInfoTreeSEME.bind("<Double-1>",doubleClickSEME)
+
+entrySEME = ttk.Entry(singleEditME,textvariable = entry_varSEME)
+
+songCoverButtonME = ttk.Button(singleEditME,image = songCoverImageME,command = loadImageME)#songCoverImagME durch song_cover_image ersetzen
+songCoverButtonME.pack(side = tk.TOP)
+
+whereSaveButtonSEME = ttk.Button(singleEditME,text = whereSaveButtonSEME_text_langtext,command = whereSave)
+whereSaveButtonSEME.pack(side = tk.BOTTOM)
+copyFileCheckbuttonME = ttk.Checkbutton(singleEditME,text = copyFileCheckbuttonME_text_langtext,command = copyFileCheck,variable = copyFileVarME,onvalue = True,offvalue = False)
+copyFileCheckbuttonME.pack(side = tk.BOTTOM)
+separatorSEME = ttk.Separator(singleEditME,orient = "horizontal")
+separatorSEME.pack(side = tk.BOTTOM)
+copyFileCheck()
+
+
+#renameME - RE
+selectFilesFrameREME = ttk.Frame(renameME)
+selectFilesFrameREME.pack(side = tk.TOP,fill = tk.X)
+selectFilesFrameInnerREME = ttk.Frame(selectFilesFrameREME)
+selectFilesFrameInnerREME.pack(side = tk.LEFT)
+namePatternFrameREME = ttk.Frame(renameME)
+namePatternFrameREME.pack(side =tk.TOP,fill = tk.X)
+
+fileCountTextREME = ttk.Label(selectFilesFrameInnerREME,text = fileCountTextREME_text_langtext)
+fileCountTextREME.pack(side = tk.BOTTOM)
+deleteFilesButtonREME = ttk.Button(selectFilesFrameInnerREME,text = deleteFilesButtonREME_text_langtext,command = deleteFiles)
+deleteFilesButtonREME.pack(side = tk.BOTTOM)
+selectFilesButtonREME = ttk.Button(selectFilesFrameInnerREME,text = selectFilesButtonREME_text_langtext,command = loadFilesP1)
+selectFilesButtonREME.pack(side = tk.BOTTOM,fill = tk.X)
+scrollbarREME = ttk.Scrollbar(selectFilesFrameREME)
+selectedFilesTreeREME = ttk.Treeview(selectFilesFrameREME,yscrollcommand = scrollbarREME.set,columns = columnsME,show = "headings",height = 4)
+scrollbarREME.configure(command = selectedFilesTreeREME.yview)
+scrollbarREME.pack(side = tk.RIGHT,fill = tk.Y)
+selectedFilesTreeREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+
+namePatternTextREME = ttk.Label(namePatternFrameREME,text = namePatternTextREME_text_langtext)
+namePatternTextREME.pack(side = tk.TOP,anchor = tk.NW)
+namePatternHelpButtonREME = ttk.Button(namePatternFrameREME,text = namePatternHelpButtonREME_text_langtext,command = namePatternHelp)
+namePatternHelpButtonREME.pack(side = tk.RIGHT)
+namePatternEntryREME = ttk.Entry(namePatternFrameREME,textvariable = namePattern)
+namePatternEntryREME.pack(side = tk.LEFT,fill = tk.X,expand = True)
+
+whereSaveTextREME = ttk.Label(renameME,text = whereSaveTextREME_text_langtext)
+whereSaveTextREME.pack(side = tk.TOP,anchor = tk.NW)
+whereSaveButtonREME = ttk.Button(renameME,text = whereSaveButtonREME_text_langtext,command = whereSave)
+whereSaveButtonREME.pack(side = tk.TOP,anchor = tk.NW)
+
+#settings
+with open(os.path.join(dirname,"texts/license.txt"),'r') as licenseTextFileME:
+    licenseTextListME = licenseTextFileME.readlines()
+licenseTextME = ""
+for lineME in licenseTextListME:
+    licenseTextME = licenseTextME + lineME
+licenseTextLabelME = ScrolledText(settingsME,wrap = "word")
+licenseTextLabelME.pack(side = tk.TOP,fill = tk.BOTH)
+licenseTextLabelME.insert(tk.INSERT,licenseTextME)
+licenseTextLabelME.config(state = 'disabled',font = 'Helvetica 9')
+
 #end
+changeVolumeUp()
+changeVolumeDown()
+metadataEditorStart()
+refreshRecentFiles()
+buildVolumeSliderText(volumeSliderText)
 plW.mainloop()
-root.mainloop()
+main_window.mainloop()
+metadataWindow.mainloop()
 
 #verschiedene sprachen, du brauchst eine textdatei wo alle dinge drinstehen, und die nennst du dann "language_Deutsch.txt", und die englische wird dann eben "language_United States.txt". das programm guckt dann eben in einem ornder (maybe in einem eigenen maysbe in dem texts ornder) nach allen ("language_...") dateien, und zeigt in eionem dropdown menü alle optionen an, sodass man dann da eine auswählen kann. vlt schaffst du den wechsel sogar ohne das programm neuzustarten
 #vlt eine option zum verändern des styles/themes, der farben/(zumindest) der farbe des ausgewählten elements in der playlist
-#auf meinem linux pc wird nicht der gesamte text von length im playlist fenster angezeigt
+#auf meinem linux pc (der kleine) wird nicht der gesamte text von length im playlist fenster angezeigt
 #entweder das extra window (wieder ig) nicht größenverstellbar machen, oder gucken, ob das programm vlt doch größenverstellbar sein kann
+#option machen, mit der man anschalten kann, dass songs aus playlisten auch in den recent songs angezeigt werden
+#wenn man zu einem anderen song skipped bevor er fertig geladen hat, gibt es einen fehler
+#ein rechtsklick menü für jeden song und eine option im menu. metadata_editor() beim menü und beim rechtsklick metadata_editor.loadFiles(ausgewählter songs)
