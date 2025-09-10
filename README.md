@@ -9,6 +9,6 @@ If you have a big music collection, but all files are missing their metadata tag
 - Able to read metadata from song (Title, Artist, Song Cover)
 - Able to edit the metadata of m4a and mp3 files
 
-There is also a [version](https://github.com/dreamAviator/TkMusic/tree/without_metadata_editor) without the metadata editor available, all other features are the same.
+--There is also a [version](https://github.com/dreamAviator/TkMusic/tree/without_metadata_editor) without the metadata editor available, all other features are the same.-- (not active)
 
 The metadata editor is also available as a [standalone](https://github.com/dreamAviator/TkMusic/tree/metadata-editor) application.
