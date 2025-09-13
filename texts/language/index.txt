@@ -233,3 +233,4 @@ namePatternTextREME_text_langtext - "Naming pattern"
 namePatternHelpButtonREME_text_langtext - "What's that?"
 whereSaveTextREME_text_langtext - "Save Location"
 whereSaveButtonREME_text_langtext - "Select folder"
+settingsWE_resetRelativePlWpositionButton_text_langtext

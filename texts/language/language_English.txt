@@ -233,3 +233,4 @@ Naming pattern
 What's that?
 Save Location
 Select folder
+Reset relative playlist window position

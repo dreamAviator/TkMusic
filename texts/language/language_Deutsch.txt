@@ -233,3 +233,4 @@ Muster
 Was ist das?
 Speicherort
 Verzeichnis auswählen
+Setze die relative Position des Wiedergabelistenfensters zurück.
