@@ -2040,11 +2040,11 @@ def windowExtra(extraType):
 
 def closeExtra():
     global extraWindow
+    main_window.geometry(main_windowWidthStr + 'x360+' + str(extraWindow.winfo_x()) + '+' + str(extraWindow.winfo_y()))
     extraWindow.destroy()
     main_window.attributes('-alpha',1)
     main_window.lift()
     checkLogoInverted()
-    #hier wird einfach nur restore main_window aufgerufen und oben wird main_window einmal destroyt (sieht so cursed aus mit diesem t xD)
 
 def closeExtraEvent(event):
     closeExtra()
