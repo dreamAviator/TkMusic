@@ -2768,6 +2768,7 @@ def editMetadataOfSelected():#hier noch machen, dass wenn nur eine datei ausgew�
     metadataEditorStart()
 
 def metadataEditorStart():
+    print("yuppidiieyup")
     if metadataWindow.wm_state() == "withdrawn":
         metadataWindow.deiconify()
         namePattern.set(namePatternEntryBEME.get())
@@ -3253,7 +3254,7 @@ def getPosition(window):
 def resetRelativePlWposition():
     plus = main_Window_Postion.find("+")
     plus2 = main_Window_Postion[plus+1:].find("+")
-    plW_Position = "+" + str(int(main_Window_Postion[plus+1:plus2+1])+500) + "+" + str(int(main_Window_Postion[plus2+2:])-50)
+    plW_Position = "+" + str(int(main_Window_Postion[plus+1:plus2+1])+500) + "+" + str(int(main_Window_Postion[plus2+2:]))
     print(main_Window_Postion)
     print(plW_Position)
     plW.geometry(playlistWidthStr + 'x360' + plW_Position)
@@ -3671,7 +3672,6 @@ main_window.title(main_window_title_langtext)
 main_Window_Postion = getPosition("main_window")
 main_window.geometry(main_windowWidthStr + 'x360' + main_Window_Postion)
 #main_window.geometry(main_windowWidthStr + 'x360+100+100')
-main_window.bind('<Escape>',hideInBackground)
     #menus
 menubar1 = tk.Menu(main_window)
 main_window.config(menu = menubar1)
@@ -4148,8 +4148,10 @@ main_window.bind("<Shift-Left>",stepRewindSongKey)
     #open info page/window
 #main_window.bind_all('s',windowExtra("settings"))
 #main_window.bind_all('S',windowExtra("settings"))
+main_window.bind('<Escape>',hideInBackground)
 main_window.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
+metadataWindow.protocol("WM_DELETE_WINDOW",metadataEditorStart)
 
 #metadata editor window
 modesME = ttk.Notebook(metadataWindow)
@@ -4310,4 +4312,3 @@ metadataWindow.mainloop()
 #entweder das extra window (wieder ig) nicht größenverstellbar machen, oder gucken, ob das programm vlt doch größenverstellbar sein kann
 #option machen, mit der man anschalten kann, dass songs aus playlisten auch in den recent songs angezeigt werden
 #wenn man zu einem anderen song skipped bevor er fertig geladen hat, gibt es einen fehler
-#ein rechtsklick menü für jeden song und eine option im menu. metadata_editor() beim menü und beim rechtsklick metadata_editor.loadFiles(ausgewählter songs)
