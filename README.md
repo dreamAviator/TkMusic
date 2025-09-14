@@ -12,3 +12,10 @@ If you have a big music collection, but all files are missing their metadata tag
 ~~There is also a [version](https://github.com/dreamAviator/TkMusic/tree/without_metadata_editor) without the metadata editor available, all other features are the same.~~ (not active)
 
 The metadata editor is also available as a [standalone](https://github.com/dreamAviator/TkMusic/tree/metadata-editor) application.
+
+
+______
+## Known Bugs
+(will  get fixed before 1.0 release)
+- scaling doesn't  work (wrongly scaled if system scale is different from 100%)
+- if you skip to the next song before loading has finished there is an error
