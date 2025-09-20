@@ -1558,7 +1558,14 @@ def changeVolumeUp():
         volumeText = 100 - volumeText
         player.audio_set_volume(volumeText + 1)
         #volumeSlider.set(volumeText)#geht automatisch
-        volumeInfo.config(text = volumeText + 1)
+        try:
+            volumeInfo.config(text = volumeText + 1)
+        except:
+            pass
+        try:
+            volumeInfoExtra.config(text = volumeText)
+        except:
+            pass
 
 def changeVolumeDown():
     volumeText = volume.get()
@@ -1567,7 +1574,14 @@ def changeVolumeDown():
         volumeText = 100 - volumeText
         player.audio_set_volume(volumeText - 1)
         #volumeSlider.set(volumeText)#geht automatisch
-        volumeInfo.config(text = volumeText - 1)
+        try:
+            volumeInfo.config(text = volumeText - 1)
+        except:
+            pass
+        try:
+            volumeInfoExtra.config(text = volumeText)
+        except:
+            pass
 
 def changeVolumeUpKey(event):
     changeVolumeUp()
@@ -1655,10 +1669,10 @@ def settingsWE():
     preferPllstDataCheckbutton.config(state = "disabled")
     languageSelectOptionMenu = ttk.OptionMenu(extraWindow,languageStringVar,None,*languageListOptionMenu,direction = 'above',command = languageChange)#container,variable,default,values
     languageSelectOptionMenu.pack(side = tk.TOP,anchor = tk.NW)
-    resetRelativePlWpositionButton = ttk.Button(extraWindow,text = settingsWE_resetRelativePlWpositionButton_text_langtext,command = resetRelativePlWposition)
-    resetRelativePlWpositionButton.pack(side = tk.BOTTOM,anchor = tk.W)
     messageLogsButton = ttk.Button(extraWindow,text = settingsWE_messageLogsButton_text_langtext,command = lambda: (windowExtra("messageLogs")))
     messageLogsButton.pack(side = tk.BOTTOM,anchor = tk.W)
+    resetRelativePlWpositionButton = ttk.Button(extraWindow,text = settingsWE_resetRelativePlWpositionButton_text_langtext,command = resetRelativePlWposition)
+    resetRelativePlWpositionButton.pack(side = tk.BOTTOM,anchor = tk.W)
 
 def messageLogsWE():
     global logs
@@ -2037,14 +2051,20 @@ def windowExtra(extraType):
         backSeparator = ttk.Separator(extraWindow,orient = 'horizontal')
         backSeparator.pack(side = tk.TOP,fill = tk.X)
         licenseWE()
+    if volume.get() < 100:
+        changeVolumeUp()
+        changeVolumeDown()
+    else:
+        changeVolumeDown()
+        changeVolumeUp()
 
 def closeExtra():
     global extraWindow
-    main_window.geometry(main_windowWidthStr + 'x360+' + str(extraWindow.winfo_x()) + '+' + str(extraWindow.winfo_y()))
     extraWindow.destroy()
     main_window.attributes('-alpha',1)
     main_window.lift()
     checkLogoInverted()
+    #hier wird einfach nur restore main_window aufgerufen und oben wird main_window einmal destroyt (sieht so cursed aus mit diesem t xD)
 
 def closeExtraEvent(event):
     closeExtra()
@@ -2264,7 +2284,7 @@ def buildVolumeSliderText(ToF):
         volumeInfoExtra.destroy()
     except:
         pass
-    if ToF == True:
+    if ToF == "True":
         volumeInfo = ttk.Label(toolbarFrame,text = volumeText)
         volumeInfo.pack(side = tk.TOP)
         try:
@@ -2287,6 +2307,12 @@ def buildVolumeSliderText(ToF):
         volumeSliderExtra.pack(side = tk.BOTTOM,fill = tk.Y,expand = True,pady = 10)
     except:
         pass
+    if volume.get() < 100:
+        changeVolumeUp()
+        changeVolumeDown()
+    else:
+        changeVolumeDown()
+        changeVolumeUp()
 
 def buildMiniMode_main_window(event):
     global numberforminimode_main_window
@@ -2635,6 +2661,7 @@ def settingsFmenu(setting):
 def settings(setting):
     global loopPlaylist
     global loopMove
+    global volumeSliderText
     filepath = os.path.join(dirname,"texts/settings.txt")
     with open(filepath,'r') as file:
         lines = file.readlines()
@@ -2768,7 +2795,6 @@ def editMetadataOfSelected():#hier noch machen, dass wenn nur eine datei ausgew�
     metadataEditorStart()
 
 def metadataEditorStart():
-    print("yuppidiieyup")
     if metadataWindow.wm_state() == "withdrawn":
         metadataWindow.deiconify()
         namePattern.set(namePatternEntryBEME.get())
@@ -3254,7 +3280,7 @@ def getPosition(window):
 def resetRelativePlWposition():
     plus = main_Window_Postion.find("+")
     plus2 = main_Window_Postion[plus+1:].find("+")
-    plW_Position = "+" + str(int(main_Window_Postion[plus+1:plus2+1])+500) + "+" + str(int(main_Window_Postion[plus2+2:]))
+    plW_Position = "+" + str(int(main_Window_Postion[plus+1:plus2+1])+500) + "+" + str(int(main_Window_Postion[plus2+2:])-50)
     print(main_Window_Postion)
     print(plW_Position)
     plW.geometry(playlistWidthStr + 'x360' + plW_Position)
@@ -3672,6 +3698,8 @@ main_window.title(main_window_title_langtext)
 main_Window_Postion = getPosition("main_window")
 main_window.geometry(main_windowWidthStr + 'x360' + main_Window_Postion)
 #main_window.geometry(main_windowWidthStr + 'x360+100+100')
+main_window.resizable(False,False)
+main_window.bind('<Escape>',hideInBackground)
     #menus
 menubar1 = tk.Menu(main_window)
 main_window.config(menu = menubar1)
@@ -3940,7 +3968,6 @@ songCoverImageME = tk.PhotoImage(file = os.path.join(dirname,'icons/songCoverIma
 
 #window_icons
 #nachricht löschen (text auf default icon größer machen)
-main_window.resizable(False,False)
 if platform.system() == "Windows":
     main_window.iconbitmap(default_icon)
     plW.iconbitmap(playlist_icon)
@@ -4148,10 +4175,8 @@ main_window.bind("<Shift-Left>",stepRewindSongKey)
     #open info page/window
 #main_window.bind_all('s',windowExtra("settings"))
 #main_window.bind_all('S',windowExtra("settings"))
-main_window.bind('<Escape>',hideInBackground)
 main_window.protocol("WM_DELETE_WINDOW", exitProgram)
 plW.protocol("WM_DELETE_WINDOW", exitProgram)
-metadataWindow.protocol("WM_DELETE_WINDOW",metadataEditorStart)
 
 #metadata editor window
 modesME = ttk.Notebook(metadataWindow)
