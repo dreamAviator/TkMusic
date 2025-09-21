@@ -809,6 +809,7 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     global plWminiMode
     global treeMiniMode
     global remainingPlaylistLengthLabelMini
+    disable_controls()
     loading_Threading()
     if miniModeActive.get() == False:
         plW.title(updatePlaylist_plW_title_langtext)
@@ -862,6 +863,7 @@ def updatePlaylist(selectCount,seeCount):#für selectionAndSee
     #        tree.selection_set(item_id)
     #        return
     loading_stop()
+    enable_controls()
     updatePlaylistThread()
 
 def plstSelSee(selectCount,seeCount):#plstSelSee = plstSelSeeAndSee;0 = none; -1 = last
@@ -3370,12 +3372,15 @@ def notebookTabMEChange(event):#klappt noch nicht ganz
     if selectedTabME != 5:
         settings("notebookTabMEChange")
 
-def stop_drag():
-    global drag_id
-    print('stop drag')
-    # reset drag_id to be able to detect the start of next dragging
-    drag_id = ''
-    savePosition()
+def disable_controls():
+    forwardButton.config(state = 'disabled')
+    rewindButton.config(state = 'disabled')
+    togglePlayButton.config(state = 'disabled')
+
+def enable_controls():
+    forwardButton.config(state = 'normal')
+    rewindButton.config(state = 'normal')
+    togglePlayButton.config(state = 'normal')
 
 #general
 def openFilesDialog():
